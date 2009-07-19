@@ -1,0 +1,18 @@
+#! /bin/sh
+# Workarounds for making the toolkit work in Octave 3.0
+
+cd @state
+cp state.m        state_disabled.m
+cp octave_state.m state.m
+mv trace.m        trace_disabled.m
+cd ..
+
+# flatten namespaces
+sed '
+/^[^%]/ s/gate\.//g
+/^[^%]/ s/hamiltonian\.//g
+/^[^%]/ s/invariant\.//g
+/^[^%]/ s/lindblad\.//g
+/^[^%]/ s/plots\.//g
+/^[^%]/ s/seq\.//g
+' -i.orig */*.m
