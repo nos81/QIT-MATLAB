@@ -104,7 +104,7 @@ switch type
 
     % qubit Hamiltonian
     H = -qit.sz;
-    max_dH = 2;
+    max_dH = 10*desc.dH_c;
 
     % noise coupling
     D = cos(alpha)*qit.sz +sin(alpha)*qit.sx;
@@ -153,8 +153,8 @@ for k=1:length(desc.dH)
   else
     % Cauchy principal value, integrand has simple poles at +-dH.
     f = @(x) J(x).*(dH*coth(desc.scale*x/2) +x)./(dH^2 -x.^2);
-
-    desc.S(k) = quad(f, 0, abs(dH)-ep) + quad(f, abs(dH)+ep, inf);
+    desc.S(k) = quad(f, ep, abs(dH)-ep)...
+      +quad(f, abs(dH)+ep, 10*max_dH); % upper limit should be inf, this is arbitrary
   end
 end
 

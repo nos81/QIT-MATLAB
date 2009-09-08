@@ -7,6 +7,9 @@ addpath([pwd '/examples']);
 % define global variables in the toolkit namespace
 global qit;
 
+% toolkit version number
+qit.version = '0.9.1';
+
 % Pauli matrices
 qit.I  = eye(2);
 qit.sx = [0 1; 1 0];

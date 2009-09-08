@@ -28,7 +28,7 @@ if (nargin ~= 2)
 end
 
 % assume parameters are set and lookup table computed
-s = desc.N * interp1(desc.dH, desc.S, dH, 'linear');
+s = desc.N * interp1(desc.dH, desc.S, dH, 'linear', 0);
   
 if (abs(dH) <= 1e-8)
   g = desc.N * 2*pi/desc.scale; % limit at dH == 0
