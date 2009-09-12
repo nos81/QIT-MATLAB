@@ -54,12 +54,11 @@ deltaE = kron(E.', ones(1,m)) -kron(E, ones(m,1)); % deltaE(i,j) = E(i)-E(j)
 [deltaE, ind] = sort(deltaE(:));
 
 % index of first lower triangle element
-s = n*(n-1)/2 + 1;
+s = m*(m-1)/2 + 1;
 %assert(ind(s), 1)
 deltaE = deltaE(s:end).';
 ind = ind(s:end).';
 p = length(deltaE);
-
 
 % combine degenerate deltaE, build Lindblad ops
 % k -> ind(k) -> i,j

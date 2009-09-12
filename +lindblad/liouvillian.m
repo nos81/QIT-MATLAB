@@ -1,11 +1,10 @@
-function L = liouvillian(H, D, desc)
+function L = liouvillian(H, D, b)
 % LINDBLAD/LIOUVILLIAN  Liouvillian superoperator for a Born-Markov system.
 %
-%  L = liouvillian(H, D, bath_desc)
+%  L = liouvillian(H, D, b)
 %
 %  Builds the Liouvillian superoperator L corresponding to a base Hamiltonian H
-%  and a (hermitian) interaction operator D. bath_desc is a bath descriptor
-%  returned by the function bath.
+%  and a (hermitian) interaction operator D coupling the system to bath b.
 %
 %  Returns L/omega0, which includes the system Hamiltonian, the Lamb shift,
 %  and the Lindblad dissipator.
@@ -20,7 +19,7 @@ function L = liouvillian(H, D, desc)
 % we build the liouvillian in a funny order to be a bit more efficient
 
 % dH == 0 terms
-[g, s] = lindblad.bath(desc, 0);
+[g, s] = lindblad.bath_corr(b, 0);
 temp = A{1}' * A{1};
 
 iH_LS = i * s * temp; % Lamb shift
@@ -29,7 +28,7 @@ diss = lrmul(g * A{1}, A{1}'); % dissipator (part)
 
 for k=2:length(dH)
   % first the positive energy shift
-  [g, s] = lindblad.bath(desc, dH(k));
+  [g, s] = lindblad.bath_corr(b, dH(k));
   temp = A{k}' * A{k};
 
   iH_LS = iH_LS +i * s * temp;
@@ -37,7 +36,7 @@ for k=2:length(dH)
   diss = diss +lrmul(g * A{k}, A{k}');
 
   % now the corresponding negative energy shift
-  [g, s] = lindblad.bath(desc, -dH(k));
+  [g, s] = lindblad.bath_corr(b, -dH(k));
   temp = A{k} * A{k}'; % note the difference here, A(-omega) = A'(omega)
 
   iH_LS = iH_LS +i * s * temp;
