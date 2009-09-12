@@ -18,11 +18,12 @@ function p = phase_estimation(t, U, u)
 fprintf('\n\n=== Phase estimation ===\n')
 
 % find eigenstates of the operator
+if (nargin < 2)
+  error('Both t and U must be given.')
+end
+
+[v,d] = eig(U);
 if (nargin < 3)
-  if (nargin < 2)
-    error('Both t and U must be given.')
-  end
-  [v,d] = eig(U);
   u = v(:,1); % exact eigenstate
 end
 
@@ -69,8 +70,9 @@ bar((0:T-1)/T, p);
 xlabel('phase/2\pi');
 ylabel('probability');
 title('Phase estimation result distribution')
+axis([-1/(T*2) 1-1/(T*2) 0 1])
 
 % compare to correct answer
 target = angle(diag(d))/(2*pi) + 1;
 target = target - floor(target)
-plot(target, 0.5*max(p)*ones(size(target)), 'ro');
+plot(target, 0.5*max(p)*ones(size(target)), 'mo');
