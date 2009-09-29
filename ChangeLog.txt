@@ -1,1 +1,6 @@
-2009-07-18    Version 0.9.0 released (first public beta).
+2009-07-18    Version 0.9.0 (first public beta)
+
+2009-09-29    Version 0.9.1 (beta)
+	      + version string in qit namespace
+	      + bb84 and markov_decoherence examples added
+	      + Born-Markov noise package redesigned

@@ -60,23 +60,28 @@ deltaE = deltaE(s:end).';
 ind = ind(s:end).';
 p = length(deltaE);
 
-% combine degenerate deltaE, build Lindblad ops
-% k -> ind(k) -> i,j
-s = 1;
-[r,c] = ind2sub([m m], ind(1));
-dH(s) = deltaE(1);
-A{s} = P{c} * D * P{r};
 
-for k = 2:p
-  [r,c] = ind2sub([m m], ind(k));
+n_D = length(D); % number of bath coupling ops
+for op=1:n_D
 
-  if (abs(deltaE(k) - deltaE(k-1)) > tol)
-    % new omega value, new Lindblad op
-    s = s+1;
-    dH(s) = deltaE(k);
-    A{s} = P{c} * D * P{r};
-  else
-    % extend current op
-    A{s} = A{s} +P{c} * D * P{r};
+  % combine degenerate deltaE, build Lindblad ops
+  % k -> ind(k) -> i,j
+  s = 1;
+  [r,c] = ind2sub([m m], ind(1));
+  dH(s) = deltaE(1);
+  A{op,s} = P{c} * D{op} * P{r};
+
+  for k = 2:p
+    [r,c] = ind2sub([m m], ind(k));
+
+    if (abs(deltaE(k) - deltaE(k-1)) > tol)
+      % new omega value, new Lindblad op
+      s = s+1;
+      dH(s) = deltaE(k);
+      A{op,s} = P{c} * D{op} * P{r};
+    else
+      % extend current op
+      A{op,s} = A{op,s} +P{c} * D{op} * P{r};
+    end
   end
 end
