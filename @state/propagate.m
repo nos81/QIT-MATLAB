@@ -82,7 +82,7 @@ if (d == temp) % Hamiltonian evolution
       step = min(dt, t(r)-tt);
 
       % propagate, advance time
-      s = u_propagate(s, expm(-i*H*step));
+      s = u_propagate(s, expm(-i*h*step));
       tt = tt + step;
       h = H(tt); % value of Hamiltonian now
 
@@ -127,7 +127,7 @@ elseif (d == temp^2) % Liouvillian superoperator evolution
       step = min(dt, t(r)-tt);
 
       % propagate, advance time
-      [svec, err] = expv(step, H, svec);
+      [svec, err] = expv(step, h, svec);
 
       tt = tt + step;
       h = H(tt); % value of Hamiltonian now
