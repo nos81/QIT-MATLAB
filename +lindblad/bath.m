@@ -47,7 +47,7 @@ b.scale = qit.hbar * omega0 / (qit.kB * T); % physical temperature scaling param
 
 % defaults, can be changed later
 b.N = 0; % bath coupling strength
-b   = bath_set(b,  'cut_type', 'sharp',  'cut_limit', 20);
+b   = lindblad.bath_set(b,  'cut_type', 'sharp',  'cut_limit', 20);
 % FIXME changing the cutoff requires recalc of S
 
 switch type
@@ -58,7 +58,7 @@ switch type
     b.g0 = 2*pi/b.scale; % limit of g at x == 0
 
     s0 = -b.cut_limit; % limit of s at x == 0
-    J = @(x) x * b.cut_func(x); % J(omega0 * x)/omega0
+    J = @(x) x .* b.cut_func(x); % J(omega0 * x)/omega0
 
   otherwise
     error('Unknown bath type.')
@@ -94,9 +94,9 @@ for k=1:length(b.dH)
     b.S(k) = s0;
   else
     % Cauchy principal value, integrand has simple poles at +-dH.
-    f = @(x) J(x) * (dH*coth(b.scale*x/2) +x) / (dH^2 -x.^2);
+    f = @(x) J(x) .* (dH*coth(b.scale*x/2) +x) ./ (dH^2 -x.^2);
     b.S(k) = quad(f, ep, abs(dH)-ep)...
-      +quad(f, abs(dH)+ep, inf); % FIXME upper limit should be inf, this is arbitrary
+      +quad(f, abs(dH)+ep, 5*b.cut_limit); % FIXME upper limit should be inf, this is arbitrary
   end
 end
 

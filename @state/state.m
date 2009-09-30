@@ -18,14 +18,14 @@ classdef state
     %  x = state(s [, dim]);
     %  x = state(y);                % copy constructor
     %  x = state(y, [2 2]);         % copy constructor, reinterpret system as two qubits
-    %  x = state("00101");          % standard basis ket |00101> in a five-qubit system
-    %  x = state("02", [2 3]);      % standard basis ket |02> in a qubit+qutrit system
+    %  x = state('00101');          % standard basis ket |00101> in a five-qubit system
+    %  x = state('02', [2 3]);      % standard basis ket |02> in a qubit+qutrit system
     %  x = state(k, [2 3]);         % standard basis ket |k> in a qubit+qutrit system, k must be an integer scalar
     %  x = state(rand(4,1));        % ket, dim = 4
     %  x = state(rand(4,1), [2 2]); % ket, two qubits
     %  x = state(rand(4));          % state operator, dim = 4
     %  x = state(rand(6), [3 2]);   % state operator, qutrit+qubit
-    %  x = state("GHZ", [2 2 2]);   % three-qubit GHZ state
+    %  x = state('GHZ', [2 2 2]);   % three-qubit GHZ state
     %
     %  The currently supported named states are GHZ (Greenberger-Horne-Zeilinger) and W.
 

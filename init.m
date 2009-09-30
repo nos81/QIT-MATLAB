@@ -9,6 +9,7 @@ global qit;
 
 % toolkit version number
 qit.version = '0.9.1';
+fprintf('MATLAB Quantum Information Toolkit, version %s\n', qit.version)
 
 % Pauli matrices
 qit.I  = eye(2);
