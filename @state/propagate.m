@@ -96,7 +96,7 @@ if (d == temp) % Hamiltonian evolution
 
 elseif (d == temp^2) % Liouvillian superoperator evolution
 
-  svec = vec(operator(s).data); % state operator, arranged as a col vector
+  svec = vec(to_op(s).data); % state operator, arranged as a col vector
 
   if (~t_dependent)
     if (n == 1)
