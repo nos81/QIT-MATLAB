@@ -14,4 +14,3 @@ if (size(s.data, 2) ~= 1)
 end
 
 s.data = s.data*s.data';
-end

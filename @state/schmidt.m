@@ -30,7 +30,7 @@ end
 
 if (size(s.data, 2) ~= 1)
   % state operator
-  s = purify(s);
+  s = to_ket(s);
   %error('Schmidt decomposition is only defined for pure states.')
 end
 

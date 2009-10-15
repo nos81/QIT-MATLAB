@@ -46,7 +46,7 @@ reg
 
 disp('Since Alice''s measurement has unentangled the state,')
 disp('Bob can ignore her qubits. His qubit now looks like')
-reg_B = purify(ptrace(reg, [1 2])) % pure state
+reg_B = to_ket(ptrace(reg, [1 2])) % pure state
 
 disp('Using the two classical bits of data Alice sent him,')
 disp('Bob performs a local transformation on his half of the EPR pair.')
