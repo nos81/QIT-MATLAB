@@ -1,5 +1,5 @@
 function x = var(s, A)
-% VAR  Variance of an observable in a quantum state.
+% VAR  Variance of an observable in the state.
 %  x = var(s, A)
 %
 %  Returns the variance of observable A in the state s.

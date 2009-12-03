@@ -1,5 +1,5 @@
 function bb84(n)
-% BB84  Bennett-Brassard 1984 quantum key distribution protocol
+% BB84  Bennett-Brassard 1984 quantum key distribution protocol demo.
 %
 %  bb84(n)
 %

@@ -1,5 +1,5 @@
 function assert_o(a, b, tol)
-% ASSERT  Octave-style assert for MATLAB.
+% ASSERT_O  Octave-style assert for MATLAB.
 %  assert_o(a, b, tol)
 %
 %  Equivalent to assert(abs(a-b) <= tol).

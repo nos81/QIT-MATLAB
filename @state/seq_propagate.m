@@ -1,5 +1,5 @@
 function [out, t] = seq_propagate(s, seq, func)
-% STATE/PROPAGATE  Propagate a quantum state in time using a control sequence
+% STATE/PROPAGATE  Propagate the state in time using a control sequence.
 %  [out, t] = propagate(s, seq, func)
     
 % Ville Bergholm 2009

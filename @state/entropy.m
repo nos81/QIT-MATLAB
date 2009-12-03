@@ -1,5 +1,5 @@
 function S = entropy(s)
-% STATE/ENTROPY  Returns the von Neumann entropy of the state.
+% STATE/ENTROPY  Von Neumann entropy of the state.
 %  S = entropy(s)
 %
 %  S(\rho) = -trace(\rho * \log_2(\rho))

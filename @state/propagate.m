@@ -1,5 +1,5 @@
 function out = propagate(s, H, t, varargin)
-% STATE/PROPAGATE  Propagate a quantum state in time using a Hamiltonian or a Liouvillian.
+% STATE/PROPAGATE  Propagate the state in time using a Hamiltonian or a Liouvillian.
 %
 %  out = propagate(s, H, t [, out_func])
 %  out = propagate(s, H_func, t, steps [, out_func])

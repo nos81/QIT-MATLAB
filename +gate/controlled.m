@@ -1,5 +1,5 @@
 function out = controlled(U, ctrl)
-% controlled  Controlled gate.
+% CONTROLLED  Controlled-unitary gate.
 %  V = controlled(U, ctrl)
 %
 %  Returns the (t+n)-qubit controlled-U gate, where t == length(ctrl) and n == size(U,1).

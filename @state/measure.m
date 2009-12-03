@@ -1,8 +1,8 @@
 function [p, res, s] = measure(s, M)
 % STATE/MEASURE  Quantum measurement.
-%  [p, res, s] = measure(s, M)
-%    = measure(s) % measure the entire system projectively
-%    = measure(s, [1 4]) % measure subsystems 1 and 4 projectively
+%  [p, res, s]
+%    = measure(s)                % measure the entire system projectively
+%    = measure(s, [1 4])         % measure subsystems 1 and 4 projectively
 %    = measure(s, {M1, M2, ...}) % perform a general measurement
 %
 %  Performs a quantum measurement on the state s.
@@ -18,10 +18,10 @@ function [p, res, s] = measure(s, M)
 %  result k in the measurement. For a projective measurement in the
 %  computational basis this corresponds to the ket |k-1>.
 %
-%  If res is specified, it will contain a randomly chosen result for the
+%  If res is given, it will contain a randomly chosen result for the
 %  measurement, in accordance with p.
 % 
-%  If s is specified, it will contain the collapsed state corresponding
+%  If s is given, it will contain the collapsed state corresponding
 %  to measurement result res.
 
 % Ville Bergholm 2009

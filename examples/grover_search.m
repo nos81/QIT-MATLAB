@@ -1,5 +1,5 @@
 function [p] = grover_search(n)
-% GROVER_SEARCH  Grover search algorithm example.
+% GROVER_SEARCH  Grover search algorithm demo.
 %
 %  p = grover_search(n)
 %

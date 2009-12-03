@@ -1,5 +1,5 @@
 function U = qft(n)
-% QFT  Quantum Fourier transform.
+% QFT  Quantum Fourier transform gate.
 %  U = qft(n)
 %
 %  Returns the quantum Fourier transform matrix for n qubits.

@@ -1,5 +1,5 @@
 function a = bloch_vector(s)
-% STATE/BLOCH_VECTOR  Bloch vector corresponding to a state.
+% STATE/BLOCH_VECTOR  Generalized Bloch vector corresponding to the state.
 %  a = bloch_vector(s)
 %
 %  Returns the Bloch vector corresponding to state s.

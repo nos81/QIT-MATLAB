@@ -1,5 +1,5 @@
 function C = concurrence(s, sys)
-% STATE/CONCURRENCE  Concurrence of a state.
+% STATE/CONCURRENCE  Concurrence of the state.
 %  C = concurrence(s, sys)
 %
 %  Returns the concurrence of the state s wrt. the partitioning
@@ -12,7 +12,7 @@ function C = concurrence(s, sys)
 
 
 
-
+% FIXME
 % bipartite:
 % entropy of entanglement E: -tr(rho_a * log2(rho_a))
 % e of formation: minimum of average E over pure decompositions

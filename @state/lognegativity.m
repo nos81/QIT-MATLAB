@@ -1,5 +1,5 @@
 function N = lognegativity(s, sys)
-% STATE/LOGNEGATIVITY  Logaritmic negativity of a quantum state.
+% STATE/LOGNEGATIVITY  Logarithmic negativity of the state.
 %  N = lognegativity(s, sys)
 %
 %  Returns the logarithmic negativity of the state s wrt. the partitioning

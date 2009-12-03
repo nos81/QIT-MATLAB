@@ -1,5 +1,5 @@
 function U = walsh(n)
-% walsh  Walsh-Hadamard gate.
+% WALSH  Walsh-Hadamard gate.
 %  U = walsh(n)
 %
 %  Returns the Walsh-Hadamard matrix for n qubits.

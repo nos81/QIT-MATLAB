@@ -1,5 +1,5 @@
 function s = tensor(varargin)
-% STATE/TENSOR  Tensor product for states.
+% STATE/TENSOR  Tensor product of states.
 %  s = tensor(s1, s2, ...)
 %
 %  Returns the tensor product state of states s1, s2, ...

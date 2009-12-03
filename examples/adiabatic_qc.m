@@ -1,5 +1,5 @@
 function adiabatic_qc(n, n_clauses)
-% ADIABATIC_QC  Adiabatic quantum computing example.
+% ADIABATIC_QC  Adiabatic quantum computing demo.
 %  adiabatic_qc(n_bits, n_clauses)
 %
 %  This example solves random 3-SAT problems using the
@@ -79,12 +79,19 @@ end
 H1_full = diag(H1); % into a full matrix
 
 % adiabatic simulation
-t = 50;
-steps = t*10;
-res = adiabatic_propagate(s, H0, H1_full, t, steps);
+tmax = 50; % how long the passage takes
+steps = tmax*10;
+t = linspace(0, tmax, steps);
+
+% linear path
+H_func = @(t) (1-t/tmax)*H0 +(t/tmax)*H1_full;
+res = propagate(s, H_func, t, steps);
+
 
 % plots
 % final state probabilities
+adiabatic_ev(t, res, H_func);
+
 figure;
 plots.tomography(res{end});
 title('Final state');

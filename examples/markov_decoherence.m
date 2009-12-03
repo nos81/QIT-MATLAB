@@ -18,7 +18,7 @@ if (nargin < 2)
 end
 
 omega0 = 1e10 % Hz
-T = 0.02 % K
+T = 0.02e2 % K
 
 delta = 2.5 + rand; % qubit energy splitting
 
@@ -33,10 +33,12 @@ L = lindblad.liouvillian(H, D, b);
 t = 0:0.1:10;
 
 % T1 demo
+eq = 1/(1+exp(delta*b.scale)); % equilibrium rho_11
+
 s = state("1", [2]); % qubit in the |1> state
 out = propagate(s, L, t, @(x) ev(x, qit.p1));
 figure
-plot(t, cell2mat(out), 'r-', t, exp(-t/(T1*omega0)), 'b-');
+plot(t, cell2mat(out), 'r-', t, eq +(1-eq)*exp(-t/(T1*omega0)), 'b-');
 xlabel('t \omega_0');
 ylabel('probability');
 axis([0 t(end) 0 1])
@@ -55,5 +57,3 @@ ylabel('probability')
 axis([0 t(end) 0 1])
 title('T_2: dephasing');
 legend('P_0', '0.5*(1+exp(-t/T_2))')
-
-end

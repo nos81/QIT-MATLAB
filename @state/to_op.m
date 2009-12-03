@@ -1,5 +1,5 @@
 function s = to_op(s)
-% STATE/TO_OP  Use the state operator representation for a quantum state.
+% STATE/TO_OP  Convert state representation into a state operator.
 %
 %  q = to_op(s)
 %

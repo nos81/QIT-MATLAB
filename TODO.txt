@@ -31,5 +31,4 @@ Examples
 - adiabatic simulation
 - dense coding
 - quantum key distribution
-- grover search
 - shor factorization?

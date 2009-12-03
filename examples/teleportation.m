@@ -1,5 +1,5 @@
 function [reg_B, payload] = teleportation()
-% TELEPORTATION  Quantum teleportation.
+% TELEPORTATION  Quantum teleportation demo.
 %
 %  [reg_B, payload] = teleportation()
 %
@@ -55,7 +55,7 @@ reg_B.data = qit.sz^(q1) * qit.sx^(q2) * reg_B.data
 
 
 ov = overlap(payload, reg_B);
-fprintf('The overlap between the resulting state and the original payload state is |<payload|B>|^2 = %f\n', ov)
+fprintf('The overlap between the resulting state and the original payload state is |<payload|B>| = %f\n', ov)
 if (norm(ov-1) > qit.tol)
   error('Should not happen.')
 else

@@ -1,5 +1,5 @@
 function x = ev(s, A)
-% EV  Expectation value of an observable in a quantum state.
+% EV  Expectation value of an observable in the state.
 %  x = ev(s, A)
 %
 %  Returns the expectation value of observable A in the state s.

@@ -1,11 +1,11 @@
 function s = to_ket(s)
-% STATE/TO_KET  Converts the state representation into a ket (if possible).
+% STATE/TO_KET  Convert state representation into a ket (if possible).
 %
 %  q = to_ket(s)
 %
 %  If the state s is pure, returns q, a copy of s for which the
 %  internal representation of the state (q.data) is guaranteed to
-%  be a ket.
+%  be a ket vector.
 
 % Ville Bergholm 2009
 

@@ -1,5 +1,5 @@
 function display(s)
-% STATE/DISPLAY  Display a quantum state.
+% STATE/DISPLAY  Display the state.
 
 % Ville Bergholm 2008
 

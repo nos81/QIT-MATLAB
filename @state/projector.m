@@ -1,5 +1,5 @@
 function P = projector(s)
-% PROJECTOR  Projection operator defined by state.
+% PROJECTOR  Projection operator defined by the state.
 %  P = projector(s)
 %
 %  Returns the projection operator P defined by the state s.

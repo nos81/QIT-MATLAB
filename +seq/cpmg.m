@@ -1,7 +1,8 @@
 function s = cpmg(t, n)
-% CPMG  Carr-Purcell-Meiboom-Gill sequence of n repeats with waiting time t.
+% CPMG  Carr-Purcell-Meiboom-Gill sequence.
 %  s = cpmg(t, n)
 %
+%  Returns the Carr-Purcell-Meiboom-Gill sequence of n repeats with waiting time t.
 %  The purpose of the CPMG sequence is to facilitate a T_2 measurement
 %  under a nonuniform z drift, it is not meant to be a full memory protocol.
 %  The target operation for this sequence is identity.
