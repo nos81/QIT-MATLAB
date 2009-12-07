@@ -6,6 +6,7 @@ function [p] = grover_search(n)
 %  Simulate the Grover search algorithm formulated using amplitude amplification
 %  in a system of n qubits.
 
+%! L.K. Grover, "Quantum Computers Can Search Rapidly by Using Almost Any Transformation", PRL 80, 4329 (1998). doi:10.1103/PhysRevLett.80.4329.   
 % Ville Bergholm 2009
 
 
@@ -25,6 +26,7 @@ fprintf('Probability maximized by %d iterations\n', reps)
 
 
 % black box oracle capable of recognizing the correct answer (given as the diagonal)
+% TODO an oracle that actually checks the solutions by computing (using ancillas?)
 U_oracle = ones(N, 1);
 U_oracle(sol) = -1;
 
@@ -42,10 +44,10 @@ for k=1:reps
 
   % inversion about the mean
   s = u_propagate(s, A');
-  s.data(1) = -s.data(1); % phase flip the zero state
+  temp = s.data; % FIXME annoying
+  temp(1) = -temp(1); % phase flip the zero state
+  s.data = temp;
   s = u_propagate(s, A);
 end
 
 p = prob(s);
-
-

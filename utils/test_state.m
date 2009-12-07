@@ -25,7 +25,7 @@ U_p = rand_U(prod(dim));
 
 % Test scripts for fidelity.m, trace_dist.m
 % Ville Bergholm 2009
-assert_o(fidelity(rho1, rho2), fidelity(rho2. rho1), tol);
+assert_o(fidelity(rho1, rho2), fidelity(rho2, rho1), tol);
 assert_o(fidelity(sigma1, sigma1), 1, tol);
 assert_o(trace_dist(p1, p2)^2 +fidelity(p1, p2)^2, 1, tol);
 assert(1-fidelity(rho1, rho2) -trace_dist(rho1, rho2) <= tol);

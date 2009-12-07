@@ -61,26 +61,34 @@ ind = ind(s:end).';
 p = length(deltaE);
 
 
+if (~iscell(D))
+  D = {D}; % D needs to be a cell array, even if it has just one element
+end
 n_D = length(D); % number of bath coupling ops
+
+% combine degenerate deltaE, build Lindblad ops
+% k -> ind(k) -> i,j
+s = 1;
+[r,c] = ind2sub([m m], ind(1));
+dH(s) = deltaE(1);
+  
 for op=1:n_D
-
-  % combine degenerate deltaE, build Lindblad ops
-  % k -> ind(k) -> i,j
-  s = 1;
-  [r,c] = ind2sub([m m], ind(1));
-  dH(s) = deltaE(1);
   A{op,s} = P{c} * D{op} * P{r};
+end
+  
+for k = 2:p
+  [r,c] = ind2sub([m m], ind(k));
 
-  for k = 2:p
-    [r,c] = ind2sub([m m], ind(k));
-
-    if (abs(deltaE(k) - deltaE(k-1)) > tol)
-      % new omega value, new Lindblad op
-      s = s+1;
-      dH(s) = deltaE(k);
+  if (abs(deltaE(k) - deltaE(k-1)) > tol)
+    % new omega value, new Lindblad op
+    s = s+1;
+    dH(s) = deltaE(k);
+    for op=1:n_D
       A{op,s} = P{c} * D{op} * P{r};
-    else
-      % extend current op
+    end
+  else
+    % extend current op
+    for op=1:n_D
       A{op,s} = A{op,s} +P{c} * D{op} * P{r};
     end
   end

@@ -29,16 +29,23 @@ E_depolarize   = {sqrt(1-3*p/4)*I, sqrt(p)*sx/2, sqrt(p)*sy/2, sqrt(p)*sz/2};
 t = pi/3;
 E_amplitudedamp = {sqrt(p)*diag([1, cos(t)]), sqrt(p)*[0 sin(t); 0 0], sqrt(1-p)*diag([cos(t), 1]), sqrt(1-p)*[0 0; sin(t) 0]};
 
+channels = {E_bitflip, E_phaseflip, E_bitphaseflip, E_depolarize, E_amplitudedamp};
+titles   = {'Bit flip', 'Phase flip', 'Bit and phase flip', 'Depolarization', 'Amplitude damping'};
+
 [X,Y,Z] = sphere(20);
 S(1,:,:) = X;
 S(2,:,:) = Y;
 S(3,:,:) = Z;
 
-%present(S, E_bitflip, 'Bit flip channel');
-%present(S, E_depolarize, 'Depolarizing channel');
-present(S, E_amplitudedamp, 'Amplitude damping channel');
-end
 
+n = length(channels);
+
+figure;
+for k=1:n
+  subplot(2, ceil(n/2), k);
+  present(S, channels{k}, titles{k});
+end
+end
 
 
 function res = present(S, E, T)
@@ -53,7 +60,6 @@ for a=1:s(2)
   end
 end
 
-figure
 plots.bloch_sphere();
 surf(squeeze(res(1,:,:)), squeeze(res(2,:,:)), squeeze(res(3,:,:)));
 shading flat

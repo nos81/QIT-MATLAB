@@ -1,7 +1,5 @@
 General
-- test functions with asserts
-
-Plots
+- more comprehensive test scripts with asserts
 
 
 Algorithmic efficiency
@@ -24,11 +22,9 @@ Noise
 
 Circuit model
 - more gates
-- output Qcircuit.tex diagrams
+- output Qcircuit.tex diagrams?
 
 
 Examples
 - adiabatic simulation
 - dense coding
-- quantum key distribution
-- shor factorization?

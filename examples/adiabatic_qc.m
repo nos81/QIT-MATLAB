@@ -90,7 +90,7 @@ res = propagate(s, H_func, t, steps);
 
 % plots
 % final state probabilities
-adiabatic_ev(t, res, H_func);
+plots.adiabatic_evolution(t, res, H_func);
 
 figure;
 plots.tomography(res{end});

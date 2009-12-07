@@ -69,10 +69,12 @@ hold on;
 bar((0:T-1)/T, p);
 xlabel('phase/2\pi');
 ylabel('probability');
-title('Phase estimation result distribution')
+title('Phase estimation')
 axis([-1/(T*2) 1-1/(T*2) 0 1])
 
 % compare to correct answer
 target = angle(diag(d))/(2*pi) + 1;
 target = target - floor(target)
 plot(target, 0.5*max(p)*ones(size(target)), 'mo');
+
+legend('Measurement probability distribution', 'Target phases');

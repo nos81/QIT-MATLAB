@@ -31,7 +31,7 @@ U = seq.seq2prop(s); % target propagator
 
 s_error = s;
 s_error(:,3) = s(:,3) +0.1; % off-resonance error
-%s_error(:,end) = s(:,end)*1.1; % pulse lenght error
+s_error(:,end) = s(:,end)*1.1; % pulse lenght error
 
 % apply sequence on state psi, plot the evolution
 [out, t] = seq_propagate(psi, s_error, @bloch_vector);
@@ -41,6 +41,7 @@ subplot(1,2,1);
 plots.bloch_sphere();
 plot3(a(1,:),a(2,:),a(3,:));
 plot3(a(1,n),a(2,n),a(3,n), 'k.');
+title([titles{q} ' evolution']);
 
 % in this simple example the errors can be fully included in the control sequence
 s_error = s;
@@ -51,7 +52,7 @@ for k=1:nf
   for j=1:ng
     s_error(:,end) = s(:,end)*(1 + g(j)); % proportional pulse length error
 
-    fid(j, k) = fidelity(U, seq.seq2prop(s_error));
+    fid(j, k) = u_fidelity(U, seq.seq2prop(s_error));
   end
 end
 
@@ -66,7 +67,7 @@ end
 end
 
 
-function F = fidelity(a,b)
+function F = u_fidelity(a,b)
 % fidelity of two unitary rotations, [0,1]
 
   F = 0.5*abs(trace(a'*b));

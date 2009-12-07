@@ -23,10 +23,8 @@ disp('Alice wants to transmit this payload qubit to Bob:')
 payload = state('0');
 payload.data = rand_SU(2)*payload.data;
 % choose a nice global phase
-temp = payload.data;
-phase = temp(1)/abs(temp(1));
-payload.data = payload.data/phase;
-payload
+payload = to_ket(payload, 'do it!');
+
 
 disp('The total |payload> \otimes |epr> register looks like')
 reg = tensor(payload, epr)
@@ -35,12 +33,12 @@ reg = tensor(payload, epr)
 disp('Now Alice entangles the payload with her half of the EPR pair')
 reg.data = kron(H, eye(4)) * kron(cnot, I) * reg.data
 
-disp('and then measures her qubits, getting the results')
+disp('and then measures her qubits, getting the result')
 %[p, q, reg] = measure(reg, [1 2]);
-[p, q1, reg] = measure(reg, {mkron(qit.p0, I, I), mkron(qit.p1, I, I)});
-[p, q2, reg] = measure(reg, {mkron(I, qit.p0, I), mkron(I, qit.p1, I)});
-q1 = q1-1
-q2 = q2-1
+[p, q(1), reg] = measure(reg, {mkron(qit.p0, I, I), mkron(qit.p1, I, I)});
+[p, q(2), reg] = measure(reg, {mkron(I, qit.p0, I), mkron(I, qit.p1, I)});
+q = q-1
+
 disp('and transmits them to Bob using a classical channel. The shared state is now')
 reg
 
@@ -50,8 +48,8 @@ reg_B = to_ket(ptrace(reg, [1 2])) % pure state
 
 disp('Using the two classical bits of data Alice sent him,')
 disp('Bob performs a local transformation on his half of the EPR pair.')
-%reg.data = kron(eye(4), qit.sz^(q1) * qit.sx^(q2)) * reg.data
-reg_B.data = qit.sz^(q1) * qit.sx^(q2) * reg_B.data
+%reg.data = kron(eye(4), qit.sz^(q(1)) * qit.sx^(q(2))) * reg.data
+reg_B.data = qit.sz^(q(1)) * qit.sx^(q(2)) * reg_B.data
 
 
 ov = overlap(payload, reg_B);

@@ -1,4 +1,4 @@
-function s = to_ket(s)
+function s = to_ket(s, set_phase)
 % STATE/TO_KET  Convert state representation into a ket (if possible).
 %
 %  q = to_ket(s)
@@ -13,23 +13,27 @@ function s = to_ket(s)
 global qit;
 
 if (size(s.data, 2) == 1)
-  return; % nothing to do
+  % already a ket
+  if (nargin < 2)
+    return; % nothing to do
+  else
+    v = s.data; % prepare to apply phase convention
+  end
+else
+  % state op
+  if (abs(purity(s) - 1) > qit.tol)
+    error('The state is not pure, and thus cannot be represented using a ket vector.')
+  end
+
+  [v, d] = eig(s.data);
+  v = v(:,end); % corresponds to the highest eigenvalue, i.e. 1
 end
 
-if (abs(purity(s) - 1) > qit.tol)
-  error('The state is not pure, and thus cannot be represented using a ket vector.')
-end
-
-[v, d] = eig(s.data);
-v = v(:,end); % corresponds to the highest eigenvalue, e.g. 1
-
-% phase convention: first nonzero element in state vector is real, positive
+% apply the phase convention: first nonzero element in state vector is real, positive
 for k=1:length(v)
   if (abs(v(k)) > qit.tol)
     phase = v(k)/abs(v(k));
-    v = v / phase;
-    break;
+    s.data = v / phase;
+    return;
   end
 end
-
-s.data = v;
