@@ -90,5 +90,5 @@ fprintf('\nMismatch frequency between Alice and Bob: %f\n\n', sum(xor(key_A, key
 
 disp('Alice and Bob then sacrifice k bits of their shared key to compare them.')
 disp('If an nonmatching bit is found, the reason is either an eavesdropper or a noisy channel.')
-disp('Since the probability for each eavesdropped bit to be wrong is 1/4, they will detect.')
+disp('Since the probability for each eavesdropped bit to be wrong is 1/4, they will detect')
 disp('Eve''s presence with the probability 1-(3/4)^k.')

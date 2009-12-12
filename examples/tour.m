@@ -12,7 +12,10 @@ pause
 adiabatic_qc(5, 3);
 pause
 
-phase_estimation(4, rand_U(4));
+phase_estimation(5, rand_U(4));
+title('Phase estimation, eigenstate')
+phase_estimation(5, rand_U(4), state(0, [4]));
+title('Phase estimation, random state')
 pause
 
 nmr_sequences;
@@ -26,3 +29,5 @@ pause
 
 bb84(40);
 pause
+
+markov_decoherence(7e-9, 1e-8);

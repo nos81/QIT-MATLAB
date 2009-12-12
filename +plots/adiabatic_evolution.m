@@ -16,7 +16,7 @@ function adiabatic_evolution(t, st, H_func)
 n = 4;
 
 T = t(end);
-H = H_func(T)
+H = H_func(T);
 
 % find the n lowest eigenstates of the final Hamiltonian
 [v,d] = eig(H);
@@ -36,7 +36,7 @@ for k=1:length(t)
 end
 
 
-figure
+subplot(2,1,1);
 plot(t/T, energies);
 grid on;
 %set(gca, 'XTick', [0:0.25*t:t]);
@@ -46,11 +46,10 @@ grid on;
 title('Energy spectrum');
 xlabel('Adiabatic time');
 ylabel('Energy');
-%axis([0, 1, min(min(energies)), max(max(energies))]);
-axis([0, 1, min(min(energies)), 10]);
+axis([0, 1, min(min(energies)), max(max(energies))]);
 
 
-figure
+subplot(2,1,2);
 plot(t/T, overlaps); %, 'LineWidth', 1.7);
 grid on;
 %set(gca, 'XTick', [0:0.25*t:t]);
@@ -61,6 +60,6 @@ title('Squared overlap of current state and final eigenstates');
 xlabel('Adiabatic time');
 ylabel('Probability');
 %ylabel('|<l(s)|\psi(s)>|^2');
-legend('\psi_0','\psi_1','\psi_2','\psi_3')
+legend('|0\rangle','|1\rangle','|2\rangle','|3\rangle')
 %axis([0, 1, 0, 1]);
 axis([0, 1, 0, max(max(overlaps))]);

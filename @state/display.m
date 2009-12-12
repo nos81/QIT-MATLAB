@@ -1,4 +1,4 @@
-function display(s)
+function display(s, short)
 % STATE/DISPLAY  Display the state.
 
 % Ville Bergholm 2008-2009
@@ -6,21 +6,32 @@ function display(s)
 
 global qit;
 
+if (nargin < 2)
+  short = false;
+end
+
+out = [inputname(1) ' ='];
+
+if (~short)
+  % long format
+  disp(out);
+  disp('state:');
+  out = '  ';
+end
+
 if (size(s.data, 2) == 1)
   % state vector (pure state)
-
-  out = 'state:  ';
   n = length(s.dim);
 
   for ind = 1:prod(s.dim)
     temp = s.data(ind);
     if (abs(temp) >= qit.tol)
       if (abs(imag(temp)) <= qit.tol)
-        out = strcat(out, sprintf(' %+2g', real(temp)));
+        out = cat(2, out, sprintf(' %+2g', real(temp)));
       elseif (abs(real(temp)) <= qit.tol)
-        out = strcat(out, sprintf(' %+2gi', imag(temp)));
+        out = cat(2, out, sprintf(' %+2gi', imag(temp)));
       else
-        out = strcat(out, sprintf(' +(%s)', num2str(temp)));
+        out = cat(2, out, sprintf(' +(%s)', num2str(temp)));
       end
       
       d = fliplr(s.dim); % big-endian convention makes this way more complicated than it should be
@@ -31,17 +42,20 @@ if (size(s.data, 2) == 1)
       end
       ket = fliplr(ket); % big-endian again
 
-      out = strcat(out, ' |');
-      out = strcat(out, char(ket - 1 + '0'));
-      out = strcat(out, '>');
+      out = cat(2, out, ' |');
+      out = cat(2, out, char(ket - 1 + '0'));
+      out = cat(2, out, '>');
     end
   end
   disp(out);
 else
   % state operator
-  disp('state:');
   disp(s.data);
 end
 
-disp('dim:');
-disp(s.dim);
+if (~short)
+  disp('dim:');
+  disp(s.dim);
+else
+  disp(' ') % empty line
+end

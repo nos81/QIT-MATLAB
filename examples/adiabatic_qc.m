@@ -14,7 +14,7 @@ function adiabatic_qc(n, n_clauses)
 % Ville Bergholm 2009
 
 
-fprintf('\n\n=== Solving 3-SAT using adiabatic qc ===\n')
+fprintf('\n\n=== Solving 3-SAT using adiabatic qc ===\n\n')
 
 if (nargin < 2)
   if (nargin < 1)
@@ -26,6 +26,8 @@ end
 if (n < 3)
   n = 3;
 end
+
+fprintf('%d bits, %d clauses\n', n, n_clauses);
 
 % generate clauses, count how many times each bit is referenced in the clauses
 clauses = zeros(n_clauses, 3);
@@ -54,7 +56,7 @@ for k=1:n
 end
 
 % initial state (ground state of H0)
-s = state(ones(2^n, 1)/sqrt(2^n), 2*ones(1, n)); % n qubits, uniform superposition
+s0 = state(ones(2^n, 1)/sqrt(2^n), 2*ones(1, n)); % n qubits, uniform superposition
 
 % cache some stuff (all the matrices in this example are diagonal, so)
 zb  = [0 1]; % 0.5*(I - sz);
@@ -85,17 +87,19 @@ t = linspace(0, tmax, steps);
 
 % linear path
 H_func = @(t) (1-t/tmax)*H0 +(t/tmax)*H1_full;
-res = propagate(s, H_func, t, steps);
+res = propagate(s0, H_func, t, steps);
 
 
 % plots
 % final state probabilities
+figure;
 plots.adiabatic_evolution(t, res, H_func);
 
 figure;
 plots.tomography(res{end});
 title('Final state');
 
+disp('Final Hamiltonian (diagonal):')
 H1
 
 disp('Measured result:')

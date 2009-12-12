@@ -15,7 +15,7 @@ function p = phase_estimation(t, U, u)
 % TODO to get a result accurate to n bits with probability >= (1-epsilon),
 % choose  t >= n + ceil(log2(2+1/(2*epsilon)))
 
-fprintf('\n\n=== Phase estimation ===\n')
+fprintf('\n\n=== Phase estimation ===\n\n')
 
 % find eigenstates of the operator
 if (nargin < 2)
@@ -29,6 +29,8 @@ end
 
 T = 2^t;
 N = size(U, 1);
+
+fprintf('Use %d qubits to estimate the phases of the eigenvalues of a U(%d) operator.\n', t, N)
 
 % index register
 reg_t = state(ones(T, 1)/sqrt(T), 2*ones(1,t)); % uniform superposition
