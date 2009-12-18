@@ -1,9 +1,11 @@
-function tomography(s)
+function h = tomography(s)
 % PLOT/TOMOGRAPHY  State tomography plot.
-%  tomography(s)
+%  h = tomography(s)
 %
 %  Plots the probabilities of finding a system in the state s
-%  in different computational basis states upon measurement.
+%  in the different computational basis states upon measurement.
+%  Relative phases are represented by the colors of the bars.
+%
 %  If s is a nonpure state, also plots the coherences.
 
 % Ville Bergholm 2009
@@ -35,27 +37,78 @@ end
 
 
 N = size(s.data, 1);
+Ncol = 127; % color resolution (odd to fix zero phase at the center of a color index)
+colormap(circshift(hsv(Ncol), floor(Ncol/6))); % the hsv map wraps (like phase)
 
 if (size(s.data, 2) == 1)
   % state vector
-  bar(0:N-1, prob(s));
+  s = fix_phase(s);
+
+  h = bar(0:N-1, prob(s));
   xlabel('Basis state');
   ylabel('Probability');
   set(gca,'XTick', ticks)
-  set(gca,'XTickLabel', ticklabels)
+  set(gca,'XTickLabel', ticklabels);
+
+  % color bars using phase data
+  ch = get(h,'Children');
+  fvd = get(ch,'Faces');
+  fvcd = get(ch,'FaceVertexCData');
+
+  c = colors(phases(s.data), Ncol);
+  for b = 1:N
+    fvcd(fvd(b,:)) = c(b); % all four vertices of a bar have same color
+  end
+  set(ch,'FaceVertexCData',fvcd);
+  set(ch,'EdgeColor','k');
+  set(ch, 'CDataMapping', 'direct');
+
 else
-  bar3(abs(s.data))
-  xlabel('Basis state');
-  ylabel('Basis state');
+  % state op
+  h = bar3(abs(s.data));
+  xlabel('Col state');
+  ylabel('Row state');
   zlabel('|\rho|');
-  %title('Absolute value of \rho')
-  set(gca,'XTick', ticks+1)
-  set(gca,'XTickLabel', ticklabels)
-  set(gca,'YTick', ticks+1)
-  set(gca,'YTickLabel', ticklabels)
-  %alpha(0.6)
-  % subplot(3,4,5)
-  %bar3(angle(rho(:,:,p)))
-  %axis([0 5 0 5 -pi pi])
-  %title('Phase of \rho')
+  set(gca,'XTick', ticks+1);
+  set(gca,'XTickLabel', ticklabels);
+  set(gca,'YTick', ticks+1);
+  set(gca,'YTickLabel', ticklabels);
+  axis tight;
+  alpha(0.8);
+
+  % color bars using phase data
+  c = colors(phases(s.data), Ncol);
+  for m = 1:length(h)
+    % get color data
+    cdata = get(h(m), 'Cdata'); % [one row of 3d bars * six faces, four vertices per face]
+    for k = 1:(size(cdata, 1)/6)
+      j = 6*k;
+      cdata(j-5:j, :) = c(k,m); % all faces are the same color
+    end
+    set(h(m), 'Cdata', cdata);
+    set(h(m), 'CDataMapping', 'direct');
+  end
+
+end
+
+%set(gca, 'CLimMode', 'manual')
+set(gca, 'CLim', [0 Ncol]); % color limits
+
+hcb = colorbar('YTickMode', 'manual');
+set(hcb, 'YTick', linspace(0, Ncol, 5));
+set(hcb, 'YTickLabel', {'-\pi', '-\pi/2', '0', '\pi/2', '\pi'});
+end
+
+
+function p = phases(A)
+  p = 0.5*((angle(A)/pi)+1); % normalized to (0,1]
+end
+
+
+function c = colors(p, n)
+  % p in [0,1) is uniformly mapped to {1, 2, ..., n}
+  %c = 1 + floor(n * p);
+
+  % p in (0,1] is uniformly mapped to {1, 2, ..., n}
+  c = ceil(n * p);
 end

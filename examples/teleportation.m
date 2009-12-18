@@ -23,7 +23,7 @@ disp('Alice wants to transmit this payload qubit to Bob:')
 payload = state('0');
 payload = u_propagate(payload, rand_SU(2));
 % choose a nice global phase
-payload = to_ket(payload, 'fix phase')
+payload = fix_phase(payload)
 
 
 disp('The total |payload> \otimes |epr> register looks like')
@@ -33,13 +33,12 @@ reg = tensor(payload, epr)
 disp('Now Alice entangles the payload with her half of the EPR pair')
 reg = u_propagate(reg, kron(H, eye(4)) * kron(cnot, I))
 
-disp('and then measures her qubits, getting the result')
 %[p, q, reg] = measure(reg, [1 2]);
 [p, q(1), reg] = measure(reg, {mkron(qit.p0, I, I), mkron(qit.p1, I, I)});
 [p, q(2), reg] = measure(reg, {mkron(I, qit.p0, I), mkron(I, qit.p1, I)});
-q = q-1
-
-disp('and transmits the two bits to Bob using a classical channel. The shared state is now')
+q = q-1;
+fprintf('and then measures her qubits, getting the result [%d, %d].\n', q)
+disp('She then transmits the two bits to Bob using a classical channel. The shared state is now')
 reg
 
 disp('Since Alice''s measurement has unentangled the state,')
@@ -48,7 +47,7 @@ reg_B = to_ket(ptrace(reg, [1 2])) % pure state
 
 disp('Using the two classical bits of data Alice sent him,')
 disp('Bob performs a local transformation on his half of the EPR pair.')
-reg_B = u_propagate(reg_B, qit.sz^(q(1)) * qit.sx^(q(2)))
+reg_B = fix_phase(u_propagate(reg_B, qit.sz^(q(1)) * qit.sx^(q(2))))
 
 
 ov = overlap(payload, reg_B);

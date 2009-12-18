@@ -68,6 +68,9 @@ classdef state
               s(ind*(dim(k) - 1) + 1) = 1; % MATLAB indexing starts at 1
               ind = ind*dim(k);
             end
+
+	  otherwise
+	    error('Unknown named state ''%s''.', name)
         end
         s = s/norm(s); % normalize
       

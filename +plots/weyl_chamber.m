@@ -1,5 +1,6 @@
 function weyl_chamber()
 % WEYL_CHAMBER  Plots the two-qubit Weyl chamber.
+%  weyl_chamber
 %
 %  Plots the Weyl chamber for the local invariants
 %  of 2q gates.

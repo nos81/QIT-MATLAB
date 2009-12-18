@@ -1,14 +1,14 @@
 README file for the Quantum Information Toolkit.
-Version 0.9.1 (beta)
-Released 2009-09-29
+Version 0.9.2 (beta)
+Released 2009-12-17
 
 
 
 === Introduction ===
 
-The Quantum Information Toolkit is collection of open source MATLAB 7.6
-scripts, functions and classes for various quantum information and
-computing -related purposes, distributed under the GPLv3.
+Quantum Information Toolkit (QIT) is collection of open source
+MATLAB 7.6 scripts, functions and classes for various quantum
+information and computing -related purposes, distributed under GPLv3.
 The latest version can be downloaded from the project website,
 
   http://sourceforge.net/projects/qit/
@@ -38,7 +38,7 @@ To initialize the toolkit, run octave_init.m instead of init.m.
 
 === License ===
 
-QI Toolkit is released under the GNU General Public License version 3.
+QIT is released under the GNU General Public License version 3.
 This basically means that you can freely use, share and modify it as
 you wish, as long as you give proper credit to the authors and do not
 change the terms of the license.
@@ -69,9 +69,9 @@ in the toolkit using the shell command "grep '%!' */*.m".
 
 === Contributing ===
 
-The QI Toolkit is an open source project and your contributions are
-welcome. To keep the code readable and maintainable, we ask you to
-follow these coding guidelines:
+QIT is an open source project and your contributions are welcome.
+To keep the code readable and maintainable, we ask you to follow these
+coding guidelines:
 
 * Use the file template.m as a template for new functions
 * Instead of using multiple similar functions, use a single function
