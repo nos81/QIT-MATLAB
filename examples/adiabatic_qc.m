@@ -87,7 +87,7 @@ t = linspace(0, tmax, steps);
 
 % linear path
 H_func = @(t) (1-t/tmax)*H0 +(t/tmax)*H1_full;
-res = propagate(s0, H_func, t, steps);
+res = propagate(s0, H_func, t);
 
 
 % plots

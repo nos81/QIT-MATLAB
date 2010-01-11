@@ -1,4 +1,4 @@
-function a = bloch_vector(s)
+function a = bloch_vector(s, varargin)
 % STATE/BLOCH_VECTOR  Generalized Bloch vector corresponding to the state.
 %  a = bloch_vector(s)
 %
