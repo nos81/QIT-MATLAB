@@ -2,16 +2,26 @@
 
 2009-09-29    Version 0.9.1 (beta)
 	      + version string in qit namespace
-	      + bb84 and markov_decoherence examples added
-	      * @state/propagate redesigned
+	      + examples: bb84 and markov_decoherence
+	      * state/propagate redesigned
 	      * Born-Markov noise package redesigned
 
 2009-12-17    Version 0.9.2 (beta)
-	      + new @state methods: fidelity, trace_dist, fix_phase
-	      + new plot: adiabatic_evolution
-	      + Grover search example
-	      * renamed @state methods: purify => to_ket, operator => to_op
-	      * @state/display fixed, prints also the imaginary parts
-	      * +plots/tomography shows relative phases in color
+	      + state methods: fidelity, trace_dist, fix_phase
+	      + plots/adiabatic_evolution
+	      + examples/grover_search
+	      b state/display fixed, prints also the imaginary parts
+	      * renamed state methods: purify => to_ket, operator => to_op
+	      * plots/tomography shows relative phases in color
 	      * nicer examples
 	      * lindblad.@bath class
+
+2010-01-13    Version 0.9.3 (beta)
+	      + utils/makemovie for making AVI movies of plots
+	      + lindblad/superop
+	      + state arithmetic: plus, minus, mtimes, mrdivide, normalize
+	      + examples/superdense_coding
+	      b state/measure now gives correct collapsed states
+	      * gate/qft now also handles non-qubit systems
+	      * state/propagate now uses ode45 for time-dependent Hamiltonians
+	      * examples/nmr_sequences produces nicer plots

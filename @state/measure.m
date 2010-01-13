@@ -6,25 +6,28 @@ function [p, res, s] = measure(s, M)
 %    = measure(s, {M1, M2, ...}) % perform a general measurement
 %
 %  Performs a quantum measurement on the state s.
+%
 %  If only s is given, a full projective measurement in the
 %  computational basis is performed.
-%  If a vector of subsystems is given as the second parameter M, only
+%
+%  If a vector of subsystems is given as the second parameter, only
 %  those subsystems are measured, projectively, in the
 %  computational basis.
+%
 %  A general measurement may be performed by giving a complete set
-%  of measurement operators M == {M1, M2, ...} as the second parameter.
+%  of measurement operators {M1, M2, ...} as the second parameter.
 %
-%  Returns the vector p, where p(k) is the probability of obtaining
-%  result k in the measurement. For a projective measurement in the
-%  computational basis this corresponds to the ket |k-1>.
+%  p = measure(...) returns the vector p, where p(k) is the probability of
+%  obtaining result k in the measurement. For a projective measurement
+%  in the computational basis this corresponds to the ket |k-1>.
 %
-%  If res is given, it will contain a randomly chosen result for the
-%  measurement, in accordance with p.
+%  [p, res] = measure(...) additionally produces the result of the measurement,
+%  res, chosen at random following the probability distribution p.
 % 
-%  If s is given, it will contain the collapsed state corresponding
-%  to measurement result res.
+%  [p, res, s] = measure(...) additionally gives s, the collapsed state
+%  corresponding to the measurement result res.
 
-% Ville Bergholm 2009
+% Ville Bergholm 2009-2010
 
 
 if (nargin <= 1)
@@ -60,6 +63,7 @@ elseif (isnumeric(M))
   m = muls(end); % number of possible results
   muls(end) = 1; % now muls == [..., d_s{q-1}*d_s{q}, d_s{q}, 1]
 
+
   % sum the probabilities
   born = prob(s);
   for j=1:m
@@ -70,18 +74,18 @@ elseif (isnumeric(M))
       temp(mod(floor((j-1)/muls(k)), dims(2*k))+1) = 1; % projector
       stencil = kron(kron(stencil, temp), ones(1, dims(2*k+1))); % identity
     end
-    p(j) = stencil*born;
+    p(j) = stencil*born; % inner product
     projector{j} = stencil;
   end
 
   if (nargout >= 2)
     res = rand_measure(p);
     if (nargout >= 3)
-      R = projector{res};
+      R = projector{res}; % projector is diagonal, hence we only store the diagonal
       
       if (size(s.data, 2) == 1)
         % state vector
-        s.data = R * s.data / sqrt(p(res)); % collapsed state
+        s.data = R' .* s.data / sqrt(p(res)); % collapsed state
       else
         % state operator
         s.data = (R'*R) .* s.data / p(res); % collapsed state, HACK

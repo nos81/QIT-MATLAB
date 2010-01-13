@@ -27,4 +27,3 @@ Circuit model
 
 Examples
 - adiabatic simulation
-- dense coding

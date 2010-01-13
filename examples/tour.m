@@ -9,6 +9,9 @@ pause
 teleportation;
 pause
 
+superdense_coding;
+pause
+
 adiabatic_qc(5, 3);
 pause
 

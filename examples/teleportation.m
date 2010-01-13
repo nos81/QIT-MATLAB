@@ -8,7 +8,7 @@ function [reg_B, payload] = teleportation()
 % Ville Bergholm 2009
 
 
-fprintf('\n\n=== Quantum teleportation ===\n')
+fprintf('\n\n=== Quantum teleportation ===\n\n')
 
 global qit;
 
@@ -18,6 +18,7 @@ I    = qit.I;
 
 disp('Alice and Bob start with a shared EPR pair.')
 epr = state('bell1')
+
 
 disp('Alice wants to transmit this payload qubit to Bob:')
 payload = state('0');
@@ -33,11 +34,11 @@ reg = tensor(payload, epr)
 disp('Now Alice entangles the payload with her half of the EPR pair')
 reg = u_propagate(reg, kron(H, eye(4)) * kron(cnot, I))
 
-%[p, q, reg] = measure(reg, [1 2]);
-[p, q(1), reg] = measure(reg, {mkron(qit.p0, I, I), mkron(qit.p1, I, I)});
-[p, q(2), reg] = measure(reg, {mkron(I, qit.p0, I), mkron(I, qit.p1, I)});
-q = q-1;
-fprintf('and then measures her qubits, getting the result [%d, %d].\n', q)
+[p, b(1), reg] = measure(reg, 1);
+[p, b(2), reg] = measure(reg, 2);
+%[p, b, reg] = measure(reg, [1 2]);
+b = b-1;
+fprintf('and measures her qubits, getting the result [%d, %d].\n', b)
 disp('She then transmits the two bits to Bob using a classical channel. The shared state is now')
 reg
 
@@ -47,7 +48,7 @@ reg_B = to_ket(ptrace(reg, [1 2])) % pure state
 
 disp('Using the two classical bits of data Alice sent him,')
 disp('Bob performs a local transformation on his half of the EPR pair.')
-reg_B = fix_phase(u_propagate(reg_B, qit.sz^(q(1)) * qit.sx^(q(2))))
+reg_B = fix_phase(u_propagate(reg_B, qit.sz^(b(1)) * qit.sx^(b(2))))
 
 
 ov = overlap(payload, reg_B);

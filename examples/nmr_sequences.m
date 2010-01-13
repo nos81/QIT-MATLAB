@@ -29,21 +29,38 @@ figure;
 s = seqs{q};
 U = seq.seq2prop(s); % target propagator
 
+% in this simple example the errors can be fully included in the control sequence
+%==================================================
 s_error = s;
 s_error(:,3) = s(:,3) +0.1; % off-resonance error
+
+% apply sequence on state psi, plot the evolution
+[out, t] = seq_propagate(psi, s_error, @bloch_vector);
+a = cell2mat(out);
+n = size(a, 2);
+
+subplot(2,2,1);
+plots.bloch_sphere();
+plot3(a(1,:),a(2,:),a(3,:));
+plot3(a(1,n),a(2,n),a(3,n), 'k.');
+title([titles{q} ' evolution, off-resonance error']);
+
+%==================================================
+s_error = s;
 s_error(:,end) = s(:,end)*1.1; % pulse lenght error
 
 % apply sequence on state psi, plot the evolution
 [out, t] = seq_propagate(psi, s_error, @bloch_vector);
 a = cell2mat(out);
 n = size(a, 2);
-subplot(1,2,1);
+
+subplot(2,2,3);
 plots.bloch_sphere();
 plot3(a(1,:),a(2,:),a(3,:));
 plot3(a(1,n),a(2,n),a(3,n), 'k.');
-title([titles{q} ' evolution']);
+title([titles{q} ' evolution, pulse length error']);
 
-% in this simple example the errors can be fully included in the control sequence
+%==================================================
 s_error = s;
 fid = [];
 
@@ -56,7 +73,7 @@ for k=1:nf
   end
 end
 
-subplot(1,2,2);
+subplot(2,2,[2 4]);
 [X,Y] = meshgrid(f,g);
 contour(X,Y,1-fid);
 %surf(X,Y,1-fid);
