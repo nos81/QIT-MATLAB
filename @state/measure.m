@@ -4,6 +4,7 @@ function [p, res, s] = measure(s, M)
 %    = measure(s)                % measure the entire system projectively
 %    = measure(s, [1 4])         % measure subsystems 1 and 4 projectively
 %    = measure(s, {M1, M2, ...}) % perform a general measurement
+%    = measure(s, A)             % measure a Hermitian observable A
 %
 %  Performs a quantum measurement on the state s.
 %
@@ -17,12 +18,17 @@ function [p, res, s] = measure(s, M)
 %  A general measurement may be performed by giving a complete set
 %  of measurement operators {M1, M2, ...} as the second parameter.
 %
+%  Finally, if the second parameter is a Hermitian matrix A, the
+%  corresponding observable is measured. In this case the second
+%  column of p contains the eigenvalue of A corresponding to each
+%  measurement result.
+%
 %  p = measure(...) returns the vector p, where p(k) is the probability of
 %  obtaining result k in the measurement. For a projective measurement
 %  in the computational basis this corresponds to the ket |k-1>.
 %
-%  [p, res] = measure(...) additionally produces the result of the measurement,
-%  res, chosen at random following the probability distribution p.
+%  [p, res] = measure(...) additionally returns the index of the result of the
+%  measurement, res, chosen at random following the probability distribution p.
 % 
 %  [p, res, s] = measure(...) additionally gives s, the collapsed state
 %  corresponding to the measurement result res.
@@ -43,6 +49,7 @@ if (nargin <= 1)
   return;
 
 elseif (isnumeric(M))
+ if (isvector(M))
   % measure a set of subsystems in the computational basis
   sys = clean_selection(s, M);
   d = s.dim;
@@ -81,7 +88,7 @@ elseif (isnumeric(M))
   if (nargout >= 2)
     res = rand_measure(p);
     if (nargout >= 3)
-      R = projector{res}; % projector is diagonal, hence we only store the diagonal
+      R = projector{res}; % each projector is diagonal, hence we only store the diagonal
       
       if (size(s.data, 2) == 1)
         % state vector
@@ -93,7 +100,34 @@ elseif (isnumeric(M))
     end
   end
 
-else
+ else % M is a matrix
+  % measure the given Hermitian observable
+
+  [a, P] = spectral_decomposition(M);
+     
+  m = length(a); % number of possible results
+  p = zeros(m, 2);
+  for k=1:m
+    p(k, 1) = ev(s, P{k});
+  end
+  p(:,2) = a; % also return the corresponding results
+
+  if (nargout >= 2)
+    res = rand_measure(p);
+    if (nargout >= 3)
+      ppp = P{res};
+
+      if (size(s.data, 2) == 1)
+        % state vector
+        s.data = ppp * s.data / sqrt(p(res)); % collapsed state
+      else
+        % state operator
+        s.data = ppp * s.data * ppp / p(res); % collapsed state
+      end
+    end
+  end
+ end
+elseif (iscell(M))
   % otherwise use set M of measurement operators (assumed complete!)
   m = length(M);
 
@@ -125,6 +159,8 @@ else
     end
   end
 
+else
+  error('Unknown input type.')
 end
 
 

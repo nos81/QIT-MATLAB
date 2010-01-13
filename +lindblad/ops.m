@@ -14,31 +14,8 @@ function [dH, A] = ops(H, D)
 
 tol = 1e-12;
 
-n = length(H); % total eigenvalues
-
-[v,d] = eig(H);
-d = diag(d);
-
-% projectors to energy subspaces
-s = 1;
-E(1) = d(1);
-P{1} = v(:,1)*v(:,1)';
-
-% get rid of degenerate energies
-for k = 2:n
-  if (abs(d(k) - d(k-1)) > tol)
-    % new energy value, new projector
-    s = s+1;
-    E(s) = d(k);
-    P{s} = v(:,k)*v(:,k)';
-  else
-    % extend current projector
-    P{s} = P{s} + v(:,k)*v(:,k)';
-  end
-end
-
+[E, P] = spectral_decomposition(H);
 m = length(E); % unique eigenvalues
-% now H = \sum_k E_k P_k
 
 %X = 0;
 %for k=1:m

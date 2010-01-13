@@ -25,3 +25,7 @@
 	      * gate/qft now also handles non-qubit systems
 	      * state/propagate now uses ode45 for time-dependent Hamiltonians
 	      * examples/nmr_sequences produces nicer plots
+
+2010-xx-yy    Version zzz
+	      + utils: majorize, spectral_decomposition
+	      * state/measure now also measures arbitrary observables
