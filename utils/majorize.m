@@ -2,17 +2,19 @@ function res = majorize(x, y)
 % MAJORIZE  Majorization partial order of real vectors.
 %  res = majorize(x, y)
 %
-%  Returns true iff vector x is majorized by vector y.
+%  Returns true iff vector x is majorized by vector y,
+%  i.e. res = x \preceq y.
+
 
 % Ville Bergholm 2010
 
 
 global qit
 
-if (~isvector(x) || ~isvector(y))
-  error('Both inputs must be vectors.')
+if (~isvector(x) || ~isvector(y) || ~isreal(x) || ~isreal(y))
+  error('Inputs must be real vectors.')
 end
-    
+
 if (length(x) ~= length(y))
   error('The vectors must be of equal length.')
 end
