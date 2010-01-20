@@ -10,6 +10,8 @@ function qubit_and_resonator(d_r)
 % Ville Bergholm 2010
 
 
+fprintf('\n\n=== Qubit coupled to a single-mode microwave resonator. ===\n\n')
+
 global qit
 
 if (nargin < 1 || d_r < 10)
@@ -20,13 +22,15 @@ sx = qit.sx;
 sy = qit.sy;
 p1 = qit.p1;
 
-%b = lindblad.bath('ohmic', omega0, T); % TODO noise
-omega0 = 1e9; % Hz
+omega0 = 1e9; % Energy scale/\hbar, Hz
 
 Omega     = 2*pi* 19e-3; % GHz
 omega_r   = 2*pi* 6.570; % GHz
 Delta_off = -2*pi* 463e-3; % GHz
 Omega_q   = 2*pi*0.5; % GHz, stronger than anything else
+
+
+%b = lindblad.bath('ohmic', omega0, T); % TODO noise
 
 
 T1_q = 650e-9; % s
@@ -153,8 +157,8 @@ else
 end
 
 n = length(targ);
-targ = tensor(state([targ; zeros(d_r-n, 1)], d_r), state(0, 2));
-targ = normalize(targ);
+targ = normalize(state([targ; zeros(d_r-n, 1)], d_r))
+targ = tensor(targ, state(0, 2));
 
 % calculate the pulse sequence for constructing targ
 prog = demolish_state(targ);
