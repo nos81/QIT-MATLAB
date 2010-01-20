@@ -26,6 +26,10 @@
 	      * state/propagate now uses ode45 for time-dependent Hamiltonians
 	      * examples/nmr_sequences produces nicer plots
 
-2010-xx-yy    Version zzz
+2010-01-19    Version 0.9.4 (beta)
 	      + utils: majorize, spectral_decomposition
+	      + Harmonic oscillator package
+	      + ho methods: ladder, displace, squeeze, coherent_state,
+	      	 momentum_state, position_state, wigner
+	      + examples/qubit_and_resonator
 	      * state/measure now also measures arbitrary observables

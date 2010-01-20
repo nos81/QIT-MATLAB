@@ -1,6 +1,6 @@
 README file for the Quantum Information Toolkit.
-Version 0.9.3 (beta)
-Released 2010-01-13
+Version 0.9.4 (beta)
+Released 2010-01-19
 
 
 
