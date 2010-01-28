@@ -4,11 +4,12 @@ function S = lrmul(L, R)
 %
 %  L*rho*R == inv_vec(lrmul(L, R)*vec(rho))
 
-% Ville Bergholm 2009
+% Ville Bergholm 2009-2010
 
 
 if (issquare(L) && issquare(R))
   S = kron(R.', L); % simplifies to this when L and R are both square
+  return
 end
 
 n = size(L, 1);
