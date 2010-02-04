@@ -5,9 +5,13 @@ function [W, a, b] = wigner(s, res, limits)
 %
 %  Returns the Wigner quasi-probability distribution
 %  W(Im \alpha, Re \alpha) corresponding to the harmonic
-%  oscillator state s.
+%  oscillator state s given in the number basis.
 %
-%  Example: pcolor(wigner(state(0, 20)))
+%  The integral of W is normalized to unity.
+%
+%  NOTE: The truncation of the number state space to a finite dimension
+%  results in spurious circular ripples in the Wigner function outside
+%  a given radius. To increase the accuracy, increase the state space dimension.
 
 % Ville Bergholm 2010
 
@@ -47,8 +51,14 @@ for k=1:length(a)
   end
 end
 
-%pcolor(a, b, W);
-%shading interp;
-%shading flat;
-%xlabel('Re(\alpha)')
-%ylabel('Im(\alpha)')
+return
+
+pcolor(a, b, W);
+axis equal tight;
+shading interp;
+set(gca, 'CLim', [-1 1]);
+colorbar;
+colormap(songoficeandfire(256));
+xlabel('Re(\alpha)')
+ylabel('Im(\alpha)')
+title('Wigner function W(\alpha)')

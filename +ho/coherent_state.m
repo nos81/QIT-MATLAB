@@ -3,7 +3,7 @@ function s = coherent_state(alpha, n)
 %  s = coherent_state(alpha, n)
 %
 %  Returns the n-dimensional approximation to the
-%  coherent state \ket{\alpha}.
+%  coherent state \ket{\alpha} in the number basis.
 
 % Ville Bergholm 2010
 
