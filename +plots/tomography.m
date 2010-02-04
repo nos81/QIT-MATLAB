@@ -8,7 +8,7 @@ function h = tomography(s)
 %
 %  If s is a nonpure state, also plots the coherences.
 
-% Ville Bergholm 2009
+% Ville Bergholm 2009-2010
 
 
 % prepare labels
@@ -55,13 +55,12 @@ if (size(s.data, 2) == 1)
   fvd = get(ch,'Faces');
   fvcd = get(ch,'FaceVertexCData');
 
-  c = colors(phases(s.data), Ncol);
+  c = phases(s.data);
   for b = 1:N
     fvcd(fvd(b,:)) = c(b); % all four vertices of a bar have same color
   end
   set(ch,'FaceVertexCData',fvcd);
   set(ch,'EdgeColor','k');
-  set(ch, 'CDataMapping', 'direct');
 
 else
   % state op
@@ -77,7 +76,7 @@ else
   alpha(0.8);
 
   % color bars using phase data
-  c = colors(phases(s.data), Ncol);
+  c = phases(s.data);
   for m = 1:length(h)
     % get color data
     cdata = get(h(m), 'Cdata'); % [one row of 3d bars * six faces, four vertices per face]
@@ -86,16 +85,13 @@ else
       cdata(j-5:j, :) = c(k,m); % all faces are the same color
     end
     set(h(m), 'Cdata', cdata);
-    set(h(m), 'CDataMapping', 'direct');
   end
 
 end
 
-%set(gca, 'CLimMode', 'manual')
-set(gca, 'CLim', [0 Ncol]); % color limits
+set(gca, 'CLim', [0 1]); % color limits
 
-hcb = colorbar('YTickMode', 'manual');
-set(hcb, 'YTick', linspace(0, Ncol, 5));
+hcb = colorbar('YTick', linspace(0, 1, 5));
 set(hcb, 'YTickLabel', {'-\pi', '-\pi/2', '0', '\pi/2', '\pi'});
 end
 
