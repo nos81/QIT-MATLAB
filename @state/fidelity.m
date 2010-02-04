@@ -4,8 +4,9 @@ function F = fidelity(r, s)
 %
 %  Fidelity of two state operators \rho and \sigma is defined as
 %  $F(\rho, \sigma) = \trace \sqrt{\sqrt{\rho} \sigma \sqrt{\rho}}$.
+%  For state vectors this is equivalent to the overlap, F = |<a|b>|.
 %
-%  It is symmetric in its arguments and bounded in the interval [0,1].
+%  Fidelity is symmetric in its arguments and bounded in the interval [0,1].
 
 % Ville Bergholm 2009
 %! M.A. Nielsen, I.L. Chuang, "Quantum Computation and Quantum Information" (2000), chapter 9.2.2
@@ -15,13 +16,13 @@ if (size(r.data, 2) == 1)
   if (size(s.data, 2) == 1)
     F = abs(r.data' * s.data);
   else
-    F = sqrt(r.data' * s.data * r.data);
+    F = sqrt(real(r.data' * s.data * r.data));
   end
 else
   if (size(s.data, 2) == 1)
-    F = sqrt(s.data' * r.data * s.data);
+    F = sqrt(real(s.data' * r.data * s.data));
   else
     temp = sqrtm(r.data);
-    F = trace(sqrtm(temp * s.data * temp));
+    F = real(trace(sqrtm(temp * s.data * temp)));
   end
 end

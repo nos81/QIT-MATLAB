@@ -31,7 +31,7 @@ for k=1:length(t)
   energies(:,k) = sort(real(eig(H)), 'ascend');
 
   for j=1:n
-    overlaps(j,k) = real(overlap(lowest{j}, st{k})^2); % squared overlap with lowest final states
+    overlaps(j,k) = fidelity(lowest{j}, st{k})^2; % squared overlap with lowest final states
   end
 end
 

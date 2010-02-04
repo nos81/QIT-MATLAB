@@ -51,7 +51,7 @@ disp('Bob performs a local transformation on his half of the EPR pair.')
 reg_B = fix_phase(u_propagate(reg_B, qit.sz^(b(1)) * qit.sx^(b(2))))
 
 
-ov = overlap(payload, reg_B);
+ov = fidelity(payload, reg_B);
 fprintf('The overlap between the resulting state and the original payload state is |<payload|B>| = %f\n', ov)
 if (norm(ov-1) > qit.tol)
   error('Should not happen.')
