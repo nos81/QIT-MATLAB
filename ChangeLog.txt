@@ -33,3 +33,13 @@
 	      	 momentum_state, position_state, wigner
 	      + examples/qubit_and_resonator
 	      * state/measure now also measures arbitrary observables
+
+2010-02-04    Version 0.9.5 (beta)
+	      + state/locc_convertible
+	      - state/overlap (replaced by fidelity)
+	      + ho methods: position, momentum, husimi
+	      + utils/asongoficeandfire
+	      b utils/lrmul did unnecessary work
+	      * Born-Markov package again reorganized, uses lookup
+	      	 tables more efficiently
+	      * neater examples
