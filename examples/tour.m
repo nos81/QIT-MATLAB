@@ -33,7 +33,7 @@ pause
 bb84(40);
 pause
 
-markov_decoherence(7e-9, 1e-8);
+markov_decoherence(7e-10, 1e-9);
 pause
 
-qubit_and_resonator(30);
+qubit_and_resonator();

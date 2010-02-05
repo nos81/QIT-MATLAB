@@ -20,9 +20,9 @@ N = 2^n; % number of states
 sol = floor(rand() * N) + 1; % 1..N
 reps = floor(pi/(4*asin(sqrt(1/N))));
 
-fprintf('Using %d qubits\n', n)
-fprintf('Solution: %d\n', sol)
-fprintf('Probability maximized by %d iterations\n', reps)
+fprintf('Using %d qubits.\n', n)
+fprintf('Probability maximized by %d iterations.\n', reps)
+fprintf('Correct solution: %d\n', sol)
 
 
 % black box oracle capable of recognizing the correct answer (given as the diagonal)
@@ -30,7 +30,8 @@ fprintf('Probability maximized by %d iterations\n', reps)
 U_oracle = ones(N, 1);
 U_oracle(sol) = -1;
 
-
+U_zeroflip = ones(N, 1);
+U_zeroflip(1) = -1;
 
 s = state(0, 2*ones(n, 1));
 
@@ -44,10 +45,9 @@ for k=1:reps
 
   % inversion about the mean
   s = u_propagate(s, A');
-  temp = s.data; % FIXME annoying
-  temp(1) = -temp(1); % phase flip the zero state
-  s.data = temp;
+  s.data = U_zeroflip .* s.data;
   s = u_propagate(s, A);
 end
 
-p = prob(s);
+[p, res] = measure(s);
+fprintf('\nMeasured %d.\n', res);

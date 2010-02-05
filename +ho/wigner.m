@@ -58,7 +58,7 @@ axis equal tight;
 shading interp;
 set(gca, 'CLim', [-1 1]);
 colorbar;
-colormap(songoficeandfire(256));
+colormap(asongoficeandfire(256));
 xlabel('Re(\alpha)')
 ylabel('Im(\alpha)')
 title('Wigner function W(\alpha)')
