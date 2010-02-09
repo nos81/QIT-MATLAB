@@ -1,29 +1,37 @@
-function L = liouvillian(H, D, baths)
-% LINDBLAD/LIOUVILLIAN  Liouvillian superoperator for a Born-Markov system.
+function L = superop(H, D, baths)
+% MARKOV/SUPEROP  Liouvillian superoperator for a Born-Markov system.
 %
-%  L = liouvillian(H, D, b)
+%  L = superop(H, D, B)
 %
-%  Builds the Liouvillian superoperator L corresponding to a base Hamiltonian H
-%  and a (hermitian) interaction operator D coupling the system to bath b.
+%  Builds the Liouvillian superoperator L corresponding to a
+%  base Hamiltonian H and a (Hermitian) interaction operator D
+%  coupling the system to bath B.
 %
 %  Returns L/omega0, which includes the system Hamiltonian, the Lamb shift,
 %  and the Lindblad dissipator.
 %
-%  b can also be a cell vector of baths, in which case D has to be
+%  B can also be a cell vector of baths, in which case D has to be
 %  a cell vector of the corresponding interaction operators.
 
-% Ville Bergholm 2009
-
-
-% lindblad ops
-[dH, X] = lindblad.ops(H, D);
+% Ville Bergholm 2009-2010
 
 
 if (~iscell(baths))
   baths = {baths}; % needs to be a cell array, even if it has just one element
 end
 n_baths = length(baths); % number of baths
-% TODO the baths must share the same omega0!
+
+% make sure the baths have the same omega0!
+temp = baths{1}.omega0;
+for k=2:n_baths
+  if (baths{k}.omega0 ~= temp)
+    error('All the baths must have the same energy scale omega0!')
+  end
+end
+
+
+% Lindblad ops
+[dH, X] = markov.ops(H, D);
 
 iH_LS = 0;
 acomm = 0;
@@ -33,7 +41,7 @@ for n=1:n_baths
   A = X(n,:); % ops for the n'th bath
   b = baths{n};
 
-  % we build the liouvillian in a funny order to be a bit more efficient
+  % we build the Liouvillian in a funny order to be a bit more efficient
 
   % dH == 0 terms
   [g, s] = corr(b, 0);

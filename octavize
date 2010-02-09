@@ -12,7 +12,7 @@ sed '
 /^[^%]/ s/gate\.//g
 /^[^%]/ s/hamiltonian\.//g
 /^[^%]/ s/invariant\.//g
-/^[^%]/ s/lindblad\.//g
+/^[^%]/ s/markov\.//g
 /^[^%]/ s/plots\.//g
 /^[^%]/ s/seq\.//g
 ' -i.orig */*.m

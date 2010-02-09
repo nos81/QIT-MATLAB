@@ -25,11 +25,14 @@ p1 = qit.p1;
 omega0 = 1e9; % Energy scale/\hbar, Hz
 T = 0.025; % K
 
-Omega     = 2*pi* 19e-3; % GHz
-omega_r   = 2*pi* 6.570; % GHz
-Delta_off = -2*pi* 463e-3; % GHz
-Omega_q   = 2*pi*0.5; % GHz, stronger than anything else
+% omega_r = 2*pi* 6.570; % GHz, resonator angular frequency
+% qubit-resonator detuning Delta(t) = omega_q(t) -omega_r
 
+Omega     =  2*pi* 19e-3;  % GHz, qubit-resonator coupling
+Delta_off = -2*pi* 463e-3; % GHz, detuning at off-resonance point
+Omega_q   =  2*pi* 0.5;    % GHz, qubit microwave drive amplitude, stronger than anything else
+
+% decoherence times
 T1_q = 650e-9; % s
 T2_q = 150e-9; % s
 
@@ -37,7 +40,7 @@ T1_r = 3.5e-6; % s
 T2_r = 2*T1_r; % s
 
 % heat bath and couplings
-%bq = lindblad.bath('ohmic', omega0, T);
+%bq = markov.bath('ohmic', omega0, T);
 %[H, Dq] = fit(bq, Delta_off, T1_q, T2_q);
 %[H, Dr] = fit_ho(bq, ???, T1_r, T2_r???);
 %D = kron(eye(d_r), D); % +kron(Dr, qit.I);
@@ -52,21 +55,23 @@ sm = sp';
 
 % resonator annihilation op
 a = ho.ladder(d_r);
+%Q = ho.position(d_r);
+%P = ho.momentum(d_r);
+% resonator identity op
+I_r = eye(d_r);
 
-
-Hq = kron(eye(d_r), sp*sm);
+Hq = kron(I_r, sp*sm);
 %Hr = kron(omega_r * a'*a, qit.I);
 
 Hint = Omega/2 * (kron(a, sp) +kron(a', sm));
-HOqr = kron(eye(d_r), Omega_q*0.5*sx);
-HOqi = kron(eye(d_r), Omega_q*0.5*sy);
-%HOr = kron(Omega_r*0.5*(a+a'), qit.I);
+HOq = @(Oq_a, Oq_p) kron(I_r, Oq_a*0.5*Omega_q*(cos(Oq_p)*sx +sin(Oq_p)*sy));
+%HOr = @(Or_a, Or_p) kron(Or_a*Omega_r/sqrt(2)*(cos(Or_p)*Q +sin(Or_p)*P), qit.I);
 
 % Hamiltonian, rotating frame defined by H0 = omega_r*Hq +Hr
-H = @(D,Oqr,Oqi) D*Hq +Hint +Oqr*HOqr +Oqi*HOqi;
+H = @(D, Oq_a, Oq_p) D*Hq +Hint +HOq(Oq_a, Oq_p);
 
 % readout: qubit in excited state?
-readout = @(s,h) ev(s, kron(eye(d_r), p1));
+readout = @(s,h) ev(s, kron(I_r, p1));
 
 s0 = state(0, [d_r, 2]); % ground state
 
@@ -77,13 +82,13 @@ s0 = state(0, [d_r, 2]); % ground state
 out = [];
 t = linspace(0, 500, 100);
 ddd = linspace(0, 2*pi* 40e-3, 100); % MHz
-%L = lindblad.liouvillian(H(Delta_off, 1, 0), D, bq);
+%L = markov.superop(H(0, 1, 0), D, bq);
 L = H(0, 1, 0);
 for k=1:length(ddd)
   s = propagate(s0, L, (2/Omega_q)*pi/2); % Q
-  %s = u_propagate(s0, kron(eye(d_r), sx));
+  %s = u_propagate(s0, kron(I_r, sx));
 
-  %LL = lindblad.liouvillian(H(ddd(k), 0, 0), D, bq);
+  %LL = markov.superop(H(ddd(k), 0, 0), D, bq);
   LL = H(ddd(k), 0, 0);
   out(k,:) = cell2mat(propagate(s, LL, t, readout));
 end
@@ -111,7 +116,7 @@ function [prog, t] = demolish_state(targ)
 % state preparation in reverse
 
 % Ideal H without interaction
-A = @(D,Oqr,Oqi) D*Hq +Oqr*HOqr +Oqi*HOqi;
+A = @(D, Oq_a, Oq_p) D*Hq +HOq(Oq_a, Oq_p);
 
 % resonator ket into a full normalized qubit+resonator state
 n = length(targ);
@@ -137,7 +142,7 @@ for k=n:-1:1
   phi = angle(dd(2*k)) -angle(dd(2*k-1)) +pi/2;
   prog(k, 2) = phi;
   prog(k, 1) = (2/Omega_q)*atan2(abs(dd(2*k)), abs(dd(2*k-1)));
-  targ = propagate(targ, A(0, -cos(phi), -sin(phi)), prog(k, 1)); % Q
+  targ = propagate(targ, A(0, -1, phi), prog(k, 1)); % Q
 end
 end
 
@@ -150,7 +155,7 @@ s = s0; % start with ground state
 
 for k=1:size(prog, 1)
   % Q, S, Z
-  s = propagate(s, H(0, cos(prog(k, 2)), sin(prog(k, 2))), prog(k, 1)); % Q
+  s = propagate(s, H(0, 1, prog(k, 2)), prog(k, 1)); % Q
   s = propagate(s, H(0, 0, 0), prog(k, 3)); % S
   s = propagate(s, H(Delta_off, 0, 0), prog(k, 4)); % Z
 end
@@ -195,9 +200,11 @@ end
 % calculate the pulse sequence for constructing targ
 [prog, t] = demolish_state(targ);
 s = prepare_state(prog);
+
+disp('Trying to prepare the state')
+display(t, 'short')
 fprintf('Fidelity of prepared state with target state: %g\n', fidelity(s, t));
 fprintf('Time required for state preparation: %g ns\n', sum(sum(prog(:, [1 3 4]))));
-
 
 s = ptrace(s, 2);
 

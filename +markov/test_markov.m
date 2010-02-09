@@ -1,5 +1,6 @@
-% Test script for Lindblad methods.
-% Ville Bergholm 2009
+% Test script for Markov methods.
+
+% Ville Bergholm 2009-2010
 
 tol = qit.tol;
 
@@ -9,7 +10,7 @@ dim = 5;
 % Lindblad operators
 H = rand_hermitian(dim);
 D = rand_hermitian(dim);
-[dH, A] = lindblad.ops(H, D);
+[dH, A] = markov.ops(H, D);
 
 X = A{1}; % dH(1) == 0
 for k=2:length(dH)

@@ -1,5 +1,5 @@
 function [dH, A] = ops(H, D)
-% LINDBLAD/OPS  Lindblad operators for a Born-Markov master equation.
+% MARKOV/OPS  Lindblad operators for a Born-Markov master equation.
 %  [dH, A] = ops(H, D)
 %
 %  Builds the Lindblad operators for a Hamiltonian operator H and
@@ -9,7 +9,7 @@ function [dH, A] = ops(H, D)
 %  eigenvalues of H, and A, an array of the corresponding Lindblad operators.
 %  length(dH) == length(A)
 
-% Ville Bergholm 2009
+% Ville Bergholm 2009-2010
 
 
 tol = 1e-12;

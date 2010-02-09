@@ -1,9 +1,9 @@
-function [H, D, b] = markov_decoherence(T1, T2, b)
+function [H, D, B] = markov_decoherence(T1, T2, B)
 % MARKOV_DECOHERENCE  Decoherence demo.
 %
-%  [H, D, b] = markov_decoherence(T1, T2)
+%  [H, D, B] = markov_decoherence(T1, T2)
 %
-%  Given decoherence times T1 and T2, creates a markovian bath b
+%  Given decoherence times T1 and T2, creates a markovian bath B
 %  and a coupling operator D which reproduce them on a single-qubit system.
 
 % Ville Bergholm 2009-2010
@@ -11,7 +11,7 @@ function [H, D, b] = markov_decoherence(T1, T2, b)
 
 global qit;
 
-fprintf('\n\n=== Markovian decoherence ===\n')
+fprintf('\n\n=== Markovian decoherence in a qubit ===\n')
 
 if (nargin < 2)
   error('Both T1 and T2 must be given.')
@@ -24,18 +24,18 @@ delta = 2.5 + rand; % qubit energy splitting (GHz)
 
 % setup the bath
 if (nargin < 3)
-  b = lindblad.bath('ohmic', omega0, T); % defaults
+  B = markov.bath('ohmic', omega0, T); % defaults
 end
 
 % find the correct qubit-bath coupling
-[H, D] = fit(b, delta, T1*omega0, T2*omega0)
+[H, D] = fit(B, delta, T1*omega0, T2*omega0)
 
-L = lindblad.liouvillian(H, D, b);
+L = markov.superop(H, D, B);
 t = linspace(0, 10, 100);
 
 
 % T1 demo
-eq = 1/(1+exp(delta*b.scale)); % equilibrium rho_11
+eq = 1/(1+exp(delta*B.scale)); % equilibrium rho_11
 
 s = state('1', [2]); % qubit in the |1> state
 out = propagate(s, L, t, @(x,h) ev(x, qit.p1));

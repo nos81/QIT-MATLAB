@@ -43,3 +43,7 @@
 	      * Born-Markov package again reorganized, uses lookup
 	      	 tables more efficiently
 	      * neater examples
+
+2010-02-??    Version 0.9.6 (beta)
+	      * Born-Markov package cleaned up and renamed: +lindblad => +markov
+

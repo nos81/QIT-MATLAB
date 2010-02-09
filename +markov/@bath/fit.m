@@ -42,9 +42,9 @@ switch b.type
     D = sqrt(N)*(cos(alpha)*qit.sz +sin(alpha)*qit.sx);
 
     % decoherence times in scaled time units
-    T1 = 1/(N * sin(alpha)^2 * 2*pi * delta * coth(temp) * b.cut_func(delta))
-    T_dephase = b.scale/(N *4*pi*cos(alpha)^2);
-    T2 = 1/(0.5/T1 +1/T_dephase)
+    %T1 = 1/(N * sin(alpha)^2 * 2*pi * delta * coth(temp) * b.cut_func(delta))
+    %T_dephase = b.scale/(N *4*pi*cos(alpha)^2);
+    %T2 = 1/(0.5/T1 +1/T_dephase)
 
   otherwise
     error('Unknown bath type.')

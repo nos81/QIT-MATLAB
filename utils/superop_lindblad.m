@@ -1,5 +1,5 @@
-function L = superop(A, H)
-% LINDBLAD/SUPEROP  Liouvillian superoperator for a set of Lindblad operators.
+function L = superop_lindblad(A, H)
+% SUPEROP_LINDBLAD  Liouvillian superoperator for a set of Lindblad operators.
 %  L = superop(A [, H])
 %
 %  A is a cell vector of traceless, orthogonal Lindblad operators.
@@ -12,7 +12,7 @@ function L = superop(A, H)
 %    = -i [H, \rho] +\sum_k (2 A_k \rho A_k^\dagger -\{A_k^\dagger A_k, \rho\})
 
 % James D. Whitfield 2009
-% Ville Bergholm 2009
+% Ville Bergholm 2009-2010
 
 
 if (nargin == 2)
