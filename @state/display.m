@@ -1,7 +1,7 @@
 function display(s, short)
-% STATE/DISPLAY  Display the state.
+% STATE/DISPLAY  Print the state in a neat format.
 
-% Ville Bergholm 2008-2009
+% Ville Bergholm 2008-2010
 
 
 global qit;
@@ -21,6 +21,12 @@ end
 
 if (size(s.data, 2) == 1)
   % state vector (pure state)
+
+  if (size(s.data, 1) > 128)
+    % sanity check, do not display states with hundreds of terms
+    out = cat(2, out, ' (long)');
+  else
+
   n = length(s.dim);
 
   for ind = 1:prod(s.dim)
@@ -46,6 +52,7 @@ if (size(s.data, 2) == 1)
       out = cat(2, out, char(ket - 1 + '0'));
       out = cat(2, out, '>');
     end
+  end
   end
   disp(out);
 else

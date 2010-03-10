@@ -49,6 +49,7 @@ if (size(s.data, 2) == 1)
   ylabel('Probability');
   set(gca,'XTick', ticks)
   set(gca,'XTickLabel', ticklabels);
+  axis tight;
 
   % color bars using phase data
   ch = get(h,'Children');
@@ -73,7 +74,7 @@ else
   set(gca,'YTick', ticks+1);
   set(gca,'YTickLabel', ticklabels);
   axis tight;
-  alpha(0.8);
+  %alpha(0.8);
 
   % color bars using phase data
   c = phases(s.data);
