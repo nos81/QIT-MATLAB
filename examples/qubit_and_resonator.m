@@ -58,7 +58,7 @@ a = ho.ladder(d_r);
 %Q = ho.position(d_r);
 %P = ho.momentum(d_r);
 % resonator identity op
-I_r = eye(d_r);
+I_r = speye(d_r);
 
 Hq = kron(I_r, sp*sm);
 %Hr = kron(omega_r * a'*a, qit.I);
@@ -208,15 +208,7 @@ fprintf('Time required for state preparation: %g ns\n', sum(sum(prog(:, [1 3 4])
 
 s = ptrace(s, 2);
 
-figure
 [W, a, b] = ho.wigner(s, [80 80], [-2.5 2.5 -2.5 2.5]);
-pcolor(a, b, W);
-axis equal tight;
-shading interp;
-set(gca, 'CLim', [-1 1]);
-colorbar;
-colormap(asongoficeandfire(256));
-xlabel('Re(\alpha)')
-ylabel('Im(\alpha)')
-title('Wigner function W(\alpha)')
+figure
+plots.wigner_function(W, a, b);
 end

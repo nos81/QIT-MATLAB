@@ -1,4 +1,4 @@
-function adiabatic_evolution(t, st, H_func)
+function adiabatic_evolution(t, st, H_func, n)
 % ADIABATIC_EVOLUTION  Adiabatic evolution plot.
 %  adiabatic_evolution(t, st, H_func)
 %
@@ -10,13 +10,17 @@ function adiabatic_evolution(t, st, H_func)
 %  Useful for illustrating adiabatic evolution.
 
 % Jacob D. Biamonte 2008
-% Ville Bergholm 2009
+% Ville Bergholm 2009-2010
 
-
-n = 4;
 
 T = t(end);
 H = H_func(T);
+
+if (nargin < 4)
+  n = 4;
+end
+
+n = min(n, length(H));
 
 % find the n lowest eigenstates of the final Hamiltonian
 [v,d] = eig(H);
@@ -39,10 +43,6 @@ end
 subplot(2,1,1);
 plot(t/T, energies);
 grid on;
-%set(gca, 'XTick', [0:0.25*t:t]);
-%set(gca, 'XTickLabel', {'s = 0';'s = 0.25';'s = 0.5';'s = 0.75'; 's = 1'});
-%set(gca, 'YTick', [min(min(energies)):0.25*m:max(max(energies))])
-%set(gca,'YTickLabel',{'0';'0.5';'1';'1.5'; '2'})
 title('Energy spectrum');
 xlabel('Adiabatic time');
 ylabel('Energy');
@@ -52,14 +52,13 @@ axis([0, 1, min(min(energies)), max(max(energies))]);
 subplot(2,1,2);
 plot(t/T, overlaps); %, 'LineWidth', 1.7);
 grid on;
-%set(gca, 'XTick', [0:0.25*t:t]);
-%set(gca, 'XTickLabel', {'s = 0';'s = 0.25';'s = 0.5';'s = 0.75'; 's = 1'});
-%set(gca, 'YTick', [0:0.5:1.1]);
-%set(gca, 'YTickLabel', {'0';'0.5'; '1'});
 title('Squared overlap of current state and final eigenstates');
 xlabel('Adiabatic time');
 ylabel('Probability');
-%ylabel('|<l(s)|\psi(s)>|^2');
-legend('|0\rangle','|1\rangle','|2\rangle','|3\rangle')
+temp = char([]);
+for k=1:n
+  temp(k,:) = sprintf('|%d\\rangle', k-1);
+end
+legend(temp);
 %axis([0, 1, 0, 1]);
 axis([0, 1, 0, max(max(overlaps))]);
