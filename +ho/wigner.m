@@ -50,15 +50,3 @@ for k=1:length(a)
     W(j,k) = real(ev(r, P));
   end
 end
-
-return
-
-pcolor(a, b, W);
-axis equal tight;
-shading interp;
-set(gca, 'CLim', [-1 1]);
-colorbar;
-colormap(asongoficeandfire(256));
-xlabel('Re(\alpha)')
-ylabel('Im(\alpha)')
-title('Wigner function W(\alpha)')
