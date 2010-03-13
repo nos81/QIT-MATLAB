@@ -6,7 +6,7 @@ function [a] = ladder(n)
 %  annihilation operator a in the number basis {|0>, |1>, ..., |n-1>}.
 %  (The corresponding creation operator is of course a').
 
-% Ville Bergholm 2009
+% Ville Bergholm 2009-2010
 
 
-a = diag(sqrt(1:n-1), 1);
+a = spdiags(sqrt(0:n-1).', 1, n, n);

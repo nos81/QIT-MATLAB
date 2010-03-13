@@ -9,7 +9,7 @@ function L = superop_lindblad(A, H)
 %  diagonal-form Lindblad equation
 %
 %  \dot{\rho} = inv_vec(L * vec(\rho)) =
-%    = -i [H, \rho] +\sum_k (2 A_k \rho A_k^\dagger -\{A_k^\dagger A_k, \rho\})
+%    = -i [H, \rho] +\sum_k (A_k \rho A_k^\dagger -0.5*\{A_k^\dagger A_k, \rho\})
 
 % James D. Whitfield 2009
 % Ville Bergholm 2009-2010
@@ -22,10 +22,12 @@ else
   iH = 0;
 end
 
+A = A(:); % FIXME
+
 L = 0;
 acomm = 0;
 for k=1:length(A)
-  acomm = acomm + A{k}' * A{k};
-  L = L +lrmul(2 * A{k}, A{k}'); 
+  acomm = acomm +0.5 * A{k}' * A{k};
+  L = L +lrmul(A{k}, A{k}'); 
 end
 L = L +lmul(-acomm -iH) +rmul(-acomm +iH);

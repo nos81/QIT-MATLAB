@@ -23,7 +23,7 @@ end
 n = min(n, length(H));
 
 % find the n lowest eigenstates of the final Hamiltonian
-[v,d] = eig(H);
+[v,d] = eigs(H, n, 'SR');
 [S,I] = sort(diag(d), 'ascend');
 for j=1:n
   lowest{j} = state(v(:, I(j)));
@@ -32,7 +32,7 @@ end
 for k=1:length(t)
   tt = t(k);
   H = H_func(tt);
-  energies(:,k) = sort(real(eig(H)), 'ascend');
+  energies(:,k) = sort(real(eig(full(H))), 'ascend');
 
   for j=1:n
     overlaps(j,k) = fidelity(lowest{j}, st{k})^2; % squared overlap with lowest final states

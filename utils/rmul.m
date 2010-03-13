@@ -11,4 +11,4 @@ if (nargin < 2)
   m = size(R, 1); % assume target is a square matrix
 end
 
-S = kron(R.', eye(m));
+S = kron(R.', speye(m));

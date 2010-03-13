@@ -15,7 +15,7 @@ end
 n = size(L, 1);
 q = size(R, 1);
 
-S = kron(R.', eye(n)) * kron(eye(q), L);
+S = kron(R.', speye(n)) * kron(speye(q), L);
 end
 
 function b = issquare(A)
