@@ -1,4 +1,4 @@
-function [f] = fermion_ladder(n)
+function [f] = fermion_ladder(grouping)
 % FERMION_LADDER  Fermionic ladder operators.
 %  f = fermion_ladder(n)
 %
@@ -30,6 +30,7 @@ function [f] = fermion_ladder(n)
 % Ville Bergholm 2009-2010
 
 
+n = prod(grouping);
 d = 2^n;
 
 % number and phase operators (diagonal, so we store them as such)
@@ -47,3 +48,5 @@ s = sparse([0 1; 0 0]);
 for k=1:n
   f{k} = spdiags((-1).^phi{k}, 0, d, d) * mkron(speye(2^(k-1)), s, speye(2^(n-k)));
 end
+
+f = reshape(f, grouping);

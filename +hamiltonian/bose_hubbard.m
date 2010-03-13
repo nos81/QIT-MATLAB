@@ -1,5 +1,5 @@
 function [H, dim] = bose_hubbard(n, m, U_t, mu_t)
-% BOSE_HUBBARD  Bose-Hubbard model, bosons in a lattice.
+% BOSE_HUBBARD  Bose-Hubbard model, bosons in a 1D lattice.
 %  [H, dim] = bose_hubbard(n, m, U_t, mu_t)
 %
 %  Returns the Hamiltonian H and the dimension vector dim for an
@@ -11,7 +11,7 @@ function [H, dim] = bose_hubbard(n, m, U_t, mu_t)
 %  The dimensions of boson Hilbert spaces (infinite in principle)
 %  are truncated to m.
 %
-%  H = \sum_k (b_k' b_{k+1} +h.c.) +U/(2t) n_k (n_k-1) -\mu/t n_k
+%  H = \sum_k -(b_k' b_{k+1} +h.c.) +U/(2t) n_k (n_k-1) -\mu/t n_k
 %
 %  The Hamiltonian has been normalized by the boson hopping
 %  constant t. The other parameters are U_t == U/t and mu_t = \mu/t. 
@@ -25,8 +25,10 @@ b = ho.ladder(m); % boson annihilation
 nb = b'*b; % boson number operator
 
 if (nargin < 4)
-  U_t  = 1;
-  mu_t = 1;
+  mu_t = 0;
+  if (nargin < 3)
+    U_t = 1;
+  end
 end
 
 I = speye(m);
