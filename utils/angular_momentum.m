@@ -5,14 +5,14 @@ function [Jx, Jy, Jz] = angular_momentum(j)
 %  Returns the angular momentum matrices \vec(J)/\hbar
 %  for the 2*j + 1 -dimensional subspace defined by quantum number j.
 
-% Ville Bergholm 2009
+% Ville Bergholm 2009-2010
 
 
 n = 2*j + 1; % dimension
 
 % raising operator in subspace J^2 = j*(j+1)
 m = j;
-Jplus = zeros(n);
+Jplus = sparse(n,n);
 for k=1:n-1
   m = m - 1;
   Jplus(k, k+1) = sqrt(j*(j+1) -m*(m+1));
@@ -26,4 +26,4 @@ Jminus = Jplus';
 
 Jx = 0.5*(Jplus + Jminus);
 Jy = 0.5*i*(Jminus - Jplus);
-Jz = diag([j:-1:-j]);
+Jz = spdiags([j:-1:-j].', 0, n, n);
