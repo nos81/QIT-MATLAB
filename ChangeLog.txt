@@ -44,6 +44,19 @@
 	      	 tables more efficiently
 	      * neater examples
 
-2010-02-??    Version 0.9.6 (beta)
+2010-03-17    Version 0.9.6 (beta)
+	      * numerous small improvements
+	      * functions handling large operators now use sparse matrices
 	      * Born-Markov package cleaned up and renamed: +lindblad => +markov
+	      * renamed lindblad/superop => utils/superop_lindblad
+	      * utils/angular_momentum now returns a cell vector, caches results
+	      + plots/wigner_function
+	      + hamiltonians: heisenberg, hubbard, bose_hubbard, holstein
+	      + utils/fermion_ladder
+	      + utils/op_list
+	      - utils/fidelity (unnecessary)
+	      - hamiltonian/graph (replaced by utils/op_list)
 
+
+2010-03-??    Version 0.9.7 (beta)
+	      * state/propagate now also can use Lindblad operators

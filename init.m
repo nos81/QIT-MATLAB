@@ -8,7 +8,7 @@ addpath([pwd '/examples']);
 global qit;
 
 % toolkit version number
-qit.version = '0.9.5';
+qit.version = '0.9.6';
 fprintf('MATLAB Quantum Information Toolkit, version %s\n', qit.version)
 
 % Pauli matrices
@@ -35,3 +35,4 @@ qit.eV   = 1.602176487e-19; % J
 % caching
 qit.gellmann = {};
 qit.tensorbasis = {};
+qit.angular_momentum = {};
