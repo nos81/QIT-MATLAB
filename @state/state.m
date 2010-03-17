@@ -83,10 +83,13 @@ classdef state
 
         % calculate the linear index
         n = length(dim);
-        ind = s(1) - '0';
-        for k=2:n
-          ind = (ind * dim(k)) + (s(k) - '0');
+        s = s - '0';
+        if (any(s >= dim))
+          error('Invalid basis ket.')
         end
+        muls = fliplr(circshift(cumprod(fliplr(dim)), [0 1]));
+        muls(end) = 1;
+        ind = muls*s';
         s = zeros(prod(dim), 1);
         s(ind+1) = 1; % MATLAB indexing starts at 1
       end
