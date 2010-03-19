@@ -1,17 +1,15 @@
-function J = angular_momentum(j)
+function J = angular_momentum(n)
 % ANGULAR_MOMENTUM  Angular momentum matrices.
-%  J = {Jx, Jy, Jz} = angular_momentum(j)
+%  J = {Jx, Jy, Jz} = angular_momentum(d)
 %
 %  Returns the angular momentum matrices \vec(J)/\hbar
-%  for the 2*j + 1 -dimensional subspace defined by the
-%  quantum number j as a cell vector.
+%  for the d-dimensional subspace defined by the
+%  quantum number j == (d-1)/2, as a cell vector.
 
 % Ville Bergholm 2009-2010
 
 
 global qit;
-
-n = 2*j + 1; % dimension
 
 if (n < 1)
   error('Dimension must be one or greater.')
@@ -22,6 +20,8 @@ if (length(qit.angular_momentum) >= n && length(qit.angular_momentum{n}) > 0)
   J = qit.angular_momentum{n};
   return;
 end
+
+j = (n-1)/2; % angular momentum quantum number, n == 2*j + 1
 
 % raising operator in subspace J^2 = j*(j+1)
 m = j;
