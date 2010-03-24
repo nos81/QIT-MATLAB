@@ -1,4 +1,4 @@
-function [E0, Et] = dmrg_finite(H_func, n, m, sweeps)
+function [E] = dmrg_finite(H_func, n, m, sweeps)
 % DMRG_FINITE  DMRG method for solving finite 1d-nn quantum systems.
 %  [E0] = dmrg_finite(H_func, n, m, sweeps)
 %
@@ -17,6 +17,7 @@ function [E0, Et] = dmrg_finite(H_func, n, m, sweeps)
 %  sweeps is the number of back-and-forth sweeps along the chain.
 
 %! White, Steven R., "Density matrix formulation for quantum renormalization groups", PRL 69, 2863--2866 (1992), doi:10.1103/PhysRevLett.69.2863
+%! G. De Chiara et al., "Density Matrix Renormalization Group for Dummies", JCTN 5, 1277 (2008), doi:10.1166/jctn.2008.011
 
 % Ville Bergholm 2010
 
@@ -31,17 +32,19 @@ if (nargin < 4)
   end
 end
 
-% precompute ops (if constant, this is a waste)
-for k=1:n-1
-  [block{k}.S1, block{k}.S2, block{k}.h1, block{k}.h2] = H_func(k);    
-end
 
+block = cell(1, n-1);
 
 % block k:   L(1:k)|R(k+1:n), S1|S2
 % contents: HL, HR
 % vector S1: acting on the rightmost site represented by the L block
 % vector S2: acting on the leftmost site represented by the R block
 % h1, h2 likewise
+
+% precompute ops (if constant, this is a waste)
+for k=1:n-1
+  [block{k}.S1, block{k}.S2, block{k}.h1, block{k}.h2] = H_func(k);    
+end
 
 b = 1 % initial block size
 
@@ -56,88 +59,78 @@ H = H_func([n-b+1 n]);
 block{n-b} = projectR(block{n-b}, speye(length(H)), H);
 
 
-% grow chain
-%if (false)
-if (true)
+% grow the chain
+E = zeros(1,n-1);
 
-% TODO how about L*|R ?
+if (1)
+  % L*|*R scheme (heuristic)
+  for k=b+1:ceil(n/2)-1
+    % build block Hamiltonians
+    prev = k-1;
+    [HL, Ldim] = Lstar(block{prev});
+    [HR, Rdim] = starR(block{n-prev});
+
+    % NOTE the ** coupling is undefined until the blocks touch so we just make it up!
+    % The superblock Hamiltonian is formed using the left coupling only.
+    [block{k}, OL, OR, E(k)] = combine_and_truncate(block{k}, HL, HR, [Ldim Rdim], m);
+
+    % discard useless states (in the sweep phase the dims are different)
+    block{k} = rmfield(block{k}, 'state');
     
-% L*|*R scheme (heuristic)
-for k=b+1:ceil(n/2)
-  % build block Hamiltonians
-  prev = k-1;
-  [HL, Ldim] = Lstar(block{prev});
-  [HR, Rdim] = starR(block{n-prev});
+    block{k}   = projectL(block{k},   OL, HL);
+    block{n-k} = projectR(block{n-k}, OR, HR);
+  end
+
+  % half sweep to right
+  E(end+1,:) = sweep(k+1:n-b-1, true);
   
-  % superblock Hamiltonian
-  % NOTE left coupling
-  % the ** coupling is undefined until the blocks touch so we just make it up!
-  H = kron(HL, speye(length(HR))) +kron(speye(length(HL)), HR)...
-      +coupling(speye(Ldim), block{k}.S1, block{k}.S2, speye(Rdim));
-  H = 0.5*(H+H'); % eliminate rounding errors
-
-  % truncation
-  [OL, OR, block{k}.P, E0] = truncate(H, [length(HL), length(HR)], m);
-  E0
-
-  block{k} = projectL(block{k}, OL, HL);
-  block{n-k} = projectR(block{n-k}, OR, HR);
-end
-
-% half sweep to right
-sweep(k+1:n-b-1, true);
-
 else
+  % L*|**** scheme
+  ns = 4; % number of sites in the right block
 
-% L*|**** scheme
-ns = 4; % number of sites in the right block
-
-for k=b+1:n-b-1  %n-1
-  % build block Hamiltonians
-  % the L* block has k sites in it
-  prev = k-1;
-  [HL, Ldim] = Lstar(block{prev});
+  for k=b+1:n-b-1  %n-1
+    % build block Hamiltonians
+    % the L* block has k sites in it
+    [HL, Ldim] = Lstar(block{k-1});
   
-  sites = min(ns, n-k);
-  [HR, temp] = H_func([k+1, k+sites]);
-  Rdim = length(HR)/temp(1);
+    sites = min(ns, n-k);
+    [HR, temp] = H_func([k+1, k+sites]);
+    Rdim = [temp(1), length(HR)/temp(1)];
   
-  % superblock Hamiltonian
-  H = kron(HL, speye(length(HR))) +kron(speye(length(HL)), HR)...
-      +coupling(speye(Ldim), block{k}.S1, block{k}.S2, speye(Rdim));
-  H = 0.5*(H+H'); % eliminate rounding errors
+    [block{k}, OL, OR, E(k)] = combine_and_truncate(block{k}, HL, HR, [Ldim Rdim], m);
 
-  % truncation
-  [OL, OR, block{k}.P, E0] = truncate(H, [length(HL), length(HR)], m);
-  E0
+    % discard useless states (in the sweep phase the dims are different)
+    block{k} = rmfield(block{k}, 'state');
 
-  block{k} = projectL(block{k}, OL, HL);
-  %block{n-k} = projectR(block{n-k}, OR, HR);
-  % FIXME more here?
+    block{k} = projectL(block{k}, OL, HL);
+    % projectR is unnecessary here
+  end
 end
-end
-
 
 
 % actual sweeps
-range = b+1:n-b-1;
+range = b+1:n-b-1; % FIXME one more site?
 for s=1:sweeps
-  sweep(range, false);
-  sweep(range, true);
+  E(end+1,:) = sweep(range, false);
+  E(end+1,:) = sweep(range, true);
 end
 
-
-% accurate energies for comparison
-[H, dim] = H_func([1 n]);
-Et = eigs(H, 1, 'SA'); % gs energy
-E0-Et
+% measurement sweep
+%result = {};
+%sweep(range, true, M);
 
 
-function sweep(sites, sweep_right)
+
+function res = sweep(sites, sweep_right, M)
+% L*|*R sweeping
+% TODO how about L*|R ?
+
   if (~sweep_right)
     sites = fliplr(sites);
   end
 
+  res = zeros(1,n-1);
+  
   for k=sites
     % after this iteration, block k will be replaced
 
@@ -145,15 +138,8 @@ function sweep(sites, sweep_right)
     [HL, Ldim] = Lstar(block{k-1});
     [HR, Rdim] = starR(block{k+1});
     
-    % superblock Hamiltonian L(k-1)*|*R(k+1)
-    H = kron(HL, speye(length(HR))) +kron(speye(length(HL)), HR)...
-        +coupling(speye(Ldim), block{k}.S1, block{k}.S2, speye(Rdim));
-    H = 0.5*(H+H'); % eliminate rounding errors
-
-    % truncation
-    [OL, OR, block{k}.P, E0] = truncate(H, [length(HL), length(HR)], m);
-    E0
-
+    [block{k}, OL, OR, res(k)] = combine_and_truncate(block{k}, HL, HR, [Ldim Rdim], m);
+    
     if (sweep_right)
       block{k} = projectL(block{k}, OL, HL);
     else
@@ -162,35 +148,44 @@ function sweep(sites, sweep_right)
   end  
 end
 
-function [H, Ldim] = Lstar(B)
+end
+
+
+function [H, dim] = Lstar(B)
 % L* block
-  Ldim = length(B.HL);
-  sdim = length(B.h2);
-  H = kron(B.HL, speye(sdim)) +coupling(1, B.S1p, B.S2, 1) +kron(speye(Ldim), B.h2);
+  dim = [length(B.HL), length(B.h2)];
+  H = kron(B.HL, speye(dim(2))) +coupling(1, B.S1p, B.S2, 1) +kron(speye(dim(1)), B.h2);
 end
 
-function [H, Rdim] = starR(B)
+function [H, dim] = starR(B)
 % *R block
-  sdim = length(B.h1);
-  Rdim = length(B.HR);
-  H = kron(speye(sdim), B.HR) +coupling(1, B.S1, B.S2p, 1) +kron(B.h1, speye(Rdim));
+  dim = [length(B.h1), length(B.HR)];
+  H = kron(speye(dim(1)), B.HR) +coupling(1, B.S1, B.S2p, 1) +kron(B.h1, speye(dim(2)));
 end
 
-end
+function [B, OL, OR, E0] = combine_and_truncate(B, HL, HR, dim, m)
 
+  % superblock Hamiltonian
+  H = kron(HL, speye(length(HR))) +kron(speye(length(HL)), HR)...
+      +coupling(speye(dim(1)), B.S1, B.S2, speye(dim(4)));
 
+  H = 0.5*(H+H'); % eliminate rounding errors
 
-function [OL, OR, P, E0] = truncate(HS, dim, m)
-  % find ground state
-  [v,E0] = eigs(HS, 1, 'SA'); % 'SR'
-
+  % find target state
+  opts = struct();
+  if (isfield(B, 'state'))
+    opts.v0 = B.state.data; % use last round's result as a guess
+  end
+  [v,E0] = eigs(H, 1, 'SA', opts); % ground state
+  B.state = state(v, dim); % store it
+  
   % Schmidt decompose into two halves
-  s = state(v, dim);
+  s = state(v, [length(HL), length(HR)]);
   [d, u, v] = schmidt(s, [1]);
 
   keep = min(m, length(d)); % how many states to keep in A?
     
-  P = 1 - sum(d(1:keep).^2); % truncation error
+  B.P = 1 - sum(d(1:keep).^2); % truncation error
   % keep most influential states
   OL = u(:, 1:keep);
   OR = v(:, 1:keep);
