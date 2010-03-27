@@ -1,11 +1,14 @@
-function [E] = dmrg_finite(H_func, n, m, sweeps)
+function [E, block] = dmrg_finite(H_func, n, m, sweeps)
 % DMRG_FINITE  DMRG method for solving finite 1d-nn quantum systems.
-%  [E0] = dmrg_finite(H_func, n, m, sweeps)
+%  [E0, B] = dmrg_finite(H_func, n, m, sweeps)
 %
 %  Returns the approximate ground state energy for a
 %  one-dimensional chain of n sites with nearest-neighbor
 %  couplings, with a Hamiltonian defined by H_func, using a
 %  finite-system density matrix renormalization group method.
+%
+%  Also returns the DMRG block structure B which contains a
+%  description of the state.
 %
 %  [H, dim] = H_func([first, last]) should return the partial
 %  Hamiltonian and dimension vector for the sites first:last.
@@ -22,6 +25,9 @@ function [E] = dmrg_finite(H_func, n, m, sweeps)
 % Ville Bergholm 2010
 
 
+% TODO we treat block almost as a global variable here (bad form!)
+% try to eliminate embedded functions.
+
 if (nargin < 4)
   sweeps = 3;
   if (nargin < 3)
@@ -31,7 +37,6 @@ if (nargin < 4)
     end
   end
 end
-
 
 block = cell(1, n-1);
 
@@ -51,20 +56,26 @@ b = 1 % initial block size
 % initial L block
 block{b}.P = 0;
 H = H_func([1 b]);
-block{b} = projectL(block{b}, speye(length(H)), H);
+block{b}.OL = speye(length(H));
+block{b} = projectL(block{b}, H);
 
 % initial R block
 block{n-b}.P = 0;
 H = H_func([n-b+1 n]);
-block{n-b} = projectR(block{n-b}, speye(length(H)), H);
+block{n-b}.OR = speye(length(H));
+block{n-b} = projectR(block{n-b}, H);
 
 
-% grow the chain
-E = zeros(1,n-1);
+E = NaN(1,n-1);
 
+skip = 0 % skip this many end sites in the sweeps TODO automatic
+
+% initialization
 if (1)
   % L*|*R scheme (heuristic)
-  for k=b+1:ceil(n/2)-1
+  % grow the chain (only needed if n > 4)
+  temp = ceil(n/2)-1;
+  for k=b+1:temp
     % build block Hamiltonians
     prev = k-1;
     [HL, Ldim] = Lstar(block{prev});
@@ -72,17 +83,21 @@ if (1)
 
     % NOTE the ** coupling is undefined until the blocks touch so we just make it up!
     % The superblock Hamiltonian is formed using the left coupling only.
-    [block{k}, OL, OR, E(k)] = combine_and_truncate(block{k}, HL, HR, [Ldim Rdim], m);
-
-    % discard useless states (in the sweep phase the dims are different)
-    block{k} = rmfield(block{k}, 'state');
+    block{k}.state = []; % no guess
+    [block{k}, E(k)] = combine(block{k}, HL, HR, [Ldim Rdim]);
+    block{k} = truncate(block{k}, m);
     
-    block{k}   = projectL(block{k},   OL, HL);
-    block{n-k} = projectR(block{n-k}, OR, HR);
+    % copy OR transform so we can projectR
+    block{n-k}.OR = block{k}.OR;
+    
+    block{k}   = projectL(block{k},   HL);
+    block{n-k} = projectR(block{n-k}, HR);
   end
 
-  % half sweep to right
-  E(end+1,:) = sweep(k+1:n-b-1, true);
+  % rest of sweep to right
+  range = temp+1:n-b-skip;
+  block{range(1)}.state = []; % no guess
+  E(end+1,:) = sweep(range);
   
 else
   % L*|**** scheme
@@ -97,129 +112,186 @@ else
     [HR, temp] = H_func([k+1, k+sites]);
     Rdim = [temp(1), length(HR)/temp(1)];
   
-    [block{k}, OL, OR, E(k)] = combine_and_truncate(block{k}, HL, HR, [Ldim Rdim], m);
+    block{k}.state = []; % no guess
+    [block{k}, E(k)] = combine(block{k}, HL, HR, [Ldim Rdim]);
+    block{k} = truncate(block{k}, m);
 
-    % discard useless states (in the sweep phase the dims are different)
-    block{k} = rmfield(block{k}, 'state');
-
-    block{k} = projectL(block{k}, OL, HL);
+    block{k} = projectL(block{k}, HL);
     % projectR is unnecessary here
   end
 end
 
 
-% actual sweeps
-range = b+1:n-b-1; % FIXME one more site?
-for s=1:sweeps
-  E(end+1,:) = sweep(range, false);
-  E(end+1,:) = sweep(range, true);
+% sweeps
+rangeL = fliplr(b+skip:n-b-skip-1);
+rangeR = b+skip+1:n-b-skip;
+if (length(rangeL) == 0)
+  return
 end
 
-% measurement sweep
-%result = {};
-%sweep(range, true, M);
+fprintf('Sweeping')
+for s=1:sweeps
+  % so much trouble just to avoid double diagonalization at ends!
+  q = rangeR(end);
+  block{q-1}.state = guess_stateL(block{q}, block{q-1});
+  E(end+1,:) = sweep(rangeL); % left
+  
+  q = rangeL(end);
+  block{q+1}.state = guess_stateR(block{q}, block{q+1});
+  E(end+1,:) = sweep(rangeR); % right
+  
+  fprintf('.')
+end
+fprintf(' done.\n')
 
 
-
-function res = sweep(sites, sweep_right, M)
-% L*|*R sweeping
+function res = sweep(sites)
+% L*|*R sweeping (also can handle L*|*, *|*R and *|*)
 % TODO how about L*|R ?
 
-  if (~sweep_right)
-    sites = fliplr(sites);
-  end
+  res = NaN(1,n-1);
 
-  res = zeros(1,n-1);
-  
-  for k=sites
-    % after this iteration, block k will be replaced
+  % this is OK with only one site too, because then direction does not matter.
+  sweep_right = (sites(1) <= sites(end));
 
-    % build block Hamiltonians for L(k-1)* and *R(k+1)
-    [HL, Ldim] = Lstar(block{k-1});
-    [HR, Rdim] = starR(block{k+1});
-    
-    [block{k}, OL, OR, res(k)] = combine_and_truncate(block{k}, HL, HR, [Ldim Rdim], m);
-    
-    if (sweep_right)
-      block{k} = projectL(block{k}, OL, HL);
+  for q=sites
+    % after this iteration, block q will be replaced
+
+    % build block Hamiltonians for L(q-1)* and *R(q+1)
+    if (q==1)
+        % just *|, no L
+        Ldim = [1, length(block{q}.h1)];
+        HL = block{q}.h1;
     else
-      block{k} = projectR(block{k}, OR, HR);
+        [HL, Ldim] = Lstar(block{q-1});
     end
-  end  
+
+    if (q == n-1)
+        % just |*, no R
+        Rdim = [length(block{q}.h2), 1];
+        HR = block{q}.h2;
+    else
+        [HR, Rdim] = starR(block{q+1});
+    end
+
+    [block{q}, res(q)] = combine(block{q}, HL, HR, [Ldim Rdim]);
+    block{q} = truncate(block{q}, m);
+    
+    % are we at the endpoint?
+    if (q == sites(end))
+      % endpoint, both projections, no guessing
+      block{q} = projectR(block{q}, HR);
+      block{q} = projectL(block{q}, HL);
+      return
+    end
+
+    % trailing projection, forward guess
+    if (sweep_right)
+      block{q} = projectL(block{q}, HL);
+      block{q+1}.state = guess_stateR(block{q}, block{q+1});
+    else
+      block{q} = projectR(block{q}, HR);
+      block{q-1}.state = guess_stateL(block{q}, block{q-1});
+    end
+  end
 end
 
 end
 
+
+% White's state prediction
+function s = guess_stateR(B, C)
+% make a guess towards the right
+  dim = B.state.dim;
+  O1 = B.OL';
+  O2 = C.OR;
+  c = length(C.h2);
+  dd = [size(O1,1), length(C.h1), c, size(O2,1)/c];
+  s = state(kron(speye(size(O1, 1)*dim(3)), O2)*(kron(O1, speye(prod(dim(3:4))))*B.state.data), dd);
+end
+      
+function s = guess_stateL(B, A)
+  dim = B.state.dim;
+  O1 = B.OR';
+  O2 = A.OL;
+  a = length(A.h1);
+  dd = [size(O2,1)/a, a, length(A.h2), size(O1,1)];
+  s = state(kron(O2, speye(dim(2)*size(O1, 1)))*(kron(speye(prod(dim(1:2))), O1)*B.state.data), dd);
+end
+
+
+function C = coupling(S1, S2)
+% C = \sum_k S1_k * S2_k
+  C = sparse(0);
+  for k=1:length(S1)
+    C = C +kron(S1{k}, S2{k});
+  end
+end
 
 function [H, dim] = Lstar(B)
 % L* block
   dim = [length(B.HL), length(B.h2)];
-  H = kron(B.HL, speye(dim(2))) +coupling(1, B.S1p, B.S2, 1) +kron(speye(dim(1)), B.h2);
+  H = kron(B.HL, speye(dim(2))) +coupling(B.S1p, B.S2) +kron(speye(dim(1)), B.h2);
 end
 
 function [H, dim] = starR(B)
 % *R block
   dim = [length(B.h1), length(B.HR)];
-  H = kron(speye(dim(1)), B.HR) +coupling(1, B.S1, B.S2p, 1) +kron(B.h1, speye(dim(2)));
+  H = kron(speye(dim(1)), B.HR) +coupling(B.S1, B.S2p) +kron(B.h1, speye(dim(2)));
 end
 
-function [B, OL, OR, E0] = combine_and_truncate(B, HL, HR, dim, m)
+function [B, E0] = combine(B, H_L, H_R, dim)
+% NOTE: H_L and H_R are untruncated ops (unlike B.HL and B.HR)
 
   % superblock Hamiltonian
-  H = kron(HL, speye(length(HR))) +kron(speye(length(HL)), HR)...
-      +coupling(speye(dim(1)), B.S1, B.S2, speye(dim(4)));
+  H = kron(H_L, speye(length(H_R))) +kron(speye(length(H_L)), H_R)...
+      +mkron(speye(dim(1)), coupling(B.S1, B.S2), speye(dim(4)));
 
   H = 0.5*(H+H'); % eliminate rounding errors
 
-  % find target state
+  % find target state TODO other targets?
   opts = struct();
-  if (isfield(B, 'state'))
-    opts.v0 = B.state.data; % use last round's result as a guess
+  if (isa(B.state, 'state'))
+    opts.v0 = B.state.data;
   end
   [v,E0] = eigs(H, 1, 'SA', opts); % ground state
   B.state = state(v, dim); % store it
-  
-  % Schmidt decompose into two halves
-  s = state(v, [length(HL), length(HR)]);
-  [d, u, v] = schmidt(s, [1]);
 
-  keep = min(m, length(d)); % how many states to keep in A?
+  %if (~isscalar(guess))
+  %  guess_fidelity = fidelity(guess, B.state) % test
+  %end
+end
+
+function B = truncate(B, m)
+  % Schmidt decompose block state (4 components) into two halves
+  [d, u, v] = schmidt(B.state, [1 2]);
+
+  keep = min(m, length(d)); % how many states to keep?
     
   B.P = 1 - sum(d(1:keep).^2); % truncation error
   % keep most influential states
-  OL = u(:, 1:keep);
-  OR = v(:, 1:keep);
+  B.OL = u(:, 1:keep);
+  B.OR = v(:, 1:keep);    
 end
 
-
-function B = projectL(B, O, H)
-  B.HL = O'*H*O; % project the block left Hamiltonian
+function B = projectL(B, H)
+  B.HL = B.OL'*H*B.OL; % project the block left Hamiltonian
   
   % project S1 into the new block
   % we don't need h1 because it's already included in H
-  temp = speye(length(O)/length(B.S1{1}));
+  temp = speye(length(B.OL)/length(B.S1{1}));
   for k=1:length(B.S1)
-    B.S1p{k} = O'*kron(temp, B.S1{k})*O;
+    B.S1p{k} = B.OL'*kron(temp, B.S1{k})*B.OL;
   end
 end
 
-function B = projectR(B, O, H)
-  B.HR = O'*H*O; % project the block right Hamiltonian
+function B = projectR(B, H)
+  B.HR = B.OR'*H*B.OR; % project the block right Hamiltonian
 
   % project S2 into the new block
   % we don't need h2 because it's already included in H
-  temp = speye(length(O)/length(B.S2{1}));
+  temp = speye(length(B.OR)/length(B.S2{1}));
   for k=1:length(B.S2)
-    B.S2p{k} = O'*kron(B.S2{k}, temp)*O;
+    B.S2p{k} = B.OR'*kron(B.S2{k}, temp)*B.OR;
   end
-end
-
-
-function C = coupling(IA, S1, S2, IB)
-% C = \sum_k IA * S1_k * IB * S2_k
-  C = sparse(0);
-  for k=1:length(S1)
-    C = C +kron(S1{k}, S2{k});
-  end
-  C = mkron(IA, C, IB);
 end
