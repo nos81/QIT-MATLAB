@@ -22,11 +22,11 @@ else
   iH = 0;
 end
 
-A = A(:); % FIXME
+n_A = prod(size(A));
 
 L = 0;
 acomm = 0;
-for k=1:length(A)
+for k=1:n_A
   acomm = acomm +0.5 * A{k}' * A{k};
   L = L +lrmul(A{k}, A{k}'); 
 end

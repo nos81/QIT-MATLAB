@@ -4,7 +4,7 @@
 tol = qit.tol;
 
 dim = 5;
-
+H = rand_hermitian(dim);
 
 % random matrices
 U = rand_U(dim);
@@ -33,3 +33,12 @@ assert_o(norm(L*rho*R -inv_vec(lrmul(L, R)*vec(rho))), 0, tol)
 assert_o(norm(L*rho -inv_vec(lmul(L)*vec(rho))), 0, tol)
 assert_o(norm(rho*R -inv_vec(rmul(R)*vec(rho))), 0, tol)
 
+
+% spectral decomposition
+[E, P] = spectral_decomposition(H);
+m = length(E); % unique eigenvalues
+temp = 0;
+for k=1:length(E)
+  temp = temp + E(k)*P{k};
+end
+assert_o(norm(temp-H), 0, tol);
