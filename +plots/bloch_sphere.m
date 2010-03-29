@@ -29,5 +29,5 @@ plot3(0,0,-1,'b.');
 text(0, 0,  1.1, '|0>');
 text(0, 0, -1.1, '|1>');
 if nargin==1
-    vectarrow([0;0;0],bloch_vector(s));
+    plots.vectarrow([0;0;0],bloch_vector(s));
 end
