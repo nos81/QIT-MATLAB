@@ -29,8 +29,7 @@ for k=2:n_baths
   end
 end
 
-
-% Lindblad ops
+% jump ops
 [dH, X] = markov.ops(H, D);
 
 iH_LS = 0;
