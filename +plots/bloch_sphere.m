@@ -1,12 +1,15 @@
-function h = bloch_sphere()
+function h = bloch_sphere(s)
 % BLOCH_SPHERE  Bloch sphere plot.
-%  h = bloch_sphere()
+%  h = bloch_sphere(s)
 %
 %  Plots a Bloch sphere, a geometrical representation of the state space of a single qubit.
 %  Pure states are on the surface of the sphere, nonpure states inside it.
 %  The states |0> and |1> lie on the north and south poles of the sphere, respectively.
+%
+%  s is a two dimensional state to be plotted.
 
-% Ville Bergholm 2005-2009
+% James Whitfield 2010
+% Ville Bergholm  2005-2009
 
 
 [X,Y,Z] = sphere(40);
@@ -25,3 +28,6 @@ plot3(0,0,-1,'b.');
 
 text(0, 0,  1.1, '|0>');
 text(0, 0, -1.1, '|1>');
+if nargin==1
+    vectarrow([0;0;0],bloch_vector(s));
+end
