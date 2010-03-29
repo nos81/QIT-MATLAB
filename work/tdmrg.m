@@ -42,12 +42,21 @@ for k=1:kkk
     [block{q}.S1, block{q}.S2, block{q}.h1, block{q}.h2] = H_func(q);
 
     [H, dim] = starstar(block{q});
+    
+    if (q == 1)
+      % symmetric sum, h1/2, h2/2, extra halves at ends
+      H = H +kron(block{q}.h1/2, speye(dim(2)));
+    end
+    
     if (q == n-1)
       % last block, reverse direction
       sweep_right = false;
       
-      H = H +kron(speye(dim(1)), block{q}.h2); % add h_n term (this is left-right unsymmetric!)
-      % TODO consider symmetric sum, h1/2, h2/2, extra halves at ends
+      %H = H +kron(speye(dim(1)), block{q}.h2); % add h_n term(this is left-right unsymmetric!)
+
+      % symmetric sum, h1/2, h2/2, extra halves at ends
+      H = H +kron(speye(dim(1)), block{q}.h2/2);
+
       ddt = dt; % full step (since we do it just once)
     else
       ddt = dt/2; % half step
@@ -110,8 +119,12 @@ end
 function [H, dim] = starstar(B)
 % ** block
   dim = [length(B.h1), length(B.h2)];
-  H = kron(B.h1, speye(dim(2))) +coupling(B.S1, B.S2) +kron(speye(dim(1)), B.h2);
-  % TODO TEST only include h1 here, h2 only in last cell
+
+  % TEST only include h1 here, h2 only in last cell
+  %H = kron(B.h1, speye(dim(2))) +coupling(B.S1, B.S2);% +kron(speye(dim(1)), B.h2);
+
+  % symmetric version, include only half of local terms at each block
+  H = kron(B.h1/2, speye(dim(2))) +coupling(B.S1, B.S2) +kron(speye(dim(1)), B.h2/2);
 end
 
 

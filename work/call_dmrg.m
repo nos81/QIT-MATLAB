@@ -7,28 +7,29 @@ n = length(dims)
 
 % unsymmetric chain!
 %J = @(k,s) cos(0.5*pi*(k-1)/n);
-J = @(k,s) cos(pi*(k-1)/n);
+J = @(k,s) cos(0.05 + pi*(k-1)/n);
 %J = @(k,s) 2*heaviside(k-n/2 +0.1)-1;
 %J = @(k,s) -1;
 
 %h = @(k) 0; 
-h = @(k) cos(2.1*pi*(k-1)/n);
-% BUG dmrg_finite randomly messes up sz(n)
-% (also the state(n-1)) if n == 4
+h = @(k) cos(0.05 + 2.4*pi*(k-1)/n);
+% NOTE if a site happens to be uncoupled from the rest of the chain
+% and has a negligible local H (within numerical precision), its
+% ground state is ill-defined and thus more or less random!
 
 
 Hfunc = @(ss) hamiltonian.heisenberg(dims, J, h, ss);
 
-m = 10
+m = 15
 [E, blo] = dmrg_finite(Hfunc, n, m, 3);
 
 
-oplist = {{qit.sz, 1}, {qit.sz, n}, {qit.sz, 1; qit.sz, 2}}; %, {qit.sz, 2; qit.sz, 3}};
+oplist = {{qit.sz, 1}, {qit.sz, 2}, {qit.sz, n-1}, {qit.sz, n}, {qit.sz, 1; qit.sz, 2}}; %, {qit.sz, 2; qit.sz, 3}};
 
-% another H for propagation
-H2func = @(ss) hamiltonian.heisenberg(dims, J, 0, ss);
-t = 2.174
-blo = tdmrg(blo, H2func, t, m)
+% another H for t propagation
+%H2func = @(ss) hamiltonian.heisenberg(dims, J, 0, ss);
+%t = 2.174
+%blo = tdmrg(blo, H2func, t, m)
 
 if (n <= 6)
   % accurate energies for comparison
@@ -38,8 +39,9 @@ if (n <= 6)
   s = state(v(:,1), dim);
   Et = d(1,1);
 
-  [K, dim] = H2func([1 n]);
-  s = u_propagate(s, expm(-i*t*K));
+  % exact t propagation
+  %[K, dim] = H2func([1 n]);
+  %s = u_propagate(s, expm(-i*t*K));
   
   for k=1:length(oplist)
     sss(k) = ev(s, op_list({oplist{k}}, dim));
@@ -52,8 +54,9 @@ end
 %figure
 %semilogy(E.')
 
-res = dmrg_measure(blo, oplist)
+res = cell2mat(dmrg_measure(blo, oplist))
 sss
+res-sss
 
 
 
