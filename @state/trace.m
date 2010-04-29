@@ -1,5 +1,5 @@
 function x = trace(s)
-% STATE/TRACE  Trace of the state operator.
+% TRACE  Trace of the state operator.
 %  x = trace(s)
 %
 %  Returns the trace of the state operator of quantum state s.

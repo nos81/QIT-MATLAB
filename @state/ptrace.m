@@ -1,5 +1,5 @@
 function s = ptrace(s, sys)
-% STATE/PTRACE  Partial trace.
+% PTRACE  Partial trace.
 %  x = ptrace(s, sys)
 %  x = ptrace(s, [2 3]) % trace over subsystems 2 and 3 of state s
 %

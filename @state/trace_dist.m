@@ -1,5 +1,5 @@
 function D = trace_dist(r, s)
-% STATE/TRACE_DIST  Trace distance of two states.
+% TRACE_DIST  Trace distance of two states.
 %  D = trace_dist(r, s)
 %
 %  Trace distance between state operators r and s is defined as

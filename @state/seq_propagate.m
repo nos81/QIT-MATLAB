@@ -1,5 +1,5 @@
 function [out, t] = seq_propagate(s, seq, out_func)
-% STATE/PROPAGATE  Propagate the state in time using a control sequence.
+% SEQ_PROPAGATE  Propagate the state in time using a control sequence.
 %  [out, t] = propagate(s, seq, out_func)
     
 % Ville Bergholm 2009

@@ -1,5 +1,5 @@
 function s = minus(s, t)
-% STATE/MINUS  Subtraction of states.
+% MINUS  Subtraction of states.
 %  q = minus(s, t)
 %
 %  Returns the difference of s and t.

@@ -1,5 +1,5 @@
 function p = prob(s)
-% STATE/PROB  Measurement probabilities of the state in the computational basis.
+% PROB  Measurement probabilities of the state in the computational basis.
 %  p = prob(s)
 %
 %  Vector p holds the probabilities of finding a system

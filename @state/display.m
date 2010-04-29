@@ -1,5 +1,5 @@
 function display(s, short)
-% STATE/DISPLAY  Print the state in a neat format.
+% DISPLAY  Print the state in a neat format.
 
 % Ville Bergholm 2008-2010
 

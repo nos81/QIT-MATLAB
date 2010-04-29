@@ -1,5 +1,5 @@
 function s = kraus_propagate(s, E)
-% STATE/KRAUS_PROPAGATE  Apply a quantum operation to the state.
+% KRAUS_PROPAGATE  Apply a quantum operation to the state.
 %  s1 = kraus_propagate(s0, E)
 %
 %  Applies the quantum operation E on the state s0.

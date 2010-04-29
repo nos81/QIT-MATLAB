@@ -1,5 +1,5 @@
 function [lambda, v, u] = schmidt(s, sys)
-% STATE/SCHMIDT  Schmidt decomposition.
+% SCHMIDT  Schmidt decomposition.
 %  lambda = schmidt(s, sys)
 %  [lambda, u, v] = schmidt(s, sys)
 %
@@ -41,7 +41,7 @@ d1 = prod(s.dim(sys));
 d2 = prod(s.dim(compl));
 perm = [sys, compl];
 
-if (perm == 1:n)
+if all(perm == 1:n)
   % do nothing
 else
   % reorder the system according to the partitioning

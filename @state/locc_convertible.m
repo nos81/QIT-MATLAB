@@ -1,5 +1,5 @@
 function res = locc_convertible(s, t, sys)
-% STATE/LOCC_CONVERTIBLE  LOCC convertibility of states.
+% LOCC_CONVERTIBLE  LOCC convertibility of states.
 %  res = locc_convertible(s, t, sys)
 %
 %  For bipartite pure states s and t, returns true if s can be converted to t

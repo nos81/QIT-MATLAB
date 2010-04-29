@@ -1,5 +1,5 @@
 function s = normalize(s)
-% STATE/NORMALIZE  Normalize the state.
+% NORMALIZE  Normalize the state.
 %  q = normalize(s)
 %
 %  Returns the state s normalized.

@@ -1,5 +1,5 @@
 function C = concurrence(s, sys)
-% STATE/CONCURRENCE  Concurrence of the state.
+% CONCURRENCE  Concurrence of the state.
 %  C = concurrence(s, sys)
 %
 %  Returns the concurrence of the state s wrt. the partitioning

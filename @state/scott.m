@@ -1,5 +1,5 @@
 function Q = scott(s, m)
-% STATE/SCOTT  Scott's average bipartite entanglement measure.
+% SCOTT  Scott's average bipartite entanglement measure.
 %  Q = scott(s, m)
 %
 %  Returns the vector Q containing the terms of the Scott entanglement measure

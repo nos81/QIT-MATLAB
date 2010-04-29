@@ -1,5 +1,5 @@
 function s = fix_phase(s)
-% STATE/FIX_PHASE  Apply a global phase convention to a ket state.
+% FIX_PHASE  Apply a global phase convention to a ket state.
 %
 %  q = fix_phase(s)
 %

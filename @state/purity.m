@@ -1,5 +1,5 @@
 function p = purity(s)
-% STATE/PURITY  Purity of the state.
+% PURITY  Purity of the state.
 %  p = purity(s)
 %
 %  Returns the purity of the state, p = trace(\rho^2).

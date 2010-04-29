@@ -1,5 +1,5 @@
 function s = mtimes(a, b)
-% STATE/MTIMES  Multiplication of the state by a scalar.
+% MTIMES  Multiplication of the state by a scalar.
 %  q = times(a, s)
 %  q = times(s, a)
 %

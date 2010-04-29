@@ -1,5 +1,5 @@
 function s = ptranspose(s, sys)
-% STATE/PTRANSPOSE  Partial transpose.
+% PTRANSPOSE  Partial transpose.
 %  x = ptranspose(s, sys);
 %  x = ptranspose(s, [1 3]);  % transpose subsystems 1 and 3 of state s
 %

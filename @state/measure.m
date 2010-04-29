@@ -1,5 +1,5 @@
 function [p, res, s] = measure(s, M)
-% STATE/MEASURE  Quantum measurement.
+% MEASURE  Quantum measurement.
 %  [p, res, s]
 %    = measure(s)                % measure the entire system projectively
 %    = measure(s, [1 4])         % measure subsystems 1 and 4 projectively

@@ -1,5 +1,5 @@
 function s = plus(s, t)
-% STATE/PLUS  Addition of states.
+% PLUS  Addition of states.
 %  q = plus(s, t)
 %
 %  Returns the sum of s and t.

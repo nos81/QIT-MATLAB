@@ -1,5 +1,5 @@
 function s = reorder(s, p)
-% STATE/REORDER  Change the order of subsystems in a state.
+% REORDER  Change the order of subsystems in a state.
 %  x = reorder(s, perm);
 %  x = reorder(s, [2 4 3 1]); % reorder the subsystems of s to the order given
 %  x = reorder(s, [2 5]);     % swap subsystems 2 and 5

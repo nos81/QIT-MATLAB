@@ -1,5 +1,5 @@
 function F = fidelity(r, s)
-% STATE/FIDELITY  Fidelity of two states.
+% FIDELITY  Fidelity of two states.
 %  F = fidelity(rho, sigma)
 %
 %  Fidelity of two state operators \rho and \sigma is defined as

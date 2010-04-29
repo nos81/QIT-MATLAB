@@ -1,5 +1,5 @@
 function s = u_propagate(s, U)
-% STATE/U_PROPAGATE  Propagate the state using a unitary.
+% U_PROPAGATE  Propagate the state using a unitary.
 %  q = propagate(s, U)
 %
 %  Propagates the state s using the unitary propagator U,

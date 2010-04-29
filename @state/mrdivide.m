@@ -1,5 +1,5 @@
 function s = mrdivide(s, a)
-% STATE/MRDIVIDE  Division of the state by a scalar from the right.
+% MRDIVIDE  Division of the state by a scalar from the right.
 %  q = rdivide(s, a)
 %
 %  Returns the state s divided by the scalar a.

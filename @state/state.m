@@ -24,7 +24,7 @@ classdef state
     %  x = state(rand(4,1));        % ket, dim = 4
     %  x = state(rand(4,1), [2 2]); % ket, two qubits
     %  x = state(rand(4));          % state operator, dim = 4
-    %  x = state(rand(6), [3 2]);   % state operator, qutrit+qubit
+    %  x = state(rand_positive(6), [3 2]); % state operator, qutrit+qubit
     %  x = state('GHZ', [2 2 2]);   % three-qubit GHZ state
     %
     %  The currently supported named states are GHZ (Greenberger-Horne-Zeilinger) and W.
@@ -89,7 +89,7 @@ classdef state
         end
         muls = fliplr(circshift(cumprod(fliplr(dim)), [0 1]));
         muls(end) = 1;
-        ind = muls*s';
+        ind = muls*s.';
         s = zeros(prod(dim), 1);
         s(ind+1) = 1; % MATLAB indexing starts at 1
       end
@@ -102,7 +102,11 @@ classdef state
         end
 
         ind = s;
-        s = zeros(prod(dim), 1);
+        temp = prod(dim); % total number of states
+        if (ind >= temp)
+          error('Invalid basis ket.')
+        end
+        s = zeros(temp, 1);
         s(ind+1) = 1; % MATLAB indexing starts at 1
 
       else
@@ -133,7 +137,7 @@ classdef state
     end
 
     function x = subsref(s, index)
-    % STATE/SUBSREF  Direct access to the data members.
+    % SUBSREF  Direct access to the data members.
       switch (index.type)
 	case '.'
 	  switch (index.subs)
@@ -151,7 +155,7 @@ classdef state
     end
 
     function sys = clean_selection(s, sys)
-    % STATE/CLEAN_SELECTION  Internal helper, makes a subsystem set unique and sorted.
+    % CLEAN_SELECTION  Internal helper, makes a subsystem set unique and sorted.
       sys = intersect(1:length(s.dim), sys);
     end
   end

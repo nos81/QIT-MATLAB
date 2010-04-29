@@ -1,5 +1,5 @@
 function s = to_ket(s)
-% STATE/TO_KET  Convert state representation into a ket (if possible).
+% TO_KET  Convert state representation into a ket (if possible).
 %
 %  q = to_ket(s)
 %

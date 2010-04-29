@@ -1,5 +1,5 @@
 function N = negativity(s, sys)
-% STATE/NEGATIVITY  Negativity of the state.
+% NEGATIVITY  Negativity of the state.
 %  N = negativity(s, sys)
 %
 %  Returns the negativity of the state s wrt. the partitioning
