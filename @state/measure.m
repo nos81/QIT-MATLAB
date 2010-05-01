@@ -1,4 +1,4 @@
-function [p, res, s] = measure(s, M)
+function [p, res, s] = measure(s, M, discard)
 % MEASURE  Quantum measurement.
 %  [p, res, s]
 %    = measure(s)                % measure the entire system projectively
@@ -70,32 +70,39 @@ elseif (isnumeric(M))
   m = muls(end); % number of possible results
   muls(end) = 1; % now muls == [..., d_s{q-1}*d_s{q}, d_s{q}, 1]
 
-
   % sum the probabilities
   born = prob(s);
   for j=1:m
-    % build projector to state j (diagonal because we project into the computational basis)
-    stencil = ones(1, dims(1)); % first identity
-    for k=1:q
-      temp = zeros(1, dims(2*k));
-      temp(mod(floor((j-1)/muls(k)), dims(2*k))+1) = 1; % projector
-      stencil = kron(kron(stencil, temp), ones(1, dims(2*k+1))); % identity
-    end
+    stencil = build_stencil(j, q, dims, muls);
     p(j) = stencil*born; % inner product
-    projector{j} = stencil;
   end
 
   if (nargout >= 2)
     res = rand_measure(p);
     if (nargout >= 3)
-      R = projector{res}; % each projector is diagonal, hence we only store the diagonal
-      
-      if (size(s.data, 2) == 1)
-        % state vector
-        s.data = R' .* s.data / sqrt(p(res)); % collapsed state
+      R = build_stencil(res, q, dims, muls); % each projector is diagonal, hence we only store the diagonal
+
+      if (nargin == 3 && discard)
+        % discard the measured subsystems from s
+        
+        s.dim(sys) = [];
+        keep = find(R);  % indices of elements to keep
+        
+        if (size(s.data, 2) == 1)
+          % state vector
+          s.data = s.data(keep) / sqrt(p(res)); % collapsed state
+        else
+          % state operator
+          s.data = s.data(keep, keep) / p(res); % collapsed state
+        end
       else
-        % state operator
-        s.data = (R'*R) .* s.data / p(res); % collapsed state, HACK
+        if (size(s.data, 2) == 1)
+          % state vector
+          s.data = R.' .* s.data / sqrt(p(res)); % collapsed state
+        else
+          % state operator
+          s.data = (R.'*R) .* s.data / p(res); % collapsed state, HACK
+        end
       end
     end
   end
@@ -167,6 +174,16 @@ end
 end
 
 
+function stencil = build_stencil(j, q, dims, muls)
+% build projector to state j (diagonal because we project into the computational basis)
+
+stencil = ones(1, dims(1)); % first identity
+for k=1:q
+  temp = sparse(1, dims(2*k));
+  temp(mod(floor((j-1)/muls(k)), dims(2*k))+1) = 1; % projector
+  stencil = kron(kron(stencil, temp), ones(1, dims(2*k+1))); % identity
+end
+end
 
 function r = rand_measure(p)
 % random measurement
