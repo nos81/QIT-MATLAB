@@ -15,9 +15,9 @@ pause
 adiabatic_qc(5, 3);
 pause
 
-phase_estimation(5, rand_U(4));
+phase_est(5, rand_U(4));
 title('Phase estimation, eigenstate')
-phase_estimation(5, rand_U(4), state(0, [4]));
+phase_est(5, rand_U(4), state(0, [4]));
 title('Phase estimation, random state')
 pause
 
@@ -28,6 +28,10 @@ quantum_channels(0.3)
 pause
 
 grover_search(6);
+pause
+
+shor_factorization(9);
+shor_factorization(311*269, true);
 pause
 
 bb84(40);
