@@ -1,5 +1,5 @@
 function L = superop(H, D, baths)
-% MARKOV/SUPEROP  Liouvillian superoperator for a Born-Markov system.
+% SUPEROP  Liouvillian superoperator for a Born-Markov system.
 %
 %  L = superop(H, D, B)
 %

@@ -1,5 +1,5 @@
 function [g, s] = corr(b, x)
-% BATH/CORR  Bath spectral correlation tensor.
+% CORR  Bath spectral correlation tensor.
 %
 %  [g, s] = corr(bath, dH)  % returns Gamma(omega0 * dH)/omega0, see below
 %

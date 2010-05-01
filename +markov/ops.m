@@ -1,5 +1,5 @@
 function [dH, A] = ops(H, D)
-% MARKOV/OPS  Jump operators for a Born-Markov master equation.
+% OPS  Jump operators for a Born-Markov master equation.
 %  [dH, A] = ops(H, D)
 %
 %  Builds the jump operators for a Hamiltonian operator H and

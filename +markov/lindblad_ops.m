@@ -1,5 +1,5 @@
 function [L, H_LS] = lindblad_ops(H, D, baths)
-% MARKOV/LINDBLAD_OPS
+% LINDBLAD_OPS  Lindblad operators for a Born-Markov master equation.
 %  [L, H_LS] = lindblad_ops(H, D, B)
 %
 %  Builds the Lindblad operators corresponding to a

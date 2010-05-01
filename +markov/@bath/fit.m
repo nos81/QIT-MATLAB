@@ -1,5 +1,5 @@
 function [H, D] = fit(b, delta, T1, T2)
-% BATH/FIT  Qubit-bath coupling that reproduces given decoherence times.
+% FIT  Qubit-bath coupling that reproduces given decoherence times.
 %
 %   [H, D] = fit(b, delta, T1, T2)
 %
