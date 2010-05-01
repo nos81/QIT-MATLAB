@@ -13,14 +13,16 @@ function out = controlled(U, ctrl)
 
 
 % no control, control on zero, control on one
-c = {[1 1], [1 0], [0 1]} ;
+c = {[1; 1], [1; 0], [0; 1]} ;
 
 t = length(ctrl);
-pass = 1;
+T = 2^t;
+
+pass = sparse(1);
 for k=1:t
     pass = kron(pass, c{ctrl(k)+2});
 end
 
-fail = ones(1, 2^t) - pass;
+fail = sparse(1) - pass;
 n = size(U,1);
-out = diag(kron(fail, ones(1,n))) + kron(diag(pass), U);
+out = kron(spdiags(fail, 0, T, T), speye(n)) + kron(spdiags(pass, 0, T, T), U);
