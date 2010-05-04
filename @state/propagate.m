@@ -1,14 +1,19 @@
 function out = propagate(s, H, t, varargin)
-% STATE/PROPAGATE  Propagate the state in time using a Hamiltonian or a Liouvillian.
+% PROPAGATE  Propagate the state continuously in time.
 %
 %  out = propagate(s, H, t [, out_func, odeopts])
 %  out = propagate(s, L, t [, out_func, odeopts])
+%  out = propagate(s, {H, {A_i}}, t [, out_func, odeopts])
 %
-%  Propagates the state s using the Hamiltonian H for the time t,
+%  Propagates the state s using the given generator(s) for the time t,
 %  returns the resulting state.
 %
-%  H can either be a matrix or, for time-dependent Hamiltonians, a function handle.
-%  The H function must take a time instance as input and return the corresponding H matrix.
+%  The generator can either be a Hamiltonian matrix H or, for time-dependent
+%  Hamiltonians, a function handle H(t) which takes a time instance t
+%  as input and return the corresponding H matrix.
+%
+%  Alternatively, the generator can also be a Liouvillian superoperator, or
+%  a list consisting of a Hamiltonian and a list of Lindblad operators.
 %
 %  If t is a vector of increasing time instances, returns a cell array
 %  containing the propagated state for each time given in t.
@@ -16,33 +21,72 @@ function out = propagate(s, H, t, varargin)
 %  Optional parameters (can be given in any order):
 %    out_func: If given, for each time instance propagate returns out_func(s(t), H(t)).
 %    odeopts:  Options struct for MATLAB ODE solvers from the odeset function.
-%
+
 %  out == expm(-i*H*t)*|s>
 %  out == inv_vec(expm(L*t)*vec(\rho_s))
-
 
 % Ville Bergholm 2008-2010
 % James Whitfield 2009
 
 
 if (nargin < 3)
-  error('Needs a state, a Hamiltonian and a time.');
+  error('Needs a state, a generator and a time.');
 end
 
-out_func    = @(x,h) x; % if no out_func is given, use a NOP
-odeopts = [];
-t_dependent = false; % time independent Hamiltonian by default
+out_func = @(x,h) x; % if no out_func is given, use a NOP
 
-if (isnumeric(H))
-  % time independent
-  d = size(H, 2);
-elseif (isa(H, 'function_handle'))
+odeopts = odeset('RelTol', 1e-4, 'AbsTol', 1e-6, 'Vectorized', 'on');
+
+n = length(t); % number of time instances we are interested in
+out = cell(1, n);
+dim = size(s.data); % system dimension
+
+if (isa(H, 'function_handle'))
   % time dependent
   t_dependent = true;
-  d = size(H(0), 2);
+  F = H;
+  H = F(0);
 else
-  error('The Hamiltonian parameter has to be either a matrix or a function handle.')
+  % time independent
+  t_dependent = false;
 end
+
+if (isnumeric(H))
+  % matrix
+  dim_H = size(H, 2);
+
+  if (dim_H == dim(1))
+    gen = 'H';
+  elseif (dim_H == dim(1)^2)
+    gen = 'L';
+    s = to_op(s);
+  else
+    error('Dimension of the generator does not match the dimension of the state.');
+  end
+  
+elseif (iscell(H))
+  % list of Lindblad operators
+  dim_H = size(H{1}, 2);
+  if (dim_H == dim(1))
+    gen = 'A';
+    s = to_op(s);
+
+    % HACK, in this case we use ode45 anyway
+    if (~t_dependent)
+      t_dependent = true; 
+      F = @(t) H; % ops stay constant
+    end
+  else
+    error('Dimension of the Lindblad ops does not match the dimension of the state.');
+  end
+
+else
+  error(['The second parameter has to be either a matrix, a cell array, '...
+         'or a function handle that returns a matrix or a cell array.'])
+end
+
+dim = size(s.data); % may have been switched to operator representation
+
 
 % process optional arguments
 for k=1:nargin-3
@@ -51,7 +95,7 @@ for k=1:nargin-3
       out_func = varargin{k};
 
     case 'struct'
-      odeopts = varargin{k};
+      odeopts = odeset(odeopts, varargin{k});
 
     otherwise
       error('Unknown optional parameter type.');
@@ -59,47 +103,62 @@ for k=1:nargin-3
 end
 
 
-n = length(t); % number of time instances we are interested in
-out = cell(1, n);
+% derivative functions for the solver
 
-temp = size(s.data, 1); % system dimension
+function d = lindblad_fun(t, y, F)
+  X = F(t);
+  A = X{2};
+  A = A(:);
 
-if (d == temp)
-  % Hamiltonian evolution
-  superop = false;
-elseif (d == temp^2)
-  % Liouvillian superoperator evolution
-  superop = true;
-
-  s = to_op(s);
-  s0 = vec(s.data); % state operator, arranged as a col vector
-else
-  error('Dimension of the Hamiltonian does not match the dimension of the state.');
+  d = zeros(size(y));
+  % lame vectorization
+  for k=1:size(y, 2)
+    x = reshape(y(:,k), dim); % into a matrix
+  
+    % Hamiltonian
+    temp = -i * (X{1} * x  -x * X{1});
+    % Lindblad operators
+    for j=1:length(A)
+      ac = A{j}'*A{j};
+      temp = temp +A{j}*x*A{j}' -0.5*(ac*x + x*ac);
+    end
+    d(:,k) = temp(:); % back into a vector
+  end
 end
 
-
-% mixed states require a little extra effort
-ddd = size(s.data);
-function d = mixed_fun(t, y, H)
-  y = reshape(y, ddd); % into a matrix
-  d = -i * (H(t) * y  -y * H(t)); % derivative for the solver
-  d = d(:); % back into a vector
+function d = mixed_fun(t, y, F)
+  H = F(t);
+  % vectorization
+  for k=1:size(y, 2)
+    x = reshape(y(:,k), dim); % into a matrix
+    temp = -i * (H * x  -x * H);
+    d(:,k) = temp(:); % back into a vector
+  end
 end
+
 
 if (t_dependent)
   % time dependent case, use ODE solver
 
-  if (superop == false)
-    s0 = s.data;
-    if (ddd(2) == 1)
-      % pure
-      odefun = @(t, y, H) -i * H(t) * y; % derivative function for the solver
-    else
-      % mixed
-      odefun = @mixed_fun;
-    end
-  else
-    odefun = @(t, y, H) H(t) * y;
+  switch (gen)
+    case 'H'
+      % Hamiltonian
+      if (dim(2) == 1)
+        % pure state
+        odefun = @(t, y, F) -i * F(t) * y; % derivative function for the solver
+      else
+        % mixed state
+        odefun = @mixed_fun;
+      end
+
+    case 'L'
+      % Liouvillian
+      odefun = @(t, y, F) F(t) * y;
+      %odeopts = odeset(odeopts, 'Jacobian', F);
+
+    case 'A'
+      % Hamiltonian and Lindblad operators in a list
+      odefun = @lindblad_fun;
   end
 
   skip = 0;
@@ -114,39 +173,46 @@ if (t_dependent)
 
   %odeopts = odeset(odeopts, 'OutputFcn', @(t,y,flag) odeout(t, y, flag, H));
 
-  [t_out, s_out] = ode45(odefun, t, s0, odeopts, H);
-  s_out = s_out.'; % convention: states in columns
+  [t_out, s_out] = ode45(odefun, t, s.data, odeopts, F);
+  % s_out has states in columns, row i corresponds to t(i)
 
   % apply out_func
   for k=1:n
-    if (superop == false)
-      s.data = reshape(s_out(:, k+skip), ddd);
-    else
-      s.data = inv_vec(s_out(:, k+skip));
-    end
-    out{k} = out_func(s, H(t_out(k+skip)));
+    % this works because ode45 automatically expands input data into a col vector
+    s.data = inv_vec(s_out(k+skip,:), dim);
+    out{k} = out_func(s, F(t_out(k+skip)));
   end
 
 else
   % time independent case
 
-  if (superop == false)
-    % eigendecomposition
-    [v, d] = eig(H); 
-    d = diag(d);
-    for k=1:n
-      U = v * diag(exp(-i * d * t(k))) * v';
-      out{k} = out_func(u_propagate(s, U), H);
-      %out{k} = out_func(u_propagate(s, expm(-i*H*t(k))), H);
-    end
-
-  else
-    % Krylov subspace method
-    [w, err] = expv(t, H, s0);
-    for k=1:n
-      s.data = inv_vec(w(:,k));
-      out{k} = out_func(s, H);
-    end
+  switch (gen)
+    case 'H'
+      if (length(H < 500))
+        % eigendecomposition
+        [v, d] = eig(full(H)); % TODO eigs?
+        d = diag(d);
+        for k=1:n
+          U = v * diag(exp(-i * t(k) * d)) * v';
+          out{k} = out_func(u_propagate(s, U), H);
+          %out{k} = out_func(u_propagate(s, expm(-i*H*t(k))), H);
+        end
+      else
+        % Krylov subspace method
+        [w, err] = expv(-i*t, H, s.data);
+        for k=1:n
+          s.data = w(:,k);
+          out{k} = out_func(s, H);
+        end
+      end
+      
+    case 'L'
+      % Krylov subspace method
+      [w, err] = expv(t, H, vec(s.data));
+      for k=1:n
+        s.data = inv_vec(w(:,k));
+        out{k} = out_func(s, H);
+      end
   end
 end
 
@@ -154,7 +220,6 @@ if (n == 1)
   % single output, don't bother with a list
   out = out{1};
 end
-
 end
 
 
@@ -164,30 +229,3 @@ end
 %end
 %status = 0;
 %end
-
-
-function obsolete_stuff()
-  T = t(end); % final time
-  dt = T/steps; % maximum step size
-  r  = 1; % index into t
-  tt = 0; % time now
-  h = H(0); % value of Liouvillian now
-
-  while (tt < T)
-    step = min(dt, t(r)-tt);
-
-    % propagate, advance time
-    [svec, err] = expv(step, h, svec);
-    s = u_propagate(s, expm(-i*h*step));
-
-    tt = tt + step;
-    h = H(tt); % value of Hamiltonian now
-
-    % should we output something?
-    if (t(r) <= tt)
-      s.data = inv_vec(svec);
-      out{r} = out_func(s, h);
-      r = r + 1; % next output
-    end
-  end
-end

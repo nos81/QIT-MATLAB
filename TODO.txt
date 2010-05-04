@@ -2,26 +2,16 @@ General
 - more comprehensive test scripts with asserts
 
 
-Algorithmic efficiency
-- use sparse matrices when possible?
-
-
-Entropy, entanglement, information
-- entropy of entanglement
-
-
 Control sequences
 - GRAPE optimization
 
 
 Noise
-- Lindblad equation
 - different bath models, as classes?
 - Markovian noise
 
 
 Circuit model
-- more gates
 - output Qcircuit.tex diagrams?
 
 

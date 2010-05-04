@@ -1,3 +1,11 @@
+Changelog for Quantum Information Toolkit
+
++ added
+- removed
+* changed
+b bugfix
+
+
 2009-07-18    Version 0.9.0 (first public beta)
 
 2009-09-29    Version 0.9.1 (beta)
@@ -21,9 +29,9 @@
 	      + lindblad/superop
 	      + state arithmetic: plus, minus, mtimes, mrdivide, normalize
 	      + examples/superdense_coding
-	      b state/measure now gives correct collapsed states
-	      * gate/qft now also handles non-qubit systems
-	      * state/propagate now uses ode45 for time-dependent Hamiltonians
+	      b state/measure gives correct collapsed states
+	      * gate/qft also handles non-qubit systems
+	      * state/propagate uses ode45 for time-dependent Hamiltonians
 	      * examples/nmr_sequences produces nicer plots
 
 2010-01-19    Version 0.9.4 (beta)
@@ -32,11 +40,11 @@
 	      + ho methods: ladder, displace, squeeze, coherent_state,
 	      	 momentum_state, position_state, wigner
 	      + examples/qubit_and_resonator
-	      * state/measure now also measures arbitrary observables
+	      * state/measure also measures arbitrary Hermitian observables
 
 2010-02-04    Version 0.9.5 (beta)
 	      + state/locc_convertible
-	      - state/overlap (replaced by fidelity)
+	      - state/overlap (replaced by state/fidelity)
 	      + ho methods: position, momentum, husimi
 	      + utils/asongoficeandfire
 	      b utils/lrmul did unnecessary work
@@ -45,18 +53,26 @@
 	      * neater examples
 
 2010-03-17    Version 0.9.6 (beta)
-	      * numerous small improvements
-	      * functions handling large operators now use sparse matrices
-	      * Born-Markov package cleaned up and renamed: +lindblad => +markov
-	      * renamed lindblad/superop => utils/superop_lindblad
-	      * utils/angular_momentum now returns a cell vector, caches results
 	      + plots/wigner_function
 	      + hamiltonians: heisenberg, hubbard, bose_hubbard, holstein
 	      + utils/fermion_ladder
 	      + utils/op_list
 	      - utils/fidelity (unnecessary)
 	      - hamiltonian/graph (replaced by utils/op_list)
+	      * numerous small improvements
+	      * functions handling large operators use sparse matrices
+	      * Born-Markov package cleaned up and renamed: +lindblad => +markov
+	      * renamed lindblad/superop => utils/superop_lindblad
+	      * utils/angular_momentum returns a cell vector, caches results
 
-
-2010-03-??    Version 0.9.7 (beta)
-	      * state/propagate now also can use Lindblad operators
+2010-04-04    Version 0.9.7 (beta)
+	      + markov/lindblad_ops
+	      + gates: mod_add, mod_mul, phase
+	      + examples/shor_factorization
+	      * state/propagate also accepts Lindblad operators
+	      * state/entropy also gives entropy of entanglement
+	      * state/measure can discard measured subsystems
+	      * utils/angular_momentum takes a dimension instead of j as a param
+	      * gate/qft caches its results
+	      * invariants: canonical, makhlin, max_concurrence use compatible params
+	      * more functions use sparse matrices

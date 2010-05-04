@@ -8,7 +8,7 @@ addpath([pwd '/examples']);
 global qit;
 
 % toolkit version number
-qit.version = '0.9.6';
+qit.version = '0.9.7';
 fprintf('MATLAB Quantum Information Toolkit, version %s\n', qit.version)
 
 % Pauli matrices

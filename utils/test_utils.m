@@ -42,3 +42,26 @@ for k=1:length(E)
   temp = temp + E(k)*P{k};
 end
 assert_o(norm(temp-H), 0, tol);
+
+
+
+% Test script for invariant methods.
+% Ville Bergholm 2010
+
+U = rand_U(4); % random two-qubit gate
+L = kron(rand_U(2), rand_U(2)); % random local 2-qubit gate
+cnot = gate.controlled(qit.sx, 1);
+
+% canonical invariants
+assert_o(norm(invariant.canonical(L) -[0 0 0]), 0, tol);
+assert_o(norm(invariant.canonical(cnot) -[0.5 0 0]), 0, tol);
+
+% Makhlin invariants
+c = invariant.canonical(U);
+g1 = invariant.makhlin(c);
+g2 = invariant.makhlin(U);
+assert_o(norm(g1-g2), 0, tol);
+
+% maximum concurrence
+assert_o(invariant.max_concurrence(L), 0, tol);
+assert_o(invariant.max_concurrence(cnot), 1, tol);
