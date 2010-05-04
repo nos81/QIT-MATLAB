@@ -23,7 +23,7 @@ end
 n = min(n, length(H));
 
 % find the n lowest eigenstates of the final Hamiltonian
-[v,d] = eigs(H, n, 'SR');
+[v,d] = eigs(H, n, 'SA');
 [S,I] = sort(diag(d), 'ascend');
 for j=1:n
   lowest{j} = state(v(:, I(j)));
