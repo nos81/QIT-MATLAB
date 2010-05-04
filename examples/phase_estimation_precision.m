@@ -1,10 +1,10 @@
-function p = phase_est(t, U, u)
-% PHASE_EST  Quantum phase estimation demo.
+function p = phase_estimation_precision(t, U, u)
+% PHASE_ESTIMATION_PRECISION  Quantum phase estimation demo.
 %
-%  p = phase_est(t, U [, u])
+%  p = phase_estimation_precision(t, U [, u])
 %
 %  Estimate an eigenvalue of unitary operator U using t bits, starting from the state u.
-%  Returns the probability distribution of the resulting t-bit approximations.
+%  Plots and returns the probability distribution of the resulting t-bit approximations.
 %  If u is not given, use a random eigenvector of U.
 
 %! R. Cleve et al., "Quantum Algorithms Revisited", Proc. R. Soc. London A454, 339 (1998).
@@ -27,7 +27,7 @@ end
 
 fprintf('Use %d qubits to estimate the phases of the eigenvalues of a U(%d) operator.\n', t, N)
 
-p = prob(phase_estimation(t, U, u));
+p = real(prob(phase_estimation(t, U, u))); % fix rounding errors
 
 T = 2^t;
 

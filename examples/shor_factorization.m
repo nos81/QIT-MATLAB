@@ -1,13 +1,15 @@
 function [p] = shor_factorization(N, cheat)
 % SHOR_FACTORIZATION  Shor's factorization algorithm demo.
 %  p = shor_factorization(N)       % simulate the full algorithm
-%  p = shor_factorization(N, true) % cheat, do the quantum part classically
+%  p = shor_factorization(N, true) % cheat, avoid the quantum part
 %
-%  Simulate Shor factorization, try to factorize the integer N = p*q.
+%  Simulates Shor's factorization algorithm, tries to factorize the integer N.
 %
 %  NOTE: This is a very computationally intensive quantum algorithm
 %  to simulate classically, and probably will not run for any
-%  nontrivial value of N (unless you choose to cheat).
+%  nontrivial value of N (unless you choose to cheat, in which case
+%  instead of simulating the quantum part we use a more efficient
+%  classical algorithm for the order-finding).
 
 %! P.W. Shor, "Algorithms For Quantum Computation: Discrete Logs and Factoring", Proc. 35th Symp. on the Foundations of Comp. Sci., 124 (1994).
 %! M.A. Nielsen, I.L. Chuang, "Quantum Computation and Quantum Information" (2000), chapter 5.3.
@@ -111,7 +113,7 @@ U = gate.mod_mul(a, N, M);
 st = state(1, M);
 
 % run the phase estimation algorithm
-reg = phase_estimation(t, U, st);
+reg = phase_estimation(t, U, st, true); % use implicit measurement to save memory
 
 % measure index register
 [~, res] = measure(reg, 1);

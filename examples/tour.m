@@ -15,9 +15,9 @@ pause
 adiabatic_qc(5, 3);
 pause
 
-phase_est(5, rand_U(4));
+phase_estimation_precision(5, rand_U(4));
 title('Phase estimation, eigenstate')
-phase_est(5, rand_U(4), state(0, [4]));
+phase_estimation_precision(5, rand_U(4), state(0, [4]));
 title('Phase estimation, random state')
 pause
 

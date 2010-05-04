@@ -1,6 +1,6 @@
-function reg = phase_estimation(t, U, reg_s)
+function reg = phase_estimation(t, U, reg_s, implicit)
 % PHASE_ESTIMATION  Quantum phase estimation algorithm.
-%  p = phase_estimation(t, U, s)
+%  reg = phase_estimation(t, U, s)
 %
 %  Estimate an eigenvalue of unitary operator U using t qubits,
 %  starting from the state s.
@@ -42,8 +42,16 @@ for k = 1:t
     reg = u_propagate(reg, temp);
 end
 
-% HACK to save memory and CPU: implicit measurement of the state reg, discard the results
-[~, ~, reg] = measure(reg, 2, true);
+% from this point forward the state register is not used anymore
+
+if (nargin == 4 && implicit)
+  % save memory and CPU: make an implicit measurement of the state reg, discard the results
+  [~, res, reg] = measure(reg, 2, true);
+  %fprintf('Implicit measurement of state register: %d\n', res);
+else
+  % more expensive computationally: trace over the state register
+  reg = ptrace(reg, 2);
+end
 
 % do an inverse quantum Fourier transform on the index reg
 QFT = gate.qft(t);
