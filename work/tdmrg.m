@@ -1,4 +1,4 @@
-function [block] = tdmrg(block, H_func, t, m)
+function [block] = tdmrg(block, H_func, t, steps, m)
 % TDMRG  Time-dependent DMRG.
 %  B = tdmrg(B, H_func, t, m)
 %
@@ -19,19 +19,18 @@ function [block] = tdmrg(block, H_func, t, m)
 % Ville Bergholm 2010
 
 
-if (nargin < 4)
-  m = 5;
-  if (nargin < 3)
-    error('block, H_func and t are required.');
+if (nargin < 5)
+  m = 15
+  if (nargin < 4)
+    error('block, H_func, t and steps are required.');
   end
 end
 
 n = length(block)+1
 
-kkk = 50;
-dt = t/kkk;
+dt = t/steps;
 
-for k=1:kkk
+for k=1:steps
   % do a back-and-forth sweep
   q = 1;
   sweep_right = true;
