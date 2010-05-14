@@ -1,6 +1,6 @@
-function h = tomography(s)
-% PLOT/TOMOGRAPHY  State tomography plot.
-%  h = tomography(s)
+function h = plot(s)
+% PLOT  State tomography plot.
+%  h = plot(s)
 %
 %  Plots the probabilities of finding a system in the state s
 %  in the different computational basis states upon measurement.

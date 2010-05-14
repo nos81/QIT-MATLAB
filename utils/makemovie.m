@@ -9,10 +9,10 @@ function aviobj = makemovie(filename, frameset, plot_func, varargin)
 %
 %  Returns the closed avi object handle.
 %
-%  Example: makemovie('test', states, @(x) plots.tomography(x))
+%  Example: makemovie('test', cell_vector_of_states, @(x) plot(x))
 
 % James D. Whitfield 2009
-% Ville Bergholm 2009
+% Ville Bergholm 2009-2010
 
 
 if (nargin < 3)

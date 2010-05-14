@@ -26,8 +26,8 @@ zlabel('z');
 plot3(0,0,1,'r.');
 plot3(0,0,-1,'b.');
 
-text(0, 0,  1.1, '|0\rangle');
-text(0, 0, -1.1, '|1\rangle');
+text(0, 0,  1.2, '|0\rangle');
+text(0, 0, -1.2, '|1\rangle');
 if nargin==1
     v = bloch_vector(s);
     quiver3(0, 0, 0, v(1), v(2), v(3), 0);
