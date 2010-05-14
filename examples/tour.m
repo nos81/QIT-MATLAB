@@ -12,7 +12,7 @@ pause
 superdense_coding;
 pause
 
-adiabatic_qc(5, 3);
+adiabatic_qc_3sat(5, 25);
 pause
 
 phase_estimation_precision(5, rand_U(4));

@@ -60,7 +60,7 @@ for a=1:s(2)
   end
 end
 
-plots.bloch_sphere();
+plot_bloch_sphere();
 surf(squeeze(res(1,:,:)), squeeze(res(2,:,:)), squeeze(res(3,:,:)));
 shading flat
 alpha(0.2)

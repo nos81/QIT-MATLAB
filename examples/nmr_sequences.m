@@ -40,7 +40,7 @@ a = cell2mat(out);
 n = size(a, 2);
 
 subplot(2,2,1);
-plots.bloch_sphere();
+plot_bloch_sphere();
 plot3(a(1,:),a(2,:),a(3,:));
 plot3(a(1,n),a(2,n),a(3,n), 'k.');
 title([titles{q} ' evolution, off-resonance error']);
@@ -55,7 +55,7 @@ a = cell2mat(out);
 n = size(a, 2);
 
 subplot(2,2,3);
-plots.bloch_sphere();
+plot_bloch_sphere();
 plot3(a(1,:),a(2,:),a(3,:));
 plot3(a(1,n),a(2,n),a(3,n), 'k.');
 title([titles{q} ' evolution, pulse length error']);

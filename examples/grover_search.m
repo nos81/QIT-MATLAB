@@ -7,7 +7,7 @@ function [p] = grover_search(n)
 %  in a system of n qubits.
 
 %! L.K. Grover, "Quantum Computers Can Search Rapidly by Using Almost Any Transformation", PRL 80, 4329 (1998). doi:10.1103/PhysRevLett.80.4329.   
-% Ville Bergholm 2009
+% Ville Bergholm 2009-2010
 
 
 fprintf('\n\n=== Grover search algorithm ===\n')
@@ -17,7 +17,7 @@ global qit;
 A = gate.walsh(n); % Walsh-Hadamard gate for generating uniform superpositions
 N = 2^n; % number of states
 
-sol = floor(rand() * N) + 1; % 1..N
+sol = randi(N);
 reps = floor(pi/(4*asin(sqrt(1/N))));
 
 fprintf('Using %d qubits.\n', n)

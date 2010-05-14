@@ -18,9 +18,9 @@ if (nargin < 2)
 end
 
 omega0 = 2*pi* 1e9; % Hz
-T = 3 % K
+T = 1 % K
 
-delta = 2.5 + rand; % qubit energy splitting (GHz)
+delta = 3 + 3*rand; % qubit energy splitting (GHz)
 
 % setup the bath
 if (nargin < 3)
@@ -31,21 +31,22 @@ end
 [H, D] = fit(B, delta, T1*omega0, T2*omega0)
 
 L = markov.superop(H, D, B);
-t = linspace(0, 10, 100);
+t = linspace(0, 10, 200);
 
 
 % T1 demo
-eq = 1/(1+exp(delta*B.scale)); % equilibrium rho_11
+eq = 1/(1+exp(delta*B.scale)) % equilibrium rho_11
 
 s = state('1', [2]); % qubit in the |1> state
 out = propagate(s, L, t, @(x,h) ev(x, qit.p1));
 figure
 subplot(2, 1, 1)
-plot(t, cell2mat(out), 'r-', t, eq +(1-eq)*exp(-t/(T1*omega0)), 'b-.', 'LineWidth', 2);
+plot(t, cell2mat(out), 'r-', t, eq +(1-eq)*exp(-t/(T1*omega0)), 'b-.',...
+     [0, t(end)], [eq, eq], 'k:', 'LineWidth', 2);
 xlabel('t \omega_0');
 ylabel('probability');
 axis([0 t(end) 0 1])
-title('T_1: decay');
+title('T_1: relaxation');
 legend('P_1', 'P_{1}^{eq} +(1-P_{1}^{eq}) exp(-t/T_1)')
 
 
@@ -54,7 +55,7 @@ s = state('0', [2]);
 s = u_propagate(s, R_y(pi/2)); % rotate to (|0>+|1>)/sqrt(2)
 out = propagate(s, L, t, @(x,h) ev(u_propagate(x, R_y(-pi/2)), qit.p0));
 subplot(2, 1, 2);
-plot(t, cell2mat(out), 'r-', t, 0.5*(1+exp(-t/(T2*omega0))), 'b-', 'LineWidth', 2);
+plot(t, cell2mat(out), 'r-', t, 0.5*(1+exp(-t/(T2*omega0))), 'b-.', 'LineWidth', 2);
 xlabel('t \omega_0');
 ylabel('probability')
 axis([0 t(end) 0 1])

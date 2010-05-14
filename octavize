@@ -14,6 +14,5 @@ sed '
 /^[^%]/ s/ho\.//g
 /^[^%]/ s/invariant\.//g
 /^[^%]/ s/markov\.//g
-/^[^%]/ s/plots\.//g
 /^[^%]/ s/seq\.//g
 ' -i.orig */*.m

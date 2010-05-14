@@ -1,5 +1,5 @@
 function qubit_and_resonator(d_r)
-% QUBIT_AND_RESONATOR  Demo: Qubit coupled to a microwave resonator.
+% QUBIT_AND_RESONATOR  Qubit coupled to a microwave resonator example.
 %
 %  qubit_and_resonator()
 %
@@ -210,5 +210,8 @@ s = ptrace(s, 2);
 
 [W, a, b] = ho.wigner(s, [80 80], [-2.5 2.5 -2.5 2.5]);
 figure
-plots.wigner_function(W, a, b);
+plot_pcolor(W, a, b, [-1 1]);
+title('Wigner function W(\alpha)')
+xlabel('Re(\alpha)')
+ylabel('Im(\alpha)')
 end
