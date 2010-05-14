@@ -58,7 +58,6 @@ for k=1:n
 end
 
 % Encode a 3-SAT problem into the final Hamiltonian.
-% The clauses we use here correspond to the exact cover problem.
 H1 = 0;
 for k=1:n_clauses
   % h_c = (b1(*) v b2(*) v b3(*))
