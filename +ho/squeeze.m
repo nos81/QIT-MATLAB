@@ -12,5 +12,5 @@ if (~isscalar(z))
   error('z must be a scalar.')
 end
 
-a = ho.ladder(n);
+a = boson_ladder(n);
 S = expm(0.5*(z'*a^2 -z*(a')^2));

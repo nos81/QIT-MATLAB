@@ -23,7 +23,7 @@ function [H, dim] = holstein(n, m, omega_t, g)
 % Hilbert space: electrons first, then phonons
 dim = [2^n, m*ones(1, n)] % j-w clumps fermion dims together
 
-b = ho.ladder(m); % phonon annihilation
+b = boson_ladder(m); % phonon annihilation
 q = b+b';  % phonon position
 nb = b'*b; % phonon number operator
 

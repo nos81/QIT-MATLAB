@@ -21,7 +21,7 @@ function [H, dim] = bose_hubbard(n, m, U_t, mu_t)
 
 dim = m*ones(1, n);
 
-b = ho.ladder(m); % boson annihilation
+b = boson_ladder(m); % boson annihilation
 nb = b'*b; % boson number operator
 
 if (nargin < 4)

@@ -54,7 +54,7 @@ sp = 0.5*(sx -i*sy);
 sm = sp';
 
 % resonator annihilation op
-a = ho.ladder(d_r);
+a = boson_ladder(d_r);
 %Q = ho.position(d_r);
 %P = ho.momentum(d_r);
 % resonator identity op

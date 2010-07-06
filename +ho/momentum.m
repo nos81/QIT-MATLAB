@@ -17,5 +17,5 @@ function P = momentum(n)
 % Ville Bergholm 2010
 
 
-a = ho.ladder(n);
+a = boson_ladder(n);
 P = -i*(a-a')/sqrt(2);

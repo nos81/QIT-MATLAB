@@ -12,5 +12,5 @@ if (~isscalar(alpha))
   error('Alpha must be a scalar.')
 end
 
-a = ho.ladder(n);
+a = boson_ladder(n);
 D = expm(alpha*a' -alpha'*a);
