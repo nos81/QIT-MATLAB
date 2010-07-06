@@ -49,5 +49,5 @@ for k=1:reps
   s = u_propagate(s, A);
 end
 
-[p, res] = measure(s);
+[~, res] = measure(s);
 fprintf('\nMeasured %d.\n', res);

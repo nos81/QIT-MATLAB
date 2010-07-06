@@ -76,3 +76,15 @@ b bugfix
 	      * gate/qft caches its results
 	      * invariants: canonical, makhlin, max_concurrence use compatible params
 	      * more functions use sparse matrices
+
+2010-07-??    Version 0.9.8
+	      - removed the plots package
+	      * renamed plots:
+ 	        tomography          => state/plot,
+	        weyl_chamber        => invariant/plot_weyl_2q,
+	        makhlin_gates       => invariant/plot_makhlin_2q,
+		bloch_sphere        => utils/plot_bloch_sphere,
+		adiabatic_evolution => utils/plot_adiabatic_evolution,
+		wigner_function     => utils/plot_pcolor
+	      * renamed ho/ladder => utils/boson_ladder
+
