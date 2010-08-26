@@ -1,9 +1,10 @@
-function superdense_coding()
+function superdense_coding(d)
 % SUPERDENSE_CODING  Superdense coding demo.
 %
-%  superdense_coding()
+%  superdense_coding(d)
 %
-%  Simulate Alice sending two bits of information to Bob using superdense coding.
+%  Simulate Alice sending two d-its of information to Bob using 
+%  a shared EPR qudit pair.
 
 % Ville Bergholm 2010
 
@@ -12,22 +13,31 @@ fprintf('\n\n=== Superdense coding ===\n\n')
 
 global qit;
 
-H    = qit.H; % Hadamard gate
-cnot = gate.controlled(qit.sx, 1);
-I    = qit.I;
+H   = gate.qft([d 1]);    % qft (generalized Hadamard) gate
+add = gate.mod_add(d, d); % modular adder gate
+I   = speye(d);
+
+
+% EPR preparation circuit
+U = add * kron(H, I);
 
 disp('Alice and Bob start with a shared EPR pair.')
-reg = state('bell1')
+reg = u_propagate(state('00', [d d]), U)
+
 
 % two random bits
-a = round(rand(1, 2));
+a = floor(d*rand(1, 2));
 fprintf('Alice wishes to send two bits of information to Bob: a = [%d, %d].\n', a)
 
+
+Z = diag(sqrt(d) * H(:,a(1)+1));
+X = gate.mod_inc(-a(2), d);
+
 disp('Alice encodes the bits to her half of the EPR pair using local transformations,')
-reg = u_propagate(reg, kron(qit.sz^(a(1)) * qit.sx^(a(2)), I))
+reg = u_propagate(reg, kron(Z*X, I))
 
 disp('and sends it to Bob. He then disentangles the pair using a CNOT and a Hadamard,')
-reg = u_propagate(reg, kron(H, I) * cnot)
+reg = u_propagate(reg, U')
 
 [p, b(1), reg] = measure(reg, 1);
 [p, b(2), reg] = measure(reg, 2);

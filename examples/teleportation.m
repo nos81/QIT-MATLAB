@@ -1,28 +1,31 @@
-function [reg_B, payload] = teleportation()
+function [reg_B, payload] = teleportation(d)
 % TELEPORTATION  Quantum teleportation demo.
 %
-%  [reg_B, payload] = teleportation()
+%  [reg_B, payload] = teleportation(d)
 %
-%  Simulate the teleportation of a qubit from Alice to Bob.
+%  Simulate the teleportation of a d-dimensional qudit from Alice to Bob.
 
-% Ville Bergholm 2009
+% Ville Bergholm 2009-2010
 
 
 fprintf('\n\n=== Quantum teleportation ===\n\n')
 
 global qit;
 
-H    = gate.walsh(1); % Hadamard gate
-cnot = gate.controlled(qit.sx, 1);
-I    = qit.I;
+H   = gate.qft([d 1]);    % qft (generalized Hadamard) gate
+add = gate.mod_add(d, d); % modular adder gate
+I   = speye(d);
+
+% EPR preparation circuit
+U = add * kron(H, I);
 
 disp('Alice and Bob start with a shared EPR pair.')
-epr = state('bell1')
+epr = u_propagate(state('00', [d d]), U)
 
 
-disp('Alice wants to transmit this payload qubit to Bob:')
-payload = state('0');
-payload = u_propagate(payload, rand_SU(2));
+disp('Alice wants to transmit this payload to Bob:')
+payload = state('0', d);
+payload = u_propagate(payload, rand_SU(d));
 % choose a nice global phase
 payload = fix_phase(payload)
 
@@ -32,23 +35,25 @@ reg = tensor(payload, epr)
 
 
 disp('Now Alice entangles the payload with her half of the EPR pair')
-reg = u_propagate(reg, kron(H, eye(4)) * kron(cnot, I))
+reg = u_propagate(reg, kron(U', I))
 
 [p, b(1), reg] = measure(reg, 1);
 [p, b(2), reg] = measure(reg, 2);
 %[p, b, reg] = measure(reg, [1 2]);
 b = b-1;
-fprintf('and measures her qubits, getting the result [%d, %d].\n', b)
-disp('She then transmits the two bits to Bob using a classical channel. The shared state is now')
+fprintf('and measures her qudits, getting the result [%d, %d].\n', b)
+disp('She then transmits the two d-its to Bob using a classical channel. The shared state is now')
 reg
 
 disp('Since Alice''s measurement has unentangled the state,')
-disp('Bob can ignore her qubits. His qubit now looks like')
+disp('Bob can ignore her qudits. His qudit now looks like')
 reg_B = to_ket(ptrace(reg, [1 2])) % pure state
 
-disp('Using the two classical bits of data Alice sent him,')
+disp('Using the two classical d-its of data Alice sent him,')
 disp('Bob performs a local transformation on his half of the EPR pair.')
-reg_B = fix_phase(u_propagate(reg_B, qit.sz^(b(1)) * qit.sx^(b(2))))
+Z = diag(sqrt(d) * H(:,b(1)+1));
+X = gate.mod_inc(-b(2), d);
+reg_B = fix_phase(u_propagate(reg_B, Z*X))
 
 
 ov = fidelity(payload, reg_B);

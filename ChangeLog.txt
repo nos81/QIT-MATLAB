@@ -87,4 +87,8 @@ b bugfix
 		adiabatic_evolution => utils/plot_adiabatic_evolution,
 		wigner_function     => utils/plot_pcolor
 	      * renamed ho/ladder => utils/boson_ladder
-
+	      * renamed gates: mod_add => mod_inc
+	      + gates: mod_add
+	      * gates: mod_inc, mod_mul input syntax
+	      * examples: teleportation and superdense_coding now can use qudits
+	      * restored Matlab 7.6 compatibility

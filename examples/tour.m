@@ -6,10 +6,10 @@ disp('This is the guided tour for the Quantum Information Toolkit.')
 disp('Between examples, press any key to proceed to the next one.');
 pause
 
-teleportation;
+teleportation(2);
 pause
 
-superdense_coding;
+superdense_coding(2);
 pause
 
 adiabatic_qc_3sat(5, 25);
