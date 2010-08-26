@@ -77,7 +77,7 @@ b bugfix
 	      * invariants: canonical, makhlin, max_concurrence use compatible params
 	      * more functions use sparse matrices
 
-2010-07-??    Version 0.9.8
+2010-08-26    Version 0.9.8
 	      - removed the plots package
 	      * renamed plots:
  	        tomography          => state/plot,
