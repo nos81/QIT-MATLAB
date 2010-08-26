@@ -1,30 +1,31 @@
-function U = mod_mul(x, N, dim)
+function U = mod_mul(x, dim, N)
 % MOD_MUL  Modular multiplication gate.
-%  U = mod_mul(x, dim)    % N == dim
-%  U = mod_mul(x, N, dim) % gate dimension dim must be >= N
+%  U = mod_mul(x, dim)    % N == prod(dim)
+%  U = mod_mul(x, dim, N) % gate dimension prod(dim) must be >= N
 %
 %  Returns the gate U, which, operating on the computational state
-%  |y>, multiplies it with x (mod N):  U |y> = |x*y (mod N)>.
+%  |y>, multiplies it by x (mod N):  U |y> = |x*y (mod N)>.
+%  x and N must be coprime for the operation to be reversible.
 %
-%  If given both N and dim, U will act trivially on computational states >= N.
+%  If N is given, U will act trivially on computational states >= N.
 
 % Ville Bergholm 2010
 
-
-if (nargin == 2)
-  dim = N;
-end
 
 if (~isscalar(dim))
   dim = prod(dim); % vector of dimensions
 end
 
-if (nargin == 2)
+if (nargin < 3)
   N = dim;
 else
   if (dim < N)
-    error('Register dimension must be >= N.')
+    error('Gate dimension must be >= N.')
   end
+end
+
+if (gcd(x, N) ~= 1)
+  error('x and N must be coprime for the mul operation to be reversible.')
 end
 
 % NOTE: a real quantum computer would implement this gate using a

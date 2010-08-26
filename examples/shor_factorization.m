@@ -107,7 +107,7 @@ T = 2^t; % index register dimension
 M = 2^m; % state register dimension
 
 % applying f(x) is equivalent to the sequence of controlled modular multiplications in phase estimation
-U = gate.mod_mul(a, N, M);
+U = gate.mod_mul(a, M, N);
 
 % state register initialized in the state |1>
 st = state(1, M);
