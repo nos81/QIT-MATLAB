@@ -10,7 +10,7 @@ function qubit_and_resonator(d_r)
 % Ville Bergholm 2010
 
 
-fprintf('\n\n=== Qubit coupled to a single-mode microwave resonator. ===\n\n')
+fprintf('\n\n=== Qubit coupled to a single-mode microwave resonator ===\n\n')
 
 global qit
 

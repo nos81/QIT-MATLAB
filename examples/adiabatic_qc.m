@@ -37,7 +37,7 @@ disp('Final Hamiltonian (diagonal):')
 H1
 
 disp('Measured result:')
-[~, ~, res] = measure(res{end});
+[dummy, dummy, res] = measure(res{end});
 display(res)
 if (H1(find(res.data)) == 0)
   disp('Which is a valid solution!')

@@ -46,7 +46,7 @@ end
 
 if (nargin == 4 && implicit)
   % save memory and CPU: make an implicit measurement of the state reg, discard the results
-  [~, res, reg] = measure(reg, 2, true);
+  [dummy, res, reg] = measure(reg, 2, true);
   %fprintf('Implicit measurement of state register: %d\n', res);
 else
   % more expensive computationally: trace over the state register

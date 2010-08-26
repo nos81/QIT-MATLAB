@@ -116,7 +116,7 @@ st = state(1, M);
 reg = phase_estimation(t, U, st, true); % use implicit measurement to save memory
 
 % measure index register
-[~, res] = measure(reg, 1);
+[dummy, res] = measure(reg, 1);
 
 num = res-1;
 

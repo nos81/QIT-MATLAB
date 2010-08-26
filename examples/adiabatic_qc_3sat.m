@@ -41,7 +41,7 @@ for k=1:n_clauses
     bits(choice) = [];
     clauses(k, j) = ((-1)^(rand < 0.5))*temp; % negate if bit should be inverted
   end
-  [~, I] = sort(abs(clauses(k, :)));
+  [dummy, I] = sort(abs(clauses(k, :)));
   clauses(k, :) = clauses(k, I);
 end
 end
@@ -84,8 +84,4 @@ s0 = state(ones(2^n, 1)/sqrt(2^n), 2*ones(1, n)); % n qubits, uniform superposit
 
 % adiabatic simulation
 adiabatic_qc(H0, H1, s0);
-end
-
-function a = randi(n)
-  a = ceil(rand*n);
 end
