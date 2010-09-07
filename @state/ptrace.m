@@ -51,6 +51,9 @@ for j=flipped_sys
 end
 
 s.dim = s.dim(setdiff(1:n, sys)); % remove traced-over dimensions for good
+if (length(s.dim) == 0)
+  s.dim = 1; % full trace gives a scalar
+end
 
 return
 

@@ -92,3 +92,8 @@ b bugfix
 	      * gates: mod_inc, mod_mul input syntax
 	      * examples: teleportation and superdense_coding now can use qudits
 	      * restored Matlab 7.6 compatibility
+
+
+2010-09-??    Version 0.9.9
+	      * state/concurrence fixed
+	      * state/purity does not normalize the state first
