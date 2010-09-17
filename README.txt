@@ -6,9 +6,9 @@ Released 2010-08-26
 
 === Introduction ===
 
-Quantum Information Toolkit (QIT) is collection of open source
+Quantum Information Toolkit (QIT) is collection of free, open source
 MATLAB 7.6 scripts, functions and classes for various quantum
-information and computing -related purposes, distributed under GPLv3.
+information and computing -related purposes, distributed under GPL.
 The latest version can be downloaded from the project website,
 
   http://sourceforge.net/projects/qit/
@@ -41,7 +41,7 @@ To initialize the toolkit, run octave_init.m instead of init.m.
 QIT is released under the GNU General Public License version 3.
 This basically means that you can freely use, share and modify it as
 you wish, as long as you give proper credit to the authors and do not
-change the terms of the license.
+change the terms of the license. See LICENSE.txt for the details.
 
 
 

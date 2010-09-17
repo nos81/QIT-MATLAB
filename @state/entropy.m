@@ -1,7 +1,7 @@
 function S = entropy(s, sys)
 % ENTROPY  Von Neumann entropy of the state.
 %  S = entropy(s)      % entropy
-%  S = entropy(s ,sys) % entropy of entanglement
+%  S = entropy(s, sys) % entropy of entanglement
 %
 %  Returns the entropy S of the state s.
 %
@@ -11,7 +11,7 @@ function S = entropy(s, sys)
 %
 %  Entropy of entanglement is only defined for pure states.
 %
-%  S(\rho) = -trace(\rho * \log_2(\rho))
+%  S(\rho) = -\trace(\rho * \log_2(\rho))
 
 % Ville Bergholm 2009-2010
 

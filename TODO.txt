@@ -17,3 +17,10 @@ Circuit model
 
 Examples
 - adiabatic simulation
+
+
+Entanglement
+bipartite:
+ e of formation: minimum of average E over pure decompositions
+ distillable e, e cost, relative entropy of e.
+
