@@ -13,7 +13,7 @@ fprintf('\n\n=== Quantum teleportation ===\n\n')
 global qit;
 
 H   = gate.qft([d 1]);    % qft (generalized Hadamard) gate
-add = gate.mod_add(d, d); % modular adder gate
+add = gate.mod_add(d, d); % modular adder (generalized CNOT) gate
 I   = speye(d);
 
 % EPR preparation circuit

@@ -88,7 +88,7 @@ b bugfix
 		wigner_function     => utils/plot_pcolor
 	      * renamed ho/ladder => utils/boson_ladder
 	      * renamed gates: mod_add => mod_inc
-	      + gates: mod_add
+	      + gate/mod_add
 	      * gates: mod_inc, mod_mul input syntax
 	      * examples: teleportation and superdense_coding now can use qudits
 	      * restored Matlab 7.6 compatibility
@@ -97,3 +97,9 @@ b bugfix
 2010-09-??    Version 0.9.9
 	      * state/concurrence fixed
 	      * state/purity does not normalize the state first
+	      * gate/two: any dimensions, non-sequential targets OK
+	      * gate/controlled: any dimensions OK
+	      * state/reorder: now a wrapper for utils/reorder
+	      + utils/reorder: change the relative order of subsystems in tensors
+
+

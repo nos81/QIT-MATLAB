@@ -1,37 +1,46 @@
-function U=two(g,targn,totn)
-% TWO gives the unitary of a two qubit gate
+function U = two(B, t, dim)
+% TWO  Two-qudit operator.
 %
-% U=two(gate,num_targ_1,num_tot_q)
+%  U = two(B, t, dim)
 %
-% Returns unitary gate for a two qubit gate applied to
-% two sequential qubits and identity applied to the
-% remaining qubits
+%  Returns the operator U corresponding to the two-qudit operator B applied
+%  to subsystems t == [t1, t2] (and identity applied to the remaining subsystems).
 %
-% Counts of qubits begins at 1.
-%
-% Also see:
-%     gate.controlled
-%
+%  dim is either the dimension vector for U or an integer scalar denoting
+%  the number of subsystems in an all-qubit system.
+
 % James Whitfield 2010
+% Ville Bergholm 2010
 
-%TODO make bigger identity matrices to save time and code
 
-%Warning
-if size(g,1)~=4 | size(g,2)~=4
-	warning('The gate is not a two qubit gate')
+n = length(dim);
+
+if (length(t) ~= 2)
+  error('Exactly two target subsystems required.')
 end
 
-
-global qit;
-id=qit.I;
-eval_str='mkron(';
-for k=1:(targn-1)
-	eval_str=[eval_str,'id,'];
+if (any(t < 1) || any(t > n) || t(1) == t(2))
+  error('Bad target subsystem(s).')
 end
-eval_str=[eval_str,'g'];
-for k=(targn+2):totn
-	eval_str=[eval_str,',id'];
-end
-eval_str=[eval_str,');'];
 
-U=eval(eval_str);
+temp = prod(dim(t));
+
+if (size(B,1) ~= temp || size(B,2) ~= temp)
+  error('Dimensions of the target subsystems are not compatible with the dimension of U.')
+end
+
+a = min(min(t));
+b = max(max(t));
+
+if (t(1) < t(2))
+  p = [1 3 2];
+else
+  p = [2 3 1];
+end
+
+% dimensions for t1, t2 and the subsystems in between
+ddd = [dim(t), prod(dim(a+1:b-1))];
+
+temp = reorder(kron(B, speye(ddd(3))), ddd, p);
+
+U = mkron(speye(prod(dim(1:a-1))), temp, speye(prod(dim(b+1:end))));

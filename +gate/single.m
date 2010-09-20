@@ -1,12 +1,13 @@
-function U = single(g, targ, dim)
-% SINGLE  gives the unitary for a single qubit gate
+function U = single(L, targ, dim)
+% SINGLE  Single-qudit operator.
 %
-%  U = 
+%  U = single(L, targ, dim)
 %
-%  Returns unitary gate for a single qubit applied to target
-%  qubit and identity applied to the remaining qubits. 
+%  Returns the operator U corresponding to the local operator L applied
+%  to subsystem targ (and identity applied to the remaining subsystems).
 %
-%  Counting of the qubits begins at 1. 
+%  dim is either the dimension vector for U or an integer scalar denoting
+%  the number of subsystems in an all-qubit system.
 
 % James Whitfield 2010
 % Ville Bergholm 2010
@@ -16,4 +17,4 @@ if (isscalar(dim))
   dim = 2*ones(1,dim); % assume qubits
 end
 
-U = op_list({{g, targ}}, dim);
+U = op_list({{L, targ}}, dim);
