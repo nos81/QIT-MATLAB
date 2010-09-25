@@ -8,4 +8,5 @@ function U = phase(theta)
 
 
 n = length(theta)+1; % first phase is implicitly taken to be 1
-U = spdiags([1, exp(i*theta)].', 0, n, n);
+
+U = lmap(spdiags([1, exp(i*theta)].', 0, n, n), {n, n});

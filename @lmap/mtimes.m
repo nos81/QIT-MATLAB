@@ -8,6 +8,12 @@ function b = mtimes(a, b)
 
 
 if (isa(a, 'lmap') && isa(b, 'lmap'))
+  % in lieu of a full contraction method, we only multiply vector and matrices
+
+  n = order(a);
+  m = order(b);
+FIXME
+
   if (~isequal(a.dim{2}, b.dim{1}))
     error('The dimensions do not match.')
   end

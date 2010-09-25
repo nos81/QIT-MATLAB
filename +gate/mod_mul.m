@@ -12,14 +12,12 @@ function U = mod_mul(x, dim, N)
 % Ville Bergholm 2010
 
 
-if (~isscalar(dim))
-  dim = prod(dim); % vector of dimensions
-end
+d = prod(dim);
 
 if (nargin < 3)
-  N = dim;
+  N = d;
 else
-  if (dim < N)
+  if (d < N)
     error('Gate dimension must be >= N.')
   end
 end
@@ -31,7 +29,7 @@ end
 % NOTE: a real quantum computer would implement this gate using a
 % sequence of reversible arithmetic gates but since we don't have
 % one we might as well cheat
-U = sparse(dim, dim);
+U = sparse(d, d);
 for j=1:N
   y = j-1;
   temp = mod(x*y, N);
@@ -39,6 +37,8 @@ for j=1:N
 end
 
 % U acts trivially for states >= N
-for j=N+1:dim
+for j=N+1:d
   U(j,j) = 1;
 end
+
+U = lmap(U, {dim, dim});

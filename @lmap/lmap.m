@@ -2,6 +2,7 @@ classdef lmap
 % LMAP  Class for linear maps between lists of finite-dimensional Hilbert spaces.
 %
 %  Contains both the tensor and the dimensional information.
+%  We do not track contra/covariance of the indices right now.
 
 % Ville Bergholm 2008-2010
 
@@ -20,7 +21,7 @@ classdef lmap
     %    = lmap(y, dim);           % (y is an lmap) copy constructor, reinterpret dimensions
     %    = lmap(k, dim);           % standard basis ket |k> or bra <k|. k must be an integer scalar
     %    = lmap(rand(4,1));        % ket, dim = {4, 1}
-    %    = lmap(rand(4,1), [2 2]); % ket, dim = {[2 2], 1}
+    %    = lmap(rand(4,1), [2 2]); % ket, dim = {[2 2]}
     %    = lmap(rand(4));          % operator, dim = {4, 4}
     %    = lmap(rand(6), [3 2]);   % operator
 
@@ -35,9 +36,6 @@ classdef lmap
       if (isnumeric(dim))
         dim = {dim};
       end
-      if (length(dim) < 2)
-        dim{2} = 1;
-      end
     end
 
     if (isa(s, 'lmap'))
@@ -48,40 +46,14 @@ classdef lmap
       s = s.data;
 
     elseif (isnumeric(s))
-      if (isscalar(s))
-        % integer denoting a computational basis ket
-        if (nargin == 1)
-          error('Need system dimensions.')
-        end
+      % full tensor
+      sss = size(s);
+      if (length(sss) > 2)
+        error('For now only vectors and matrices.')
+      end
 
-        % NOTE only works because we have max. two indices
-        if (isequal(dim{1}, 1))
-          q = 2;
-        elseif (isequal(dim{2}, 1))
-          q = 1;
-        else
-          error('Construction by ket/bra number only for vectors.')
-        end
-
-        ind = s;
-        d = [prod(dim{1}), prod(dim{2})]; % total number of states
-
-        if (ind >= d(q))
-          error('Invalid basis ket/bra.')
-        end
-        s = zeros(d);
-        s(ind+1) = 1; % MATLAB indexing starts at 1
-
-      else
-        % full vector or matrix
-        sss = size(s);
-        if (length(sss) > 2)
-          error('For now only vectors and matrices.')
-        end
-
-        if (nargin == 1)
-          dim = num2cell(size(s)); % no dim given, infer from s
-        end
+      if (nargin == 1)
+        dim = num2cell(size(s)); % no dim given, infer from s
       end
     end
 
@@ -99,6 +71,7 @@ classdef lmap
     out.data = s;
     out.dim = dim; % big-endian ordering
     end
+
 
     function x = subsref(s, index)
     % SUBSREF  Direct access to the data members.
@@ -118,9 +91,47 @@ classdef lmap
       end
     end
 
+
     function sys = clean_selection(s, sys)
     % CLEAN_SELECTION  Internal helper, makes a subsystem set unique and sorted.
-      sys = intersect(1:length(s.dim), sys);
+      sys = intersect(1:length(s.dim{1}), sys);
     end
+
+
+    function s = remove_singletons(s)
+    % REMOVE_SINGLETONS  Eliminate unnecessary singleton dimensions.
+
+      for k = 1:length(s.dim)
+	s.dim{k}(find(s.dim{k} == 1)) = []; % remove all ones
+	if (isempty(s.dim{k}))
+	  s.dim{k} = 1; % restore a single one if necessary
+	end
+      end
+    end
+
+
+    function n = order(s)
+      n = length(s.dim);
+    end
+
+
+    function ret = is_compatible(s, t)
+    % IS_COMPATIBLE  True iff s and t have same order and equal dimensions.
+
+      n = length(s.dim);
+      m = length(t.dim);
+
+      if (n ~= m)
+        error('The orders of the lmaps do not match.')
+      end
+
+      for k = 1:n
+        if (~isequal(s.dim, t.dim))
+          error('The dimensions of the index %d of the lmaps do not match.', k)
+        end
+      end
+      ret = true;
+    end
+
   end
 end

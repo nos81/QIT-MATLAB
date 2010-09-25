@@ -4,7 +4,10 @@ function s = tensor(varargin)
 %
 %  Returns the tensor product state of states s1, s2, ...
 
-% Ville Bergholm 2009
+% Ville Bergholm 2009-2010
+
+
+FIXME
 
 
 s = varargin{1};

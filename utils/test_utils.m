@@ -1,12 +1,14 @@
 % Test script for the Quantum Information Toolkit utilities
-% Ville Bergholm 2009
+% Ville Bergholm 2009-2010
 
 tol = qit.tol;
 
 dim = 5;
-H = rand_hermitian(dim);
 
 % random matrices
+H = rand_hermitian(dim);
+assert_o(norm(H - H'), 0, tol);
+
 U = rand_U(dim);
 assert_o(norm(U*U' -eye(dim)), 0, tol);
 assert_o(norm(U'*U -eye(dim)), 0, tol);
@@ -42,6 +44,7 @@ for k=1:length(E)
   temp = temp + E(k)*P{k};
 end
 assert_o(norm(temp-H), 0, tol);
+
 
 
 

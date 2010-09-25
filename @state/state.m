@@ -1,16 +1,11 @@
-classdef state
+classdef state < lmap
 % STATE  Class for quantum states.
 %
 %  Describes a discrete composite quantum system consisting of subsystems
 %  whose dimensions are given in the vector dim (big-endian ordering).
 %  Can handle both pure and mixed states.
 
-% Ville Bergholm 2008-2009
-
-  properties
-    data % state vector/operator
-    dim  % subsystem dimensions vector
-  end
+% Ville Bergholm 2008-2010
 
   methods
     function out = state(s, dim)
@@ -127,36 +122,16 @@ classdef state
       end
     end
 
-    % error checking
-    if (size(s, 1) ~= prod(dim))
-      error('Dimension of the system does not match the combined dimension of the subsystems.')
+    % state vector or operator?
+    if (size(s, 2) ~= 1)
+      dim = {dim, dim};
+    else
+      dim = {dim};
     end
 
-    out.data = s;
-    out.dim = dim; % big-endian ordering
+    % call the lmap constructor
+    out = out@lmap(s, dim);
     end
 
-    function x = subsref(s, index)
-    % SUBSREF  Direct access to the data members.
-      switch (index.type)
-	case '.'
-	  switch (index.subs)
-	    case 'data'
-	      x = s.data;
-	    case 'dim'
-	      x = s.dim;
-  	    otherwise
-	      error('Unknown state property.')
-	  end
-
-	otherwise
-	  error('State class cannot be indexed with that operator.')
-      end
-    end
-
-    function sys = clean_selection(s, sys)
-    % CLEAN_SELECTION  Internal helper, makes a subsystem set unique and sorted.
-      sys = intersect(1:length(s.dim), sys);
-    end
   end
 end

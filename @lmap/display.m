@@ -19,14 +19,14 @@ if (~short)
 end
 
 % number of indices
-n_ind = length(s.dim);
+n_ind = order(s);
 
-if (isequal(s.dim{1}, 1) || isequal(s.dim{2}, 1))
+if (n_ind == 1 || (n_ind == 2 && isequal(s.dim{1}, 1)))
   % vector
 
   % ket or bra?
   q = 2;
-  if (isequal(s.dim{2}, 1))
+  if (n_ind == 1)
     q = 1;
   end
 
@@ -56,14 +56,11 @@ if (isequal(s.dim{1}, 1) || isequal(s.dim{2}, 1))
       end
       ket = fliplr(ket); % big-endian again
 
+      % ket or bra?
       if (q == 1)
-      out = cat(2, out, ' |');
-      out = cat(2, out, char(ket - 1 + '0'));
-      out = cat(2, out, '>');
+        out = cat(2, out, ' |', char(ket - 1 + '0'), '>');
       else
-      out = cat(2, out, ' <');
-      out = cat(2, out, char(ket - 1 + '0'));
-      out = cat(2, out, '|');
+        out = cat(2, out, ' <', char(ket - 1 + '0'), '|');
       end
     end
   end
@@ -79,9 +76,7 @@ if (~short)
   disp('dim:');
   out = '  ';
   for k = 1:n_ind
-    out = cat(2, out, '[ ');
-    out = cat(2, out, sprintf('%d ', s.dim{k}));
-    out = cat(2, out, ']  ');
+    out = cat(2, out, '[ ', sprintf('%d ', s.dim{k}), ']  ');
     if (k < n_ind)
       out = cat(2, out, '<-  ');
     end

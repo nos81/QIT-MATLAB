@@ -9,7 +9,6 @@ function s = tensor(varargin)
 
 s = varargin{1};
 
-% concatenate dim vectors
 for k = 2:nargin
   n = length(varargin{k}.dim);
 
@@ -18,19 +17,11 @@ for k = 2:nargin
   end
 
   for ind = 1:n
-    %if (isequal(s.dim{ind}, 1))
-    %  s.dim{ind} = []; % get rid of singletons
-    %end
     s.dim{ind} = cat(2, s.dim{ind}, varargin{k}.dim{ind}); % concatenate dimension lists
   end
 
+  % kronecker product of the data
   s.data = kron(s.data, varargin{k}.data);
 end
 
-% eliminate extra singleton dimensions
-for k=1:length(s.dim)
-  s.dim{k}(find(s.dim{k} == 1)) = [];
-  if (isempty(s.dim{k}))
-    s.dim{k} = 1; % restore one
-  end
-end
+s = remove_singletons(s);
