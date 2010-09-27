@@ -3,7 +3,6 @@ function s = minus(s, t)
 %  q = minus(s, t)
 %
 %  Returns the difference of s and t.
-%  The lmaps are not normalized at any point.
 
 % Ville Bergholm 2010
 

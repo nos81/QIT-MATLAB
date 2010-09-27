@@ -13,13 +13,13 @@ fprintf('\n\n=== Superdense coding ===\n\n')
 
 global qit;
 
-H   = gate.qft([d 1]);    % qft (generalized Hadamard) gate
+H   = gate.qft(d);        % qft (generalized Hadamard) gate
 add = gate.mod_add(d, d); % modular adder (generalized CNOT) gate
-I   = speye(d);
+I   = gate.id(d);
 
 
 % EPR preparation circuit
-U = add * kron(H, I);
+U = add * tensor(H, I);
 
 disp('Alice and Bob start with a shared EPR pair.')
 reg = u_propagate(state('00', [d d]), U)
@@ -30,11 +30,11 @@ a = floor(d*rand(1, 2));
 fprintf('Alice wishes to send two d-its of information (d = %d) to Bob: a = [%d, %d].\n', d, a)
 
 
-Z = diag(sqrt(d) * H(:,a(1)+1));
+Z = H * gate.mod_inc(a(1), d) * H';
 X = gate.mod_inc(-a(2), d);
 
 disp('Alice encodes the d-its to her half of the EPR pair using local transformations,')
-reg = u_propagate(reg, kron(Z*X, I))
+reg = u_propagate(reg, tensor(Z*X, I))
 
 disp('and sends it to Bob. He then disentangles the pair,')
 reg = u_propagate(reg, U')

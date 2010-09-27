@@ -10,9 +10,9 @@ function s = tensor(varargin)
 s = varargin{1};
 
 for k = 2:nargin
-  n = length(varargin{k}.dim);
+  n = order(varargin{k});
 
-  if (length(s.dim) < n)
+  if (order(s) < n)
     s.dim{n} = []; % all missing indices filled in with []
   end
 
@@ -24,4 +24,4 @@ for k = 2:nargin
   s.data = kron(s.data, varargin{k}.data);
 end
 
-s = remove_singletons(s);
+%s = remove_singletons(s);

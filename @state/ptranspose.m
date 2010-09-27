@@ -8,7 +8,7 @@ function s = ptranspose(s, sys)
 
 % TODO not sure if this should return a state object, since a ptransposed state may no longer be a valid quantum state.
 
-% Ville Bergholm 2008-2009
+% Ville Bergholm 2008-2010
 
 
 if (nargin < 2)
@@ -16,16 +16,18 @@ if (nargin < 2)
 end
 
 % number of systems
-n = length(s.dim);
+dim = dims(s);
+n = length(dim);
+
 % total dimension
-dd = prod(s.dim);
+dd = prod(dim);
 
 % which systems to transpose, into binary vector
 tran = zeros(1,n);
 tran(sys) = 1;
 
 % big-endian ordering is more natural
-d = fliplr(s.dim);
+d = fliplr(dim);
 tran = fliplr(tran);
 
 % swap the transposed dimensions
@@ -41,9 +43,7 @@ for k=1:n
   end
 end
 
-if (size(s.data, 2) == 1)
-  s.data = s.data*s.data'; % vector into matrix
-end
+s = to_op(s);
 
 % flat matrix into tensor, partial transpose, back into a flat matrix
 s.data = reshape(permute(reshape(s.data, [d d]), perm), [dd dd]);

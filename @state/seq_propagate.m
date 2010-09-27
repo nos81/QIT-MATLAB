@@ -2,7 +2,7 @@ function [out, t] = seq_propagate(s, seq, out_func)
 % SEQ_PROPAGATE  Propagate the state in time using a control sequence.
 %  [out, t] = propagate(s, seq, out_func)
     
-% Ville Bergholm 2009
+% Ville Bergholm 2009-2010
 
 
 global qit;
@@ -15,9 +15,6 @@ if (nargin < 3)
     end
 end
 
-if (s.dim(1) ~= 2)
-  error('only works on qubits for now.');
-end
 
 base_dt = 0.1;
 n = size(seq, 1); % number of pulses

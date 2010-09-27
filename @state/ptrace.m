@@ -6,17 +6,19 @@ function s = ptrace(s, sys)
 %  Returns the partial trace of the state s
 %  wrt. the subsystems listed in the vector sys.
 
-% Ville Bergholm 2008-2009
+% Ville Bergholm 2008-2010
 
+
+dim = dims(s);
 
 % number of systems
-n = length(s.dim);
+n = length(dim);
 
 % we trace over the subsystems in order, starting from the first one
 sys = clean_selection(s, sys);
 
 % big-endian ordering is more natural for users, but little-endian more convenient for calculations
-d = fliplr(s.dim); % into little-endian: now dim(1) is the dimension of the last system (least significant digit)
+d = fliplr(dim); % into little-endian: now dim(1) is the dimension of the last system (least significant digit)
 flipped_sys = n+1-sys; % these are indices to dim vector, flip them too, now d(flipped_sys) makes sense
 
 if (size(s.data, 2) == 1)
@@ -50,11 +52,12 @@ for j=flipped_sys
   d(j) = 1;  % remove traced-over dimension.
 end
 
-s.dim = s.dim(setdiff(1:n, sys)); % remove traced-over dimensions for good
-if (length(s.dim) == 0)
-  s.dim = 1; % full trace gives a scalar
+dim = dim(setdiff(1:n, sys)); % remove traced-over dimensions for good
+if (length(dim) == 0)
+  dim = 1; % full trace gives a scalar
 end
 
+s = state(s, dim);
 return
 
 

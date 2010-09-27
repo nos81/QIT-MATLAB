@@ -13,11 +13,12 @@ function [lambda, v, u] = schmidt(s, sys)
 %  The state s is then given by \sum_k \lambda_k \ket{k}_A \otimes \ket{k}_B
 
 %! M.A. Nielsen, I.L. Chuang, "Quantum Computation and Quantum Information" (2000), chapter 2.5.
-% Ville Bergholm 2009
+% Ville Bergholm 2009-2010
 
 
 % number of systems
-n = length(s.dim);
+dim = dims(s);
+n = length(dim);
 
 if (nargin < 2)
   if (n == 2)
@@ -37,8 +38,8 @@ end
 % complement of sys, dimensions of the partitions
 sys = clean_selection(s, sys);
 compl = setdiff(1:n, sys);
-d1 = prod(s.dim(sys));
-d2 = prod(s.dim(compl));
+d1 = prod(dim(sys));
+d2 = prod(dim(compl));
 perm = [sys, compl];
 
 if all(perm == 1:n)

@@ -52,7 +52,7 @@ for k=1:n
     if (b <= a)
       error('Spec %d not in ascending order.', k)
     end
-    if (length(spec{j,1}) ~= dim(b))
+    if (size(spec{j,1}, 2) ~= dim(b))
       error('The dimension of operator %d in spec %d does not match dim.',j,k)
     end
     term = mkron(term, speye(prod(dim(a+1:b-1))), spec{j,1});

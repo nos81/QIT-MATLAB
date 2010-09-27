@@ -16,14 +16,16 @@ if (abs(trace(s)-1) > qit.tol)
   disp('Warning: State not properly normalized.')
 end
 
+dim = dims(s);
+
 if (nargin == 2)
   % concurrence between a qubit and a larger system
 
-  if (length(sys) == 1 && s.dim(sys) == 2)
+  if (length(sys) == 1 && dim(sys) == 2)
     if (abs(purity(s)-1) < qit.tol)
       % pure state
 
-      n = length(s.dim);
+      n = length(dim);
       rho_A = ptrace(s, setdiff(1:n, sys)); % trace over everything but sys
       C = 2 * sqrt(real(det(rho_A.data))); % = sqrt(2*(1-real(trace(temp*temp))))
       return
@@ -35,7 +37,7 @@ if (nargin == 2)
 end
 
 
-if (length(s.dim) ~= 2 || any(s.dim ~= [2 2]))
+if (length(dim) ~= 2 || any(dim ~= [2 2]))
   % not a two-qubit state
   error('Not a two-qubit state.')
 end

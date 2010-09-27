@@ -12,12 +12,14 @@ function h = plot(s)
 
 
 % prepare labels
-n = length(s.dim);
+dim = dims(s);
+n = length(dim);
+
 m = min(n, 3); % at most three symbols
-d = s.dim; d = d(1:m); % stupid HACK
+d = dim(1:m);
 nd = prod(d);
 
-ntot = prod(s.dim);
+ntot = prod(dim);
 skip = ntot/nd; % only every skip'th state gets a label to avoid clutter
 ticks = 0:skip:ntot-1;
 

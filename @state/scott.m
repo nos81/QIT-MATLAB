@@ -12,14 +12,16 @@ function Q = scott(s, m)
 %! D.A. Meyer and N.R. Wallach, "Global entanglement in multiparticle systems", J. Math. Phys. 43, 4273 (2002).
 %
 % Jacob D. Biamonte 2008
-% Ville Bergholm 2008
+% Ville Bergholm 2008-2010
 
 
+dim = dims(s);
 n = length(s.dim);    % number of subsystems
+
 S = nchoosek(1:n, m); % all m-combinations of n subsystems
 n_c = size(S, 1); % number of distinct combinations
 
-D = min(s.dim); % FIXME correct for arbitrary combinations of qudits??
+D = min(dim); % FIXME correct for arbitrary combinations of qudits??
 C = (D^m/(D^m-1))/nchoosek(n, m); % normalization constant
 
 Q = [];

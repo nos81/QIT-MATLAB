@@ -22,6 +22,9 @@ p2 = u_propagate(p, rand_SU(prod(dim)));
 U_p = rand_U(prod(dim));
 
 
+% TODO bloch_vector, concurrence, fix_phase, kraus_propagate, locc_convertible, lognegativity, measure,
+% negativity,
+
 
 % Test scripts for fidelity.m, trace_dist.m
 % Ville Bergholm 2009

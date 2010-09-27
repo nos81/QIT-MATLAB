@@ -7,30 +7,22 @@ function s = tensor(varargin)
 % Ville Bergholm 2009-2010
 
 
-FIXME
-
-
-s = varargin{1};
-s.dim = [];
+% if all states are pure, keep the result state pure
 pure = true;
-
-% concatenate dim vectors
 for k = 1:nargin
-  s.dim = cat(2, s.dim, varargin{k}.dim);
-
-  % if all states are pure, keep the result state pure
   if (size(varargin{k}.data, 2) ~= 1)
     pure = false;
+    break;
   end
 end
 
-
-s.data = 1;
-for k = 1:nargin
-  if (~pure && (size(varargin{k}.data, 2) == 1))
-    % vector into matrix
-    s.data = kron(s.data, varargin{k}.data*varargin{k}.data');
-  else
-    s.data = kron(s.data, varargin{k}.data);
+% otherwise convert all states to state ops before tensoring
+if (~pure)
+  for k = 1:nargin
+    varargin{k} = to_op(varargin{k});
   end
 end
+
+s = tensor@lmap(varargin{:});
+
+s = remove_singletons(s);

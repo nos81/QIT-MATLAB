@@ -6,7 +6,7 @@ function s = to_op(s)
 %  Returns q, a copy of s for which the internal representation 
 %  of the state (q.data) is guaranteed to be a state operator.
 
-% Ville Bergholm 2009
+% Ville Bergholm 2009-2010
 
 
 if (size(s.data, 2) ~= 1)
@@ -14,3 +14,4 @@ if (size(s.data, 2) ~= 1)
 end
 
 s.data = s.data*s.data';
+s.dim{2} = s.dim{1};

@@ -20,7 +20,7 @@ if (size(t.data, 2) ~= 1)
   %error('Not implemented for nonpure states.')
 end
 
-if (length(s.dim) ~= length(t.dim) || any(s.dim ~= t.dim))
+if (~equal_dims(s, t))
   error('States must have equal dimensions.')
 end
 

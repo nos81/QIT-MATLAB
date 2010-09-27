@@ -7,7 +7,7 @@ function s = to_ket(s)
 %  internal representation of the state (q.data) is guaranteed to
 %  be a ket vector.
 
-% Ville Bergholm 2009
+% Ville Bergholm 2009-2010
 
 
 global qit;
@@ -23,4 +23,6 @@ else
   [v, d] = eig(s.data);
   s.data = v(:,end); % corresponds to the highest eigenvalue, i.e. 1
   s = fix_phase(s); % clean up global phase
+
+  s.dim{2} = 1;
 end

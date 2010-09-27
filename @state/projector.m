@@ -4,14 +4,19 @@ function P = projector(s)
 %
 %  Returns the projection operator P defined by the state s.
 
-% Ville Bergholm 2009
+% Ville Bergholm 2009-2010
 
+
+global qit;
+
+if (abs(purity(s) - 1) > qit.tol)
+  error('The state is not pure, and thus does not correspond to a projector.')
+end
 
 if (size(s.data, 2) == 1)
   % state vector
   P = s.data * s.data';
 else
   % state operator
-  error('not a pure state')
-  %P = s.data;
+  P = s.data;
 end

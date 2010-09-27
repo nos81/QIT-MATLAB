@@ -12,14 +12,19 @@ if (isa(a, 'lmap') && isa(b, 'lmap'))
 
   n = order(a);
   m = order(b);
-FIXME
+
+  if (n ~= 2)
+    error('a is not a matrix.');
+  end
+  if (m ~= 2)
+    error('b is not a matrix.');
+  end
 
   if (~isequal(a.dim{2}, b.dim{1}))
     error('The dimensions do not match.')
   end
 
-  b.data = a.data*b.data;
-  b.dim{1} = a.dim{1};
+  b = lmap(a.data*b.data, {a.dim{1}, b.dim{2}});
 
 elseif (isscalar(a) && isnumeric(a))
   b.data = a * b.data;
@@ -28,5 +33,5 @@ elseif (isscalar(b) && isnumeric(b))
   b = a;
   b.data = temp * b.data;
 else
-  error('Lmaps can only be multiplied by scalars and lmaps.')
+  error('lmaps can only be multiplied by scalars and lmaps.')
 end

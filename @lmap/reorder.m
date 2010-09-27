@@ -1,5 +1,5 @@
 function [s] = reorder(s, perm)
-% REORDER  Change the order of subsystems in an lmap.
+% REORDER  Change the relative order of subsystems in an lmap.
 %  [S] = reorder(T, perm);
 %    reorder(T, {[], [3 2 1]}); % ignore first index, reverse the order of subsystems in the second
 %    reorder(T, {[2 5]});       % swap subsystems 2 and 5 in the first index
@@ -16,7 +16,7 @@ function [s] = reorder(s, perm)
 
 
 % number of indices
-n_ind = length(s.dim);
+n_ind = order(s);
 
 if (length(perm) < n_ind)
   perm{n_ind} = []; % all missing permutations filled in with []
@@ -72,7 +72,7 @@ for k = 1:n_ind
 end
 
 
-T = full(s.data); % FIXME Matlab reshape is broken (sparse matrices cause problems with singleton dimensions)
+T = full(s.data); % FIXME Matlab 7.6 reshape is broken (sparse matrices cause problems with singleton dimensions)
 
 % tensor into another tensor which has one index per subsystem, permute dimensions, back into a tensor with the original number of indices
 s.data = reshape(permute(reshape(T, total_d), total_perm), [dd 1]);

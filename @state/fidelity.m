@@ -8,7 +8,7 @@ function F = fidelity(r, s)
 %
 %  Fidelity is symmetric in its arguments and bounded in the interval [0,1].
 
-% Ville Bergholm 2009
+% Ville Bergholm 2009-2010
 %! M.A. Nielsen, I.L. Chuang, "Quantum Computation and Quantum Information" (2000), chapter 9.2.2
 
 

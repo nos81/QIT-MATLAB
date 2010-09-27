@@ -77,7 +77,7 @@ b bugfix
 	      * invariants: canonical, makhlin, max_concurrence use compatible params
 	      * more functions use sparse matrices
 
-2010-08-26    Version 0.9.8
+2010-08-26    Version 0.9.8 (beta)
 	      - removed the plots package
 	      * renamed plots:
  	        tomography          => state/plot,
@@ -94,12 +94,15 @@ b bugfix
 	      * restored Matlab 7.6 compatibility
 
 
-2010-09-??    Version 0.9.9
+2010-09-??    Version 0.9.9 (beta)
+	      + lmap class for multilinear maps, functions as a base class for state
+	      - several methods from state moved to lmap
 	      * state/concurrence fixed
 	      * state/purity does not normalize the state first
+	      * gates: qubits-as-a-default syntax removed as dangerous
+	      * gates: now return lmaps
 	      * gate/two: any dimensions, non-sequential targets OK
 	      * gate/controlled: any dimensions OK
-	      * state/reorder: now a wrapper for utils/reorder
-	      + utils/reorder: change the relative order of subsystems in tensors
-
+	      + gate/swap: swaps two subsystems
+	      * gate/phase: does not assume the first phase is always zero
 

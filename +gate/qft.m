@@ -1,29 +1,29 @@
-function U = qft(n)
+function U = qft(dim)
 % QFT  Quantum Fourier transform gate.
-%  U = qft(n)
+%  U = qft(dim)
 %
-%  Returns the quantum Fourier transform matrix for the specified system.
-%  If n is a scalar, the system consists of n qubits.
-%  Otherwise n is assumed to be a vector of subsystem dimensions.
-%  A single d-dimensional system can be specified using n = [d 1].
+%  Returns the quantum Fourier transform gate for the specified system.
+%  dim is a vector of subsystem dimensions.
 
-% Ville Bergholm 2004-2009
+% Ville Bergholm 2004-2010
+
 
 global qit;
 
-if (isscalar(n))
-  N = 2^n; % n qubits
+n = length(dim);
+cache = false;
+
+if (isequal(dim, qubits(n)))
+  cache = true;
 
   % check cache first
   if (length(qit.qft) >= n && length(qit.qft{n}) > 0)
     U = qit.qft{n};
     return;
   end
-
-else
-  N = prod(n); % vector of dimensions
 end
 
+N = prod(dim);
 
 U = zeros(N);
 for j=1:N
@@ -32,7 +32,9 @@ for j=1:N
   end
 end
 
-if (isscalar(n))
+U = lmap(U, {dim, dim});
+
+if (cache)
   % store it in the cache
   qit.qft{n} = U;
 end

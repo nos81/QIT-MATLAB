@@ -1,19 +1,19 @@
-function a = bloch_vector(s, varargin)
-% BLOCH_VECTOR  Generalized Bloch vector corresponding to the state.
+function a = bloch_vector(s)
+% BLOCH_VECTOR  Generalized Bloch vector.
 %  a = bloch_vector(s)
 %
-%  Returns the Bloch vector corresponding to state s.
+%  Returns the Bloch vector a corresponding to state s.
 %  The vector is defined in terms of the tensor basis
 %  corresponding to s.dim.
 %
 %  For proper states norm(a) <= sqrt(prod(s.dim)-1) (e.g. for qubits norm(a) <= 1).
 
-% Ville Bergholm 2009
+% Ville Bergholm 2009-2010
 
 
-d = prod(s.dim);
+d = prod(dims(s));
 n = d^2-1;
-G = tensorbasis(s.dim);
+G = tensorbasis(dims(s));
 
 for k=1:n
   a(k) = ev(s, G{k});

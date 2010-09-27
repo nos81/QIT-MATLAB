@@ -1,12 +1,18 @@
-function U = phase(theta)
+function U = phase(theta, dim)
 % PHASE  Phase shift gate.
 %  U = phase(theta)
 %
-%  Returns the phase shift gate U = diag([1, e^(i*theta)]).
+%  Returns the phase shift gate U = diag(exp(i*theta)).
 
 % Ville Bergholm 2010
 
 
-n = length(theta)+1; % first phase is implicitly taken to be 1
+n = length(theta);
 
-U = lmap(spdiags([1, exp(i*theta)].', 0, n, n), {n, n});
+if (nargin < 2)
+  dim = n;
+elseif (prod(dim) ~= n)
+  error('Dimension mismatch.');
+end
+
+U = lmap(spdiags(exp(i*theta).', 0, n, n), {dim, dim});

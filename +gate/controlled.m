@@ -46,5 +46,16 @@ end
 
 fail = sparse(1) - pass;
 T = prod(dim);
-n = size(U,1);
-out = kron(spdiags(fail, 0, T, T), speye(n)) + kron(spdiags(pass, 0, T, T), U);
+
+if (isa(U, 'lmap'))
+  dd = U.dim;
+  d1 = [dim, dd{1}];
+  d2 = [dim, dd{2}];
+  U = U.data;
+else
+  d1 = [dim, size(U,1)];
+  d2 = [dim, size(U,2)];
+end
+
+out = kron(spdiags(fail, 0, T, T), speye(size(U))) + kron(spdiags(pass, 0, T, T), U);
+out = lmap(out, {d1, d2});

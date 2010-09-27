@@ -8,7 +8,10 @@ function s = mtimes(a, b)
 % Ville Bergholm 2010
 
 
-if (isscalar(a) && isnumeric(a))
+% a must be a state, otherwise we wouldn't be in this function
+if (isa(b, 'lmap'))
+  s = mtimes@lmap(a, b); % HACK for u_propagate, returns an lmap
+elseif (isscalar(a) && isnumeric(a))
   s = b;
   s.data = a * s.data;
 elseif (isscalar(b) && isnumeric(b))

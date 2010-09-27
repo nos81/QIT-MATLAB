@@ -33,7 +33,7 @@ U_oracle(sol) = -1;
 U_zeroflip = ones(N, 1);
 U_zeroflip(1) = -1;
 
-s = state(0, 2*ones(n, 1));
+s = state(0, qubits(n));
 
 % initial superposition
 s = u_propagate(s, A);

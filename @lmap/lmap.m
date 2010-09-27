@@ -1,8 +1,11 @@
 classdef lmap
-% LMAP  Class for linear maps between lists of finite-dimensional Hilbert spaces.
+% LMAP  Class for multilinear maps between lists of finite-dimensional Hilbert spaces.
 %
 %  Contains both the tensor and the dimensional information.
-%  We do not track contra/covariance of the indices right now.
+
+%  TODO Another possible interpretation of lmap would be to only consider order-2 lmaps and
+%  treat each subsystem as an index, with the subsystems within dim{1} and dim{2}
+%  corresponding to contravariant and covariant indices, respectively?
 
 % Ville Bergholm 2008-2010
 
@@ -10,7 +13,6 @@ classdef lmap
     data % array of tensor elements
     dim  % cell vector of subsystem dimension row vectors, one for each index
          % the dimensions are in big-endian order, the indices in standard matrix order
-         % right now we only support one or two indices, i.e. vectors and matrices
   end
 
   methods
@@ -32,7 +34,7 @@ classdef lmap
     end
 
     if (nargin == 2)
-      % cover for lazy users
+      % cover for lazy users, convert a dim vector into a cell vector with one entry
       if (isnumeric(dim))
         dim = {dim};
       end
@@ -41,17 +43,13 @@ classdef lmap
     if (isa(s, 'lmap'))
       % copy constructor
       if (nargin == 1)
-        dim = s.dim;  % copy also dimensions
+        out = s;
+        return;
       end
       s = s.data;
 
     elseif (isnumeric(s))
       % full tensor
-      sss = size(s);
-      if (length(sss) > 2)
-        error('For now only vectors and matrices.')
-      end
-
       if (nargin == 1)
         dim = num2cell(size(s)); % no dim given, infer from s
       end
@@ -65,7 +63,7 @@ classdef lmap
       end
     end
     if (size(s, k+1) ~= 1)
-      error('not enough dims given');
+      error('The dimension cell vector does not have an entry for each tensor index.');
     end
 
     out.data = s;
@@ -111,6 +109,7 @@ classdef lmap
 
 
     function n = order(s)
+    % ORDER  Tensor order of the lmap.
       n = length(s.dim);
     end
 
@@ -118,8 +117,8 @@ classdef lmap
     function ret = is_compatible(s, t)
     % IS_COMPATIBLE  True iff s and t have same order and equal dimensions.
 
-      n = length(s.dim);
-      m = length(t.dim);
+      n = order(s);
+      m = order(t);
 
       if (n ~= m)
         error('The orders of the lmaps do not match.')

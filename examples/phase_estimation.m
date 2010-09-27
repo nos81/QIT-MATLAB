@@ -25,8 +25,8 @@ T = 2^t;
 S = size(U, 1);
 
 % index register in uniform superposition
-%reg_t = u_propagate(state(0, T), gate.walsh(t)); % use Hadamards
-reg_t = state(ones(T, 1)/sqrt(T), T); % skip the Hadamards
+%reg_t = u_propagate(state(0, qubits(t)), gate.walsh(t)); % use Hadamards
+reg_t = state(ones(T, 1)/sqrt(T), qubits(t)); % skip the Hadamards
 
 % state register (ignore the dimensions)
 reg_s = state(reg_s, S);
@@ -46,13 +46,13 @@ end
 
 if (nargin == 4 && implicit)
   % save memory and CPU: make an implicit measurement of the state reg, discard the results
-  [dummy, res, reg] = measure(reg, 2, true);
+  [dummy, res, reg] = measure(reg, t+1, true);
   %fprintf('Implicit measurement of state register: %d\n', res);
 else
   % more expensive computationally: trace over the state register
-  reg = ptrace(reg, 2);
+  reg = ptrace(reg, t+1);
 end
 
 % do an inverse quantum Fourier transform on the index reg
-QFT = gate.qft(t);
+QFT = gate.qft(qubits(t));
 reg = u_propagate(reg, QFT');

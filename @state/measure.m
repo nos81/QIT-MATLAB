@@ -36,6 +36,8 @@ function [p, res, s] = measure(s, M, discard)
 % Ville Bergholm 2009-2010
 
 
+d = s.dim{1};
+
 if (nargin <= 1)
   % full measurement in the computational basis
   p = prob(s); % probabilities 
@@ -43,7 +45,7 @@ if (nargin <= 1)
   if (nargout >= 2)
     res = rand_measure(p);
     if (nargout >= 3)
-      s = state(res-1, s.dim); % collapsed state
+      s = state(res-1, d); % collapsed state
     end
   end
   return;
@@ -52,7 +54,6 @@ elseif (isnumeric(M))
  if (isvector(M))
   % measure a set of subsystems in the computational basis
   sys = clean_selection(s, M);
-  d = s.dim;
 
   % dimensions of selected subsystems and identity ops between them
   % TODO sequential measured subsystems could be concatenated as well
@@ -85,7 +86,7 @@ elseif (isnumeric(M))
       if (nargin == 3 && discard)
         % discard the measured subsystems from s
         
-        s.dim(sys) = [];
+        d(sys) = [];
         keep = find(R);  % indices of elements to keep
         
         if (size(s.data, 2) == 1)
@@ -95,6 +96,7 @@ elseif (isnumeric(M))
           % state operator
           s.data = s.data(keep, keep) / p(res); % collapsed state
         end
+        s = state(s, d);
       else
         if (size(s.data, 2) == 1)
           % state vector

@@ -54,6 +54,7 @@ assert_o(norm(temp-H), 0, tol);
 U = rand_U(4); % random two-qubit gate
 L = kron(rand_U(2), rand_U(2)); % random local 2-qubit gate
 cnot = gate.controlled(qit.sx, 1);
+cnot = cnot.data;
 
 % canonical invariants
 assert_o(norm(invariant.canonical(L) -[0 0 0]), 0, tol);

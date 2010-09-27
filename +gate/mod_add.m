@@ -1,4 +1,4 @@
-function U = mod_add(d1, d2, N)
+function U = mod_add(dim1, dim2, N)
 % MOD_ADD  Modular adder gate.
 %  U = mod_add(d1, d2)    % N == prod(d2)
 %  U = mod_add(d1, d2, N) % target register dimension prod(d2) must be >= N
@@ -17,13 +17,8 @@ function U = mod_add(d1, d2, N)
 % Ville Bergholm 2010
 
 
-if (~isscalar(d1))
-  d1 = prod(d1); % vector of dimensions
-end
-
-if (~isscalar(d2))
-  d2 = prod(d2); % vector of dimensions
-end
+d1 = prod(dim1);
+d2 = prod(dim2);
 
 if (nargin < 3)
   N = d2;
@@ -54,3 +49,6 @@ for a=0:d1-1
     U(x+1, y+1) = 1;  % MATLAB indexing starts at 1
   end
 end
+
+dim = [dim1, dim2];
+U = lmap(U, {dim, dim});

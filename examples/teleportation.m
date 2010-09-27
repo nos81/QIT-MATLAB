@@ -12,12 +12,12 @@ fprintf('\n\n=== Quantum teleportation ===\n\n')
 
 global qit;
 
-H   = gate.qft([d 1]);    % qft (generalized Hadamard) gate
+H   = gate.qft(d);        % qft (generalized Hadamard) gate
 add = gate.mod_add(d, d); % modular adder (generalized CNOT) gate
-I   = speye(d);
+I   = gate.id(d);
 
 % EPR preparation circuit
-U = add * kron(H, I);
+U = add * tensor(H, I);
 
 disp('Alice and Bob start with a shared EPR pair.')
 epr = u_propagate(state('00', [d d]), U)
@@ -35,7 +35,7 @@ reg = tensor(payload, epr)
 
 
 disp('Now Alice entangles the payload with her half of the EPR pair')
-reg = u_propagate(reg, kron(U', I))
+reg = u_propagate(reg, tensor(U', I))
 
 [p, b(1), reg] = measure(reg, 1);
 [p, b(2), reg] = measure(reg, 2);
@@ -51,7 +51,7 @@ reg_B = to_ket(ptrace(reg, [1 2])) % pure state
 
 disp('Using the two classical d-its of data Alice sent him,')
 disp('Bob performs a local transformation on his half of the EPR pair.')
-Z = diag(sqrt(d) * H(:,b(1)+1));
+Z = H * gate.mod_inc(b(1), d) * H';
 X = gate.mod_inc(-b(2), d);
 reg_B = fix_phase(u_propagate(reg_B, Z*X))
 
