@@ -1,6 +1,6 @@
 function b = mtimes(a, b)
 % MTIMES  Multiplication of lmaps by lmaps and scalars.
-%  s = times(a, b)
+%  s = mtimes(a, b)
 %
 %  Returns product of a and b.
 

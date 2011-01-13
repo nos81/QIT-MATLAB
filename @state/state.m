@@ -172,5 +172,9 @@ classdef state < lmap
     function ret = equal_dims(s, t)
       ret = isequal(dims(s), dims(t));
     end
+
+    function ret = is_ket(s)
+      ret = (size(s.data, 2) == 1);
+    end
   end
 end

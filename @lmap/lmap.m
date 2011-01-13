@@ -1,5 +1,5 @@
 classdef lmap
-% LMAP  Class for multilinear maps between lists of finite-dimensional Hilbert spaces.
+% LMAP  Class for multilinear maps between tensor products of finite-dimensional Hilbert spaces.
 %
 %  Contains both the tensor and the dimensional information.
 

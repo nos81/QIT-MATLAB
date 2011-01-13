@@ -95,7 +95,8 @@ b bugfix
 
 
 2010-09-??    Version 0.9.9 (beta)
-	      + lmap class for multilinear maps, functions as a base class for state
+	      + lmap class for multilinear maps, used as a base class for state
+	      + lmap/mpower
 	      - several methods from state moved to lmap
 	      * state/concurrence fixed
 	      * state/purity does not normalize the state first
