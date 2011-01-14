@@ -28,6 +28,7 @@ n = min(n, length(H));
 for j=1:n
   lowest{j} = state(v(:, I(j)));
 end
+% TODO with degenerate states these are more or less random linear combinations of the basis states... overlaps are not meaningful
 
 for k=1:length(t)
   tt = t(k);
@@ -60,5 +61,5 @@ for k=1:n
   temp(k,:) = sprintf('|%d\\rangle', k-1);
 end
 legend(temp);
-%axis([0, 1, 0, 1]);
-axis([0, 1, 0, max(max(overlaps))]);
+axis([0, 1, 0, 1]);
+%axis([0, 1, 0, max(max(overlaps))]);
