@@ -40,6 +40,7 @@ end
 
 U.data = full(U.data); % it's a QFT anyway
 
+U
 %temp = U - gate.qft(dim);
 %norm(temp.data)
 end

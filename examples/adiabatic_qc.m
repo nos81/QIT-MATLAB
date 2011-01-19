@@ -6,7 +6,7 @@ function adiabatic_qc(H0, H1, s0, tmax)
 %  algorithm of Farhi et al. and plotting the results.
 
 %! E. Farhi et al., "Quantum Computation by Adiabatic Evolution", arXiv.org:quant-ph/0001106.
-% Ville Bergholm 2009-2010
+% Ville Bergholm 2009-2011
 
 
 if (nargin < 4)
@@ -43,5 +43,8 @@ if (H1(find(res.data)) == 0)
   disp('Which is a valid solution!')
 else
   disp('Which is not a solution!')
+  if (min(H1) > 0)
+     disp('(In this problem instance there aren''t any.)')
+  end
 end
 end

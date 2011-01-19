@@ -94,7 +94,7 @@ b bugfix
 	      * restored Matlab 7.6 compatibility
 
 
-2010-09-??    Version 0.9.9 (beta)
+2011-01-??    Version 0.9.9 (beta)
 	      + lmap class for multilinear maps, used as a base class for state
 	      + lmap/mpower
 	      - several methods from state moved to lmap
@@ -106,4 +106,4 @@ b bugfix
 	      * gate/controlled: any dimensions OK
 	      + gate/swap: swaps two subsystems
 	      * gate/phase: does not assume the first phase is always zero
-
+	      + examples/qft_circuit

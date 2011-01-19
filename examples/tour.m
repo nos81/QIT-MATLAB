@@ -1,6 +1,6 @@
 % Guided tour to the quantum information toolkit.
 
-% Ville Bergholm 2009-2010
+% Ville Bergholm 2009-2011
 
 disp('This is the guided tour for the Quantum Information Toolkit.')
 disp('Between examples, press any key to proceed to the next one.');
@@ -41,3 +41,6 @@ markov_decoherence(7e-10, 1e-9);
 pause
 
 qubit_and_resonator();
+pause
+
+%qft_circuit([2 3 2]);

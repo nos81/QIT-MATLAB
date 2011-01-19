@@ -108,7 +108,7 @@ M = 2^m; % state register dimension
 
 % applying f(x) is equivalent to the sequence of controlled modular multiplications in phase estimation
 U = gate.mod_mul(a, M, N);
-U = U.data; % phase_estimation cannot handle lmaps right now
+U = U.data; % FIXME phase_estimation cannot handle lmaps right now
 
 % state register initialized in the state |1>
 st = state(1, M);

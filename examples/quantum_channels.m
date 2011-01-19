@@ -11,8 +11,9 @@ function quantum_channels(p)
 fprintf('\n\n=== Quantum channels ===\n')
 
 if (nargin < 1)
-  p = 0.3
+  p = 0.3;
 end
+p
 
 global qit;
 
