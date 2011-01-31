@@ -1,5 +1,5 @@
 % Test script for the Quantum Information Toolkit utilities
-% Ville Bergholm 2009-2010
+% Ville Bergholm 2009-2011
 
 tol = qit.tol;
 
@@ -45,6 +45,12 @@ for k=1:length(E)
 end
 assert_o(norm(temp-H), 0, tol);
 
+
+
+% Test script for gates. TODO
+% Ville Bergholm 2010
+
+%U = gate.two(B, t, dim);
 
 
 

@@ -1,5 +1,5 @@
 % Test script for the state class.
-% Ville Bergholm 2008-2009
+% Ville Bergholm 2008-2011
 
 tol = qit.tol;
 
@@ -102,3 +102,19 @@ for k=1:20
   y = sort(eig(temp.data), 'descend');
   assert_o(norm(x-y), 0, tol);
 end
+
+
+% Test script for reorder.m
+% Ville Bergholm 2010-2011
+
+dim = [2 5 1];
+A = rand(dim(1));
+B = rand(dim(2));
+C = rand(dim(3));
+T1 = state(mkron(A, B, C), dim);
+T2 = reorder(T1, [3 1 2]);
+assert_o(norm(mkron(C, A, B) - T2.data), 0, tol);
+T2 = reorder(T1, [2 1 3]);
+assert_o(norm(mkron(B, A, C) - T2.data), 0, tol);
+T2 = reorder(T1, [3 2 1]);
+assert_o(norm(mkron(C, B, A) - T2.data), 0, tol);

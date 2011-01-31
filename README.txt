@@ -1,6 +1,6 @@
 README file for the Quantum Information Toolkit.
-Version 0.9.8 (beta)
-Released 2010-08-26
+Version 0.9.9 (beta)
+Released 2011-01-31
 
 
 
@@ -91,6 +91,6 @@ coding guidelines:
 
 === Authors ===
 
-Ville Bergholm                2008-2010
+Ville Bergholm                2008-2011
 Jacob D. Biamonte             2008-2009
 James D. Whitfield	      2009-2010
