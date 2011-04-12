@@ -1,6 +1,6 @@
-function h = bloch_sphere(s)
-% BLOCH_SPHERE  Bloch sphere plot.
-%  h = bloch_sphere(s)
+function h = plot_bloch_sphere(s)
+% PLOT_BLOCH_SPHERE  Bloch sphere plot.
+%  h = plot_bloch_sphere(s)
 %
 %  Plots a Bloch sphere, a geometrical representation of the state space of a single qubit.
 %  Pure states are on the surface of the sphere, nonpure states inside it.

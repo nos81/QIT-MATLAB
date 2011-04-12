@@ -1,21 +1,32 @@
 function a = bloch_vector(s)
 % BLOCH_VECTOR  Generalized Bloch vector.
-%  a = bloch_vector(s)
+%  A = bloch_vector(s)
 %
-%  Returns the Bloch vector a corresponding to state s.
-%  The vector is defined in terms of the tensor basis
-%  corresponding to s.dim.
+%  Returns the generalized Bloch vector A corresponding to the state s.
 %
-%  For proper states norm(a) <= sqrt(prod(s.dim)-1) (e.g. for qubits norm(a) <= 1).
+%  For an n-subsystem state the generalized Bloch vector is an order-n correlation
+%  tensor defined in terms of the standard Hermitian tensor basis B
+%  corresponding to s.dim:
+%
+%    A_{ijk...} == \sqrt(D) * \trace(\rho_s  B_{ijk...}),
+%
+%  where D = prod(s.dim). A is always real since \rho_s is Hermitian.
+%  For valid states norm(A) <= sqrt(D) (e.g. for a qubit system norm(A) <= 2).
 
-% Ville Bergholm 2009-2010
+% Ville Bergholm 2009-2011
 
 
-d = prod(dims(s));
-n = d^2-1;
-G = tensorbasis(dims(s));
+dim = dims(s);
+G = tensorbasis(dim);
+n = length(G);
 
 for k=1:n
   a(k) = ev(s, G{k});
 end
-a = a'*sqrt(d); % to match the usual Bloch vector normalization
+a = a * sqrt(prod(dim)); % to match the usual Bloch vector normalization
+
+% into an array, one dimension per subsystem
+if (length(dim) == 1)
+  dim = [dim, 1]; % stupid reshape input syntax exceptions
+end
+a = reshape(a, dim.^2);

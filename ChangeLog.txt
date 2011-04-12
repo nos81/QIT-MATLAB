@@ -108,3 +108,12 @@ b bugfix
 	      * gate/phase: does not assume the first phase is always zero
 	      + examples/qft_circuit
 	      + more testing scripts
+
+2011-??-??
+              * Performance-improving changes from MATLAB profiler
+	      b Several small bugs fixed in state/propagate
+	      b Function names made to match file names
+	      ? use logical indexing, replace find()
+	      * tensorbasis now includes identity in the basis
+	      * state/bloch_vector and bloch_state now use the full correlation tensor
+

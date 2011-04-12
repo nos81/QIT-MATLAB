@@ -35,5 +35,6 @@ qit.eV   = 1.602176487e-19; % J
 % caching
 qit.gellmann = {};
 qit.tensorbasis = {};
+qit.tensorbasislocal = {};
 qit.angular_momentum = {};
 qit.qft = {};

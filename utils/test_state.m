@@ -22,8 +22,15 @@ p2 = u_propagate(p, rand_SU(prod(dim)));
 U_p = rand_U(prod(dim));
 
 
-% TODO bloch_vector, concurrence, fix_phase, kraus_propagate, locc_convertible, lognegativity, measure,
+% TODO concurrence, fix_phase, kraus_propagate, locc_convertible, lognegativity, measure,
 % negativity,
+
+% Test script for generalized Bloch vectors.
+% Ville Bergholm 2011
+
+temp = bloch_vector(sigma1);
+assert_o(norm(bloch_state(temp) -sigma1), 0, tol); % need to match
+assert_o(norm(imag(temp)), 0, tol); % correlation tensor is real
 
 
 % Test scripts for fidelity.m, trace_dist.m

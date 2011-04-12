@@ -56,13 +56,13 @@ res = [];
 
 for a=1:s(2)
   for b=1:s(3)
-    temp = bloch_state(S(:,a,b));
+    temp = bloch_state([1; S(:,a,b)]);
     res(:,a,b) = bloch_vector(kraus_propagate(temp, E));
   end
 end
 
 plot_bloch_sphere();
-surf(squeeze(res(1,:,:)), squeeze(res(2,:,:)), squeeze(res(3,:,:)));
+surf(squeeze(res(2,:,:)), squeeze(res(3,:,:)), squeeze(res(4,:,:)));
 shading flat
 alpha(0.2)
 title(T);

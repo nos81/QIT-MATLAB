@@ -1,6 +1,6 @@
-function adiabatic_evolution(t, st, H_func, n)
-% ADIABATIC_EVOLUTION  Adiabatic evolution plot.
-%  adiabatic_evolution(t, st, H_func)
+function plot_adiabatic_evolution(t, st, H_func, n)
+% PLOT_ADIABATIC_EVOLUTION  Adiabatic evolution plot.
+%  plot_adiabatic_evolution(t, st, H_func)
 %
 %  Input: vector t of time instances, cell vector st of states corresponding
 %  to the times and time-dependant Hamiltonian function handle H_func.

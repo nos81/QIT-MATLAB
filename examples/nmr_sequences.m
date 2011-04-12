@@ -36,7 +36,7 @@ s_error(:,3) = s(:,3) +0.1; % off-resonance error
 
 % apply sequence on state psi, plot the evolution
 [out, t] = seq_propagate(psi, s_error, @bloch_vector);
-a = cell2mat(out);
+a = cell2mat(out); a = a(2:end, :);
 n = size(a, 2);
 
 subplot(2,2,1);
@@ -51,7 +51,7 @@ s_error(:,end) = s(:,end)*1.1; % pulse lenght error
 
 % apply sequence on state psi, plot the evolution
 [out, t] = seq_propagate(psi, s_error, @bloch_vector);
-a = cell2mat(out);
+a = cell2mat(out); a = a(2:end, :);
 n = size(a, 2);
 
 subplot(2,2,3);

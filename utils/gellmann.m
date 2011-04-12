@@ -3,9 +3,9 @@ function G = gellmann(n)
 %  G = gellmann(n)
 %
 %  Returns the n^2-1 (traceless, Hermitian) Gell-Mann matrices of dimension n,
-%  normalized such that trace(G_i' * G_j) = \delta_ij.
+%  normalized such that \trace(G_i' * G_j) = \delta_{ij}.
 
-% Ville Bergholm 2006-2009
+% Ville Bergholm 2006-2011
 
 
 global qit;
@@ -15,7 +15,7 @@ if (n <= 0)
 end
 
 % check cache first
-if (length(qit.gellmann) >= n && length(qit.gellmann{n}) > 0)
+if (length(qit.gellmann) >= n && ~isempty(qit.gellmann{n}))
   G = qit.gellmann{n};
   return;
 end
