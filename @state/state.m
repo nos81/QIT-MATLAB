@@ -26,9 +26,12 @@ classdef state < lmap
     %  x = state(rand(4,1), [2 2]); % ket, two qubits
     %  x = state(rand(4));          % state operator, dim = 4
     %  x = state(rand_positive(6), [3 2]); % state operator, qutrit+qubit
-    %  x = state('GHZ', [2 2 2]);   % three-qubit GHZ state
+    %  x = state('GHZ', [2 2 2]);   % named states (in this case the three-qubit GHZ state)
     %
-    %  The currently supported named states are GHZ (Greenberger-Horne-Zeilinger) and W.
+    %  The currently supported named states are
+    %   GHZ (Greenberger-Horne-Zeilinger),
+    %   W,
+    %   Bell1, Bell2, Bell3, Bell4 
 
     if (nargin == 0)
       error('No arguments given.');

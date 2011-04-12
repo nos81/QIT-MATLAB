@@ -1,8 +1,8 @@
 function U = phase(theta, dim)
-% PHASE  Phase shift gate.
+% PHASE  Diagonal phase shift gate.
 %  U = phase(theta)
 %
-%  Returns the phase shift gate U = diag(exp(i*theta)).
+%  Returns the (diagonal) phase shift gate U = diag(exp(i*theta)).
 
 % Ville Bergholm 2010
 

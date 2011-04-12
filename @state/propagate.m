@@ -112,27 +112,29 @@ function d = lindblad_fun(t, y, F)
 
   d = zeros(size(y));
   % lame vectorization
-  for k=1:size(y, 2)
-    x = reshape(y(:,k), dim); % into a matrix
+  for loc1_k=1:size(y, 2)
+    x = reshape(y(:,loc1_k), dim); % into a matrix
   
     % Hamiltonian
-    temp = -i * (X{1} * x  -x * X{1});
+    temp = -1i * (X{1} * x  -x * X{1});
     % Lindblad operators
     for j=1:length(A)
       ac = A{j}'*A{j};
       temp = temp +A{j}*x*A{j}' -0.5*(ac*x + x*ac);
     end
-    d(:,k) = temp(:); % back into a vector
+    d(:,loc1_k) = temp(:); % back into a vector
   end
 end
 
 function d = mixed_fun(t, y, F)
   H = F(t);
+  
+  d = zeros(size(y));
   % vectorization
-  for k=1:size(y, 2)
-    x = reshape(y(:,k), dim); % into a matrix
-    temp = -i * (H * x  -x * H);
-    d(:,k) = temp(:); % back into a vector
+  for loc2_k=1:size(y, 2)
+    x = reshape(y(:,loc2_k), dim); % into a matrix
+    temp = -1i * (H * x  -x * H);
+    d(:,loc2_k) = temp(:); % back into a vector
   end
 end
 
@@ -145,7 +147,7 @@ if (t_dependent)
       % Hamiltonian
       if (dim(2) == 1)
         % pure state
-        odefun = @(t, y, F) -i * F(t) * y; % derivative function for the solver
+        odefun = @(t, y, F) -1i * F(t) * y; % derivative function for the solver
       else
         % mixed state
         odefun = @mixed_fun;
@@ -188,18 +190,18 @@ else
 
   switch (gen)
     case 'H'
-      if (length(H < 500))
+      if (length(H) < 500)
         % eigendecomposition
         [v, d] = eig(full(H)); % TODO eigs?
         d = diag(d);
         for k=1:n
-          U = v * diag(exp(-i * t(k) * d)) * v';
+          U = v * diag(exp(-1i * t(k) * d)) * v';
           out{k} = out_func(u_propagate(s, U), H);
           %out{k} = out_func(u_propagate(s, expm(-i*H*t(k))), H);
         end
       else
         % Krylov subspace method
-        [w, err] = expv(-i*t, H, s.data);
+        [w, err] = expv(-1i*t, H, s.data);
         for k=1:n
           s.data = w(:,k);
           out{k} = out_func(s, H);

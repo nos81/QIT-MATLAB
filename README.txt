@@ -23,9 +23,9 @@ the features and capabilities of the toolkit, run examples/tour.m.
 === Octave 3.0 users ===
 
 The object-oriented features used in the @state class, as well as the
-namespace directories require MATLAB 7.6 to work. Unfortunately they
-do not work at all in Octave 3.0. (It would be possible to fix this
-by re-implementing @state and namespaces using traditional syntax, but
+package directories require MATLAB 7.6 to work. Unfortunately they
+do not work at all in Octave 3.2. (It would be possible to fix this
+by re-implementing @state and package namespaces using traditional syntax, but
 this would subtract from the usability.) However, the toolkit has some
 workarounds which make it at least partially usable in Octave.
 
