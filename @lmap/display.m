@@ -41,7 +41,7 @@ if (n_ind == 1 || (n_ind == 2 && (isequal(s.dim{1}, 1) || isequal(s.dim{2}, 1)))
   n = length(dim);
 
   for ind = 1:prod(dim)
-    temp = s.data(ind);
+    temp = full(s.data(ind)); % sprintf can't handle sparse arrays, not even scalars
     if (abs(temp) >= qit.tol)
       if (abs(imag(temp)) <= qit.tol)
         out = [out, sprintf(' %+2g', real(temp))];

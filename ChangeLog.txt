@@ -109,10 +109,11 @@ b bugfix
 	      + examples/qft_circuit
 	      + more testing scripts
 
-2011-??-??
+2011-08-??
               * Performance-improving changes from MATLAB profiler
 	      b Several small bugs fixed in state/propagate
 	      b Function names made to match file names
+	      b lmap/display can now handle sparse lmaps as well
 	      ? use logical indexing, replace find()
 	      * tensorbasis now includes identity in the basis
 	      * state/bloch_vector and bloch_state now use the full correlation tensor
