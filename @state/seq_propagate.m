@@ -2,35 +2,37 @@ function [out, t] = seq_propagate(s, seq, out_func)
 % SEQ_PROPAGATE  Propagate the state in time using a control sequence.
 %  [out, t] = propagate(s, seq, out_func)
     
-% Ville Bergholm 2009-2010
+% Ville Bergholm 2009-2011
 
-
-global qit;
 
 if (nargin < 3)
     out_func = @(x) x; % no output function given, use a NOP
     
     if (nargin < 2)
-        error('Needs a stuff');
+        error('Needs a control sequence.');
     end
 end
 
 
 base_dt = 0.1;
-n = size(seq, 1); % number of pulses
+n = length(seq.tau); % number of pulses
 t = [0];
 out{1} = out_func(s);
 
-for k=1:n
-    H = 0.5*(qit.sx*seq(k, 1) +qit.sy*seq(k, 2) +qit.sz*seq(k, 3));
-    T = seq(k, end);
-    
-    n_steps = ceil(T/base_dt);
-    dt = T/n_steps;
+for j=1:n
+    G = seq.A;
+    for k = 1:length(seq.B)
+        u = seq.control(j, k);
+        G = G + u * seq.B{k};
+    end
 
-    U = expm(-i*H*dt);
-    for j=1:n_steps
-        s = u_propagate(s, U);
+    T = seq.tau(j);
+    n_steps = ceil(T / base_dt);
+    dt = T / n_steps;
+
+    P = expm(-dt * G);
+    for q=1:n_steps
+        s = u_propagate(s, P);
         out{end+1} = out_func(s);
     end
 

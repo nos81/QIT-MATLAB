@@ -7,13 +7,16 @@ function s = cpmg(t, n)
 %  under a nonuniform z drift, it is not meant to be a full memory protocol.
 %  The target operation for this sequence is identity.
     
-% Ville Bergholm 2007-2009
+% Ville Bergholm 2007-2011
 
 
 s = seq.nmr([pi/2, pi/2]); % initial y rotation
 
-step = [0 0 0 t; seq.nmr([pi, 0]); 0 0 0 t]; % wait, pi x rotation, wait
+% step: wait, pi x rotation, wait
+step_tau  = [t; pi; t];
+step_ctrl = [0 0; 1 0; 0 0]; 
 
 for k=1:n
-  s = [s; step];
+  s.tau = [s.tau; step_tau];
+  s.control = [s.control; step_ctrl];
 end

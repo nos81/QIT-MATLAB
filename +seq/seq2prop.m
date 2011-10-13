@@ -1,23 +1,25 @@
-function U = seq2prop(s)
-% SEQ2PROP  SU(2) propagator corresponding to a single-qubit control sequence.
-%  U = seq2prop(s)
+function P = seq2prop(s)
+% SEQ2PROP  Propagator corresponding to a control sequence.
+%  P = seq2prop(s)
 %
-%  Returns the SU(2) rotation matrix U corresponding to the
-%  action of the single-qubit control sequence s alone.
+%  Returns the matrix P corresponding to the action of the control sequence s.
+%  
+%  Governing equation: \dot(X)(t) = -(A +\sum_k u_k(t) B_k) X(t) = -G(t) X(t)
 
 %  [a, theta] ^= R_a(theta) = expm(-i*a*sigma*theta/2) = expm(-i*H*t) => H = a*sigma/2, t = theta
 
-% Ville Bergholm 2009
+% Ville Bergholm 2009-2011
 
 
-global qit;
+n = length(s.tau);
+P = eye(size(s.A));
 
-n = size(s, 1);
-U = eye(2);
+for j=1:n
+  G = s.A;
+  for k = 1:length(s.B)
+      G = G + s.control(j, k) * s.B{k};
+  end
 
-for k=1:n
-  H = 0.5*(qit.sx*s(k,1) +qit.sy*s(k,2) +qit.sz*s(k,3));
-  t = s(k,end);
-  temp = expm(-i*H*t);
-  U = temp * U;
+  temp = expm(-s.tau(j) * G);
+  P = temp * P;
 end

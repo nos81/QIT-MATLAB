@@ -8,12 +8,14 @@ function nmr_sequences
 %  of both off-resonance error f and fractional pulse lenght error g.
 
 %! Cummins et al., "Tackling systematic errors in quantum logic gates with composite rotations", PRA 67, 042308 (2003).
-% Ville Bergholm 2006-2009 
+% Ville Bergholm 2006-2011
 
 
 fprintf('\n\n=== NMR control sequences for correcting systematic errors ===\n')
 
-seqs = {[1 0 0 pi], seq.corpse(pi), seq.scrofulous(pi), seq.bb1(pi)};
+global qit;
+
+seqs = {seq.nmr([pi, 0]), seq.corpse(pi), seq.scrofulous(pi), seq.bb1(pi)};
 titles = {'Plain \pi pulse', 'CORPSE', 'SCROFULOUS', 'BB1'};
 
 psi = state('0'); % initial state
@@ -29,35 +31,31 @@ figure;
 s = seqs{q};
 U = seq.seq2prop(s); % target propagator
 
-% in this simple example the errors can be fully included in the control sequence
+% The two systematic error types we are interested here can be
+% incorporated into the control sequence.
+
 %==================================================
 s_error = s;
-s_error(:,3) = s(:,3) +0.1; % off-resonance error
+s_error.A = 0.1 * 1i * 0.5 * qit.sz; % add off-resonance error (constant \sigma_z drift term)
 
 % apply sequence on state psi, plot the evolution
 [out, t] = seq_propagate(psi, s_error, @bloch_vector);
-a = cell2mat(out); a = a(2:end, :);
-n = size(a, 2);
 
 subplot(2,2,1);
 plot_bloch_sphere();
-plot3(a(1,:),a(2,:),a(3,:));
-plot3(a(1,n),a(2,n),a(3,n), 'k.');
+plot_bloch_trajectory(out);
 title([titles{q} ' evolution, off-resonance error']);
 
 %==================================================
 s_error = s;
-s_error(:,end) = s(:,end)*1.1; % pulse lenght error
+s_error.tau = s.tau * 1.1; % proportional pulse lenght error
 
 % apply sequence on state psi, plot the evolution
 [out, t] = seq_propagate(psi, s_error, @bloch_vector);
-a = cell2mat(out); a = a(2:end, :);
-n = size(a, 2);
 
 subplot(2,2,3);
 plot_bloch_sphere();
-plot3(a(1,:),a(2,:),a(3,:));
-plot3(a(1,n),a(2,n),a(3,n), 'k.');
+plot_bloch_trajectory(out);
 title([titles{q} ' evolution, pulse length error']);
 
 %==================================================
@@ -65,10 +63,9 @@ s_error = s;
 fid = [];
 
 for k=1:nf
-  s_error(:,3) = s(:,3) + f(k); % off-resonance error (constant \sigma_z interaction)
+  s_error.A = f(k) * 1i * 0.5 * qit.sz; % off-resonance error
   for j=1:ng
-    s_error(:,end) = s(:,end)*(1 + g(j)); % proportional pulse length error
-
+    s_error.tau = s.tau * (1 + g(j)); % pulse length error
     fid(j, k) = u_fidelity(U, seq.seq2prop(s_error));
   end
 end

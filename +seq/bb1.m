@@ -8,7 +8,7 @@ function [s] = bb1(theta, phi, location)
 %  The target rotation is \theta_\phi in the NMR notation.
 
 %! Cummins et al., "Tackling systematic errors in quantum logic gates with composite rotations", PRA 67, 042308 (2003).
-% Ville Bergholm 2009
+% Ville Bergholm 2009-2011
 
 if (nargin < 3)
   location = 0.5; % default: symmetric
@@ -18,7 +18,4 @@ if (nargin < 3)
 end
 
 ph1 = acos(-theta/(4*pi));
-W1  = seq.nmr([pi, ph1; 2*pi, 3*ph1; pi, ph1]);
-
-%s = [W1; seq.nmr([theta, phi])];
-s = [seq.nmr([location*theta, phi]); W1; seq.nmr([(1-location)*theta, phi])];
+s  = seq.nmr([location*theta, phi; pi, ph1; 2*pi, 3*ph1; pi, ph1; (1-location)*theta, phi]);
