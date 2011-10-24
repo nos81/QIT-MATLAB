@@ -12,14 +12,14 @@ function F = fidelity(r, s)
 %! M.A. Nielsen, I.L. Chuang, "Quantum Computation and Quantum Information" (2000), chapter 9.2.2
 
 
-if (size(r.data, 2) == 1)
-  if (size(s.data, 2) == 1)
+if is_ket(r)
+  if is_ket(s)
     F = abs(r.data' * s.data);
   else
     F = sqrt(real(r.data' * s.data * r.data));
   end
 else
-  if (size(s.data, 2) == 1)
+  if is_ket(s)
     F = sqrt(real(s.data' * r.data * s.data));
   else
     temp = sqrtm(r.data);

@@ -6,7 +6,7 @@ function s = normalize(s)
 
 % Ville Bergholm 2008
 
-if (size(s.data, 2) == 1)
+if is_ket(s)
   s.data = s.data/norm(s.data);
 else
   s.data = s.data/trace(s.data);

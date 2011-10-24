@@ -29,7 +29,7 @@ n = length(E);
 %  warning('Unphysical quantum operation.')
 %end
 
-if (size(s.data, 2) == 1)
+if is_ket(s)
   % state vector
   if (n == 1)
     q = u_propagate(s, E{1}); % remains a pure state

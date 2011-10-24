@@ -13,7 +13,7 @@ if (abs(purity(s) - 1) > qit.tol)
   error('The state is not pure, and thus does not correspond to a projector.')
 end
 
-if (size(s.data, 2) == 1)
+if is_ket(s)
   % state vector
   P = s.data * s.data';
 else

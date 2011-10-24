@@ -42,7 +42,7 @@ N = size(s.data, 1);
 Ncol = 127; % color resolution (odd to fix zero phase at the center of a color index)
 colormap(circshift(hsv(Ncol), floor(Ncol/6))); % the hsv map wraps (like phase)
 
-if (size(s.data, 2) == 1)
+if is_ket(s)
   % state vector
   s = fix_phase(s);
 

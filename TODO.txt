@@ -1,9 +1,6 @@
 General
 - more comprehensive test scripts with asserts
-
-
-Control sequences
-- GRAPE optimization
+- use logical indexing instead of find()?
 
 
 Noise

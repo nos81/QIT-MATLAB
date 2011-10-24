@@ -7,12 +7,12 @@ function s = to_ket(s)
 %  internal representation of the state (q.data) is guaranteed to
 %  be a ket vector.
 
-% Ville Bergholm 2009-2010
+% Ville Bergholm 2009-2011
 
 
 global qit;
 
-if (size(s.data, 2) == 1)
+if is_ket(s)
   return; % already a ket, nothing to do
 else
   % state op

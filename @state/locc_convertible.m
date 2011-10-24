@@ -6,19 +6,13 @@ function res = locc_convertible(s, t, sys)
 %  using local operations and classical communication (LOCC).
 %  sys is a vector of subsystems defining the partition.
 
-% Ville Bergholm 2010
+% Ville Bergholm 2010-2011
 %! M.A. Nielsen, I.L. Chuang, "Quantum Computation and Quantum Information" (2000), chapter 12.5.1
 
 
-if (size(s.data, 2) ~= 1)
-  s = to_ket(s);
-  %error('Not implemented for nonpure states.')
-end
-
-if (size(t.data, 2) ~= 1)
-  t = to_ket(t);
-  %error('Not implemented for nonpure states.')
-end
+s = to_ket(s);
+t = to_ket(t);
+%error('Not implemented for nonpure states.')
 
 if (~equal_dims(s, t))
   error('States must have equal dimensions.')

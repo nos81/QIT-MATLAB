@@ -8,7 +8,7 @@ function p = prob(s)
 % Ville Bergholm 2009
 
 
-if (size(s.data, 2) == 1)
+if is_ket(s)
   % state vector
   p = abs(s.data).^2;
 else

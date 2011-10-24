@@ -8,7 +8,7 @@ function x = ev(s, A)
 % Ville Bergholm 2008
 
 
-if (size(s.data, 2) == 1)
+if is_ket(s)
   % state vector
   x = s.data' * A * s.data;
 else

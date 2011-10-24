@@ -89,7 +89,7 @@ elseif (isnumeric(M))
         d(sys) = [];
         keep = find(R);  % indices of elements to keep
         
-        if (size(s.data, 2) == 1)
+        if is_ket(s)
           % state vector
           s.data = s.data(keep) / sqrt(p(res)); % collapsed state
         else
@@ -98,7 +98,7 @@ elseif (isnumeric(M))
         end
         s = state(s, d);
       else
-        if (size(s.data, 2) == 1)
+        if is_ket(s)
           % state vector
           s.data = R.' .* s.data / sqrt(p(res)); % collapsed state
         else
@@ -126,7 +126,7 @@ elseif (isnumeric(M))
     if (nargout >= 3)
       ppp = P{res};
 
-      if (size(s.data, 2) == 1)
+      if is_ket(s)
         % state vector
         s.data = ppp * s.data / sqrt(p(res)); % collapsed state
       else
@@ -141,7 +141,7 @@ elseif (iscell(M))
   m = length(M);
 
   % probabilities
-  if (size(s.data, 2) == 1)
+  if is_ket(s)
     % state vector
     for k=1:m
       p(k) = s.data' * M{k}' * M{k} * s.data;

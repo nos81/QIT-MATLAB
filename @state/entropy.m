@@ -20,7 +20,7 @@ if (nargin == 2)
   s = ptrace(to_ket(s), sys); % partial trace over one partition
 end
 
-if (size(s.data, 2) == 1)
+if is_ket(s)
   % pure state
   S = 0;
 else

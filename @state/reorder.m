@@ -14,7 +14,7 @@ function [s] = reorder(s, perm)
 
 % this is just an adapter for lmap::reorder
 
-if (size(s.data, 2) == 1)
+if is_ket(s)
   s = reorder@lmap(s, {perm});
 else
   s = reorder@lmap(s, {perm, perm});

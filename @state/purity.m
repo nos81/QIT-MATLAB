@@ -8,7 +8,7 @@ function p = purity(s)
 % Ville Bergholm 2008-2010
 
 
-if (size(s.data, 2) == 1)
+if is_ket(s)
   p = 1;
 else
   p = trace(s.data^2);

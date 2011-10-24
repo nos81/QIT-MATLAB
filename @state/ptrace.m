@@ -21,9 +21,7 @@ sys = clean_selection(s, sys);
 d = fliplr(dim); % into little-endian: now dim(1) is the dimension of the last system (least significant digit)
 flipped_sys = n+1-sys; % these are indices to dim vector, flip them too, now d(flipped_sys) makes sense
 
-if (size(s.data, 2) == 1)
-  s.data = s.data*s.data'; % vector into matrix
-end
+s = to_op(s);
 
 % partial trace over single system s, performed for every s in sys
 for j=flipped_sys

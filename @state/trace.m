@@ -7,7 +7,7 @@ function x = trace(s)
 
 % Ville Bergholm 2008
 
-if (size(s.data, 2) == 1)
+if is_ket(s)
   x = s.data'*s.data;
 else
   x = trace(s.data);

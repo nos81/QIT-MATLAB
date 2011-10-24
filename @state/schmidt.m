@@ -29,7 +29,7 @@ if (nargin < 2)
   end
 end
 
-if (size(s.data, 2) ~= 1)
+if ~is_ket(s)
   % state operator
   s = to_ket(s);
   %error('Schmidt decomposition is only defined for pure states.')

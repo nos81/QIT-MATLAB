@@ -12,8 +12,8 @@ function s = fix_phase(s)
 
 global qit;
 
-if (size(s.data, 2) ~= 1)
-  % not a ket
+if ~is_ket(s)
+  % state operator
   return;
 end
 
