@@ -1,17 +1,26 @@
-function U = single(L, targ, dim)
+function U = single(L, t, d_in)
 % SINGLE  Single-qudit operator.
 %
-%  U = single(L, targ, dim)
+%  U = single(L, t, d_in)
 %
 %  Returns the operator U corresponding to the local operator L applied
-%  to subsystem targ (and identity applied to the remaining subsystems).
+%  to subsystem t (and identity applied to the remaining subsystems).
 %
-%  dim is the dimension vector for U.
+%  d_in is the input dimension vector for U.
 
 % James Whitfield 2010
-% Ville Bergholm 2010
+% Ville Bergholm 2010-2011
 
 
-d1 = dim;
-d1(targ) = prod(size(L.data, 1));
-U = lmap(op_list({{L.data, targ}}, dim), {d1, dim});
+if isa(L, 'lmap')
+    L = L.data;
+end
+
+if d_in(t) ~= size(L, 2)
+    error('Input dimensions do not match.')
+end
+
+d_out = d_in;
+d_out(t) = size(L, 1);
+
+U = lmap(op_list({{L, t}}, d_in), {d_out, d_in});

@@ -1,18 +1,18 @@
-function U = two(B, t, dim)
+function U = two(B, t, d_in)
 % TWO  Two-qudit operator.
 %
-%  U = two(B, t, dim)
+%  U = two(B, t, d_in)
 %
-%  Returns the operator U corresponding to the bipartite operator B applied
+%  Returns the operator U corresponding to the bipartite-to-bipartite operator B applied
 %  to subsystems t == [t1, t2] (and identity applied to the remaining subsystems).
 %
-%  dim is the dimension vector for U.
+%  d_in is the input dimension vector for U.
 
 % James Whitfield 2010
-% Ville Bergholm 2010
+% Ville Bergholm 2010-2011
 
 
-n = length(dim);
+n = length(d_in);
 
 if (length(t) ~= 2)
   error('Exactly two target subsystems required.')
@@ -24,9 +24,8 @@ end
 
 dB = B.dim;
 
-temp = dim(t);
-if (~isequal(dB{2}, temp))
-  error('Dimensions of the target subsystems are not compatible with the dimensions of B.')
+if ~isequal(dB{2}, d_in(t))
+  error('Dimensions of the target subsystems are not compatible with the input dimensions of B.')
 end
 
 a = min(min(t));
@@ -40,15 +39,15 @@ else
 end
 
 % dimensions for the untouched subsystems
-before    = prod(dim(1:a-1));
-inbetween = prod(dim(a+1:b-1));
-after     = prod(dim(b+1:end));
+before    = prod(d_in(1:a-1));
+inbetween = prod(d_in(a+1:b-1));
+after     = prod(d_in(b+1:end));
 
+% tensor in the corresponding identities
 B = reorder(tensor(B, lmap(speye(inbetween))), {p, p});
-
 U = tensor(lmap(speye(before)), B, lmap(speye(after)));
 
 % restore dimensions
-d1 = dim;
-d1(t) = dB{1};
-U = lmap(U, {d1, dim});
+d_out = d_in;
+d_out(t) = dB{1};
+U = lmap(U, {d_out, d_in});
