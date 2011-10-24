@@ -47,7 +47,7 @@ xlabel('t \omega_0');
 ylabel('probability');
 axis([0 t(end) 0 1])
 title('T_1: relaxation');
-legend('P_1', 'P_{1}^{eq} +(1-P_{1}^{eq}) exp(-t/T_1)')
+legend('P_1', 'P_{1}^{eq} + (1-P_{1}^{eq}) exp(-t/T_1)')
 
 
 % T2 demo
@@ -60,4 +60,4 @@ xlabel('t \omega_0');
 ylabel('probability')
 axis([0 t(end) 0 1])
 title('T_2: dephasing');
-legend('P_0', '0.5*(1+exp(-t/T_2))')
+legend('P_0', '(1 + exp(-t/T_2)) / 2')

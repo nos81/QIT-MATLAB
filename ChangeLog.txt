@@ -38,7 +38,7 @@ b bugfix
 	      + utils: majorize, spectral_decomposition
 	      + Harmonic oscillator package
 	      + ho methods: ladder, displace, squeeze, coherent_state,
-	      	 momentum_state, position_state, wigner
+	        momentum_state, position_state, wigner
 	      + examples/qubit_and_resonator
 	      * state/measure also measures arbitrary Hermitian observables
 
@@ -49,7 +49,7 @@ b bugfix
 	      + utils/asongoficeandfire
 	      b utils/lrmul did unnecessary work
 	      * Born-Markov package again reorganized, uses lookup
-	      	 tables more efficiently
+	        tables more efficiently
 	      * neater examples
 
 2010-03-17    Version 0.9.6 (beta)
@@ -80,19 +80,18 @@ b bugfix
 2010-08-26    Version 0.9.8 (beta)
 	      - removed the plots package
 	      * renamed plots:
- 	        tomography          => state/plot,
+	        tomography          => state/plot,
 	        weyl_chamber        => invariant/plot_weyl_2q,
 	        makhlin_gates       => invariant/plot_makhlin_2q,
-		bloch_sphere        => utils/plot_bloch_sphere,
-		adiabatic_evolution => utils/plot_adiabatic_evolution,
-		wigner_function     => utils/plot_pcolor
+	        bloch_sphere        => utils/plot_bloch_sphere,
+	        adiabatic_evolution => utils/plot_adiabatic_evolution,
+	        wigner_function     => utils/plot_pcolor
 	      * renamed ho/ladder => utils/boson_ladder
 	      * renamed gates: mod_add => mod_inc
 	      + gate/mod_add
 	      * gates: mod_inc, mod_mul input syntax
 	      * examples: teleportation and superdense_coding now can use qudits
 	      * restored Matlab 7.6 compatibility
-
 
 2011-01-31    Version 0.9.9 (beta)
 	      + lmap class for multilinear maps, used as a base class for state
@@ -109,12 +108,17 @@ b bugfix
 	      + examples/qft_circuit
 	      + more testing scripts
 
-2011-08-??
-              * Performance-improving changes from MATLAB profiler
-	      b Several small bugs fixed in state/propagate
-	      b Function names made to match file names
+2011-10-??    Version 0.9.10 (beta)
+	      * performance-improving changes from MATLAB profiler
+              * better code modularization
+	      + some new physical constants, updated to CODATA 2010 values
+              + utils/rand_SL
+	      + utils/plot_bloch_trajectory
+	      b several small bugs fixed in state/propagate
+	      b function names now match file names
 	      b lmap/display can now handle sparse lmaps as well
-	      ? use logical indexing, replace find()
-	      * tensorbasis now includes identity in the basis
-	      * state/bloch_vector and bloch_state now use the full correlation tensor
-
+	      * utils/tensorbasis now includes identity in the basis,
+	        state/bloch_vector and utils/bloch_state correspondingly
+	        changed to use the full correlation tensor
+	      * Control sequences package implemented in a more general way
+	        to match with the Dynamo optimal control package.

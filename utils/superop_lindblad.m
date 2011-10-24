@@ -19,13 +19,13 @@ if (nargin == 2)
   % Hamiltonian
   iH = i*H;
 else
-  iH = 0;
+  iH = sparse(0);
 end
 
 n_A = prod(size(A));
 
-L = 0;
-acomm = 0;
+L = sparse(0);
+acomm = sparse(0);
 for k=1:n_A
   acomm = acomm +0.5 * A{k}' * A{k};
   L = L +lrmul(A{k}, A{k}'); 

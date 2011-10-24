@@ -27,10 +27,12 @@ qit.H = [1 1; 1 -1]/sqrt(2);
 % error tolerance
 qit.tol = max(1e-10, eps);
 
-% some relevant physical constants (CODATA 2006)
-qit.hbar = 1.054571628e-34; % J s
-qit.kB   = 1.3806504e-23;   % J/K
-qit.eV   = 1.602176487e-19; % J
+% some relevant physical constants (CODATA 2010)
+qit.hbar = 1.054571726e-34; % Planck constant / (2 pi), J s
+qit.kB   = 1.3806488e-23;   % Boltzmann constant, J/K
+qit.eV   = 1.602176565e-19; % electron volt, J
+qit.c    = 299792458;       % speed of light in vacuum, m/s
+
 
 % caching
 qit.gellmann = {};
