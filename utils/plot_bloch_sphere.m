@@ -6,9 +6,9 @@ function h = plot_bloch_sphere(s)
 %  Pure states are on the surface of the sphere, nonpure states inside it.
 %  The states |0> and |1> lie on the north and south poles of the sphere, respectively.
 %
-%  s is a two dimensional state to be plotted.
+%  s is an optional two-dimensional state to be plotted in the sphere.
 
-% Ville Bergholm  2005-2010
+% Ville Bergholm  2005-2011
 % James Whitfield 2010
 
 
@@ -23,11 +23,17 @@ axis square
 xlabel('x');
 ylabel('y');
 zlabel('z');
+
+% poles
 plot3(0,0,1,'r.');
 plot3(0,0,-1,'b.');
-
 text(0, 0,  1.2, '|0\rangle');
 text(0, 0, -1.2, '|1\rangle');
+
+% equator
+phi = linspace(0, 2*pi, 40);
+plot3(cos(phi), sin(phi), zeros(size(phi)), 'k-');
+
 if nargin==1
     v = bloch_vector(s);
     quiver3(0, 0, 0, v(1), v(2), v(3), 0);
