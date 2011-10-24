@@ -43,8 +43,7 @@ classdef lmap
     if (isa(s, 'lmap'))
       % copy constructor
       if (nargin == 1)
-        out = s;
-        return;
+        dim = s.dim; % copy also dimensions
       end
       s = s.data;
 
@@ -125,7 +124,7 @@ classdef lmap
       end
 
       for k = 1:n
-        if (~isequal(s.dim, t.dim))
+        if (~isequal(s.dim{k}, t.dim{k}))
           error('The dimensions of the index %d of the lmaps do not match.', k)
         end
       end

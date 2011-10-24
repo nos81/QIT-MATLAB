@@ -2,7 +2,7 @@ function [s] = reorder(s, perm)
 % REORDER  Change the relative order of subsystems in an lmap.
 %  [S] = reorder(T, perm);
 %    reorder(T, {[], [3 2 1]}); % ignore first index, reverse the order of subsystems in the second
-%    reorder(T, {[2 5]});       % swap subsystems 2 and 5 in the first index
+%    reorder(T, {[5 2]});       % swap subsystems 2 and 5 in the first index
 %
 %  Reorders the subsystems of the lmap T according to permutation
 %  cell vector perm == {p_1, p_2, ...}.
@@ -11,8 +11,15 @@ function [s] = reorder(s, perm)
 %
 %  The contents of each permutation vector p_i may be either empty (nothing is done to that index), 
 %  exactly two subsystem numbers (to be swapped), or a full permutation of subsystem numbers.
+%  Two subsystems to be swapped must be in decreasing order so as not
+%  to mistake the full identity permutation [1 2] for a swap.
+%
+%  NOTE: The full permutations are interpreted in the same sense as the
+%  MATLAB function permute() understands them, i.e. the permutation
+%  vector is the new ordering of the old subsystem indices.
+%  This is the inverse of the mathematically more common "one-line" notation.
 
-% Ville Bergholm 2009-2010
+% Ville Bergholm 2009-2011
 
 
 % number of indices
@@ -37,6 +44,11 @@ for k = 1:n_ind
 
   % total dimension
   dd(k) = prod(this_dim);
+
+  % avoid a subtle problem with the input syntax
+  if isequal(this_perm, [1 2])
+    this_perm = [];
+  end
 
   temp = 1:n;
   switch (length(this_perm))

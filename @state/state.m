@@ -47,10 +47,10 @@ classdef state < lmap
       s = s.data;
 
     elseif (isa(s, 'lmap'))
-      % state from lmap
+      % state from lmap (TODO kind of a hack really, we should not need this)
       if (nargin == 1)
         dim = s.dim;  % copy also dimensions
-	    dim = dim{1};
+        dim = dim{1}; % dim{2} should be the same for this operation to make sense
       end
       s = s.data;
 
