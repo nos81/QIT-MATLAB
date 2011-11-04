@@ -114,6 +114,8 @@ b bugfix
 	      + some new physical constants, updated to CODATA 2010 values
               + utils/rand_SL
 	      + utils/plot_bloch_trajectory
+              + lmap/trace
+              b lmap/reorder now interprets permutations more consistently
 	      b several small bugs fixed in state/propagate
 	      b function names now match file names
 	      b lmap/display can now handle sparse lmaps as well

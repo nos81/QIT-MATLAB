@@ -19,11 +19,8 @@ if n ~= length(d)
     error('Need one permutation per subsystem.')
 end
 
-% convert [] to identity permutation
 for j = 1:n
-    if length(perms{j}) == 0
-        perms{j} = 1:k;
-    end
+  perms{j} = perm_convert(perms{j}, k);
 end
 
 % splice k sequential copies of the entire system into k copies of each subsystem
@@ -42,6 +39,36 @@ total = s_inv(p(s)); % total = s^{-1} * p * s
 I = trace(reorder(tensor_pow(rho, k), {total, []}));
 end
 
+
+function ret = perm_convert(p, k)
+% interpret shortcut permutations
+
+id = 1:k; % identity permutation
+
+% troublesome case (not a swap!)
+if k == 2 && isequal(p, [1 2])
+  p = [];
+end
+
+switch length(p)
+  case 0
+    % [], identity
+    ret = id;
+
+  case 2
+    % swap two subsystems
+    ret = id;
+    ret(p(1)) = p(2);
+    ret(p(2)) = p(1);
+  
+  otherwise
+    % full permutation
+    if length(setxor(id, p)) ~= 0
+        error('Invalid permutation.');
+    end
+    ret = p;
+end
+end
 
 
 function ret = tensor_pow(rho, n)
