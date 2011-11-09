@@ -19,7 +19,8 @@ h = surf(X,Y,Z, 2*ones(41,41));
 hold on;
 shading flat
 alpha(0.2)
-axis square
+axis equal
+grid on
 xlabel('x');
 ylabel('y');
 zlabel('z');
@@ -36,5 +37,5 @@ plot3(cos(phi), sin(phi), zeros(size(phi)), 'k-');
 
 if nargin==1
     v = bloch_vector(s);
-    quiver3(0, 0, 0, v(1), v(2), v(3), 0);
+    quiver3(0, 0, 0, v(2), v(3), v(4), 0);
 end

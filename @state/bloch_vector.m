@@ -1,4 +1,4 @@
-function a = bloch_vector(s)
+function a = bloch_vector(s, as_tensor)
 % BLOCH_VECTOR  Generalized Bloch vector.
 %  A = bloch_vector(s)
 %
@@ -20,10 +20,16 @@ dim = dims(s);
 G = tensorbasis(dim);
 n = length(G);
 
+a = zeros(n, 1);
 for k=1:n
   a(k) = ev(s, G{k});
 end
 a = a * sqrt(prod(dim)); % to match the usual Bloch vector normalization
+
+% should we return it as a vector, or as a tensor?
+if nargin < 2 || ~as_tensor
+  return
+end
 
 % into an array, one dimension per subsystem
 if (length(dim) == 1)

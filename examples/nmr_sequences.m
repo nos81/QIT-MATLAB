@@ -42,8 +42,7 @@ s_error.A = 0.1 * 1i * 0.5 * qit.sz; % add off-resonance error (constant \sigma_
 [out, t] = seq_propagate(psi, s_error, @bloch_vector);
 
 subplot(2,2,1);
-plot_bloch_sphere();
-plot_bloch_trajectory(out);
+plot_state_trajectory(out);
 title([titles{q} ' evolution, off-resonance error']);
 
 %==================================================
@@ -54,8 +53,7 @@ s_error.tau = s.tau * 1.1; % proportional pulse lenght error
 [out, t] = seq_propagate(psi, s_error, @bloch_vector);
 
 subplot(2,2,3);
-plot_bloch_sphere();
-plot_bloch_trajectory(out);
+plot_state_trajectory(out);
 title([titles{q} ' evolution, pulse length error']);
 
 %==================================================
