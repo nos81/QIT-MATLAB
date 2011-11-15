@@ -41,8 +41,8 @@ M = [1 1 0; 1 0 1; 0 1 1]; % scaled by factor 2
 c = (M*S(1:3)).';
 
 % and into the Berkeley chamber using a translation and two Weyl reflections
-if (c(3) < 0.05)
-%if (c(1) > 0.6)
+if (c(3) < 0)
   c(1) = 1 - c(1);
   c(3) = -c(3);
 end
+c = mod(abs(c), 1);

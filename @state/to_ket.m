@@ -19,9 +19,11 @@ else
   if (abs(purity(s) - 1) > qit.tol)
     error('The state is not pure, and thus cannot be represented using a ket vector.')
   end
-
+  
   [v, d] = eig(s.data);
-  s.data = v(:,end); % corresponds to the highest eigenvalue, i.e. 1
+  d = real(diag(d)); % state ops are Hermitian
+  [d, I] = sort(d);
+  s.data = v(:, I(end)); % corresponds to the highest eigenvalue, i.e. 1
   s = fix_phase(s); % clean up global phase
 
   s.dim{2} = 1;

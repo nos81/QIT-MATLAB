@@ -11,7 +11,7 @@ classdef state < lmap
 %  If neither of the above is true, both indices must have equal dimensions and the
 %  object represents a state operator.
 
-% Ville Bergholm 2008-2010
+% Ville Bergholm 2008-2011
 
   methods
     function out = state(s, dim)
@@ -67,7 +67,7 @@ classdef state < lmap
         s = zeros(prod(dim), 1);
         switch name
           case {'bell1', 'bell2', 'bell3', 'bell4'}
-            Q_Bell = [1 0 0 i; 0 i 1 0; 0 i -1 0; 1 0 0 -i] / sqrt(2);
+            Q_Bell = [0 0 1 1i; 1 1i 0 0; -1 1i 0 0; 0 0 1 -1i] / sqrt(2);
             dim = [2 2];
             s = Q_Bell(:, name(5)-'0');
             
@@ -178,6 +178,24 @@ classdef state < lmap
 
     function ret = is_ket(s)
       ret = (size(s.data, 2) == 1);
+    end
+  
+    function check(s)
+    % Checks the validity of the state.
+
+      global qit;
+
+      if abs(trace(s) - 1) > qit.tol
+          error('State not properly normalized.')
+      end
+      if ~is_ket(s)
+        if norm(s.data - s.data') > qit.tol
+            error('State operator not Hermitian.')
+        end
+        if min(real(eig(s.data))) < -qit.tol
+            error('State operator not semipositive.')
+        end
+      end
     end
   end
 end

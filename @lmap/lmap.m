@@ -7,7 +7,7 @@ classdef lmap
 %  treat each subsystem as an index, with the subsystems within dim{1} and dim{2}
 %  corresponding to contravariant and covariant indices, respectively?
 
-% Ville Bergholm 2008-2010
+% Ville Bergholm 2008-2011
 
   properties
     data % array of tensor elements
@@ -124,12 +124,36 @@ classdef lmap
       end
 
       for k = 1:n
-        if (~isequal(s.dim{k}, t.dim{k}))
+        if ~isequal(s.dim{k}, t.dim{k})
           error('The dimensions of the index %d of the lmaps do not match.', k)
         end
       end
       ret = true;
     end
 
+    
+    function x = norm(s)
+    % NORM  Norm of the lmap.
+    %  x = norm(s)
+    %
+    %  Returns the 2-norm of the lmap s.
+
+      x = norm(s.data);
+    end
+
+
+    function x = trace(s)
+    % TRACE  Trace of the lmap.
+    %  x = trace(s)
+    %
+    %  Returns the trace of the lmap s.
+    %  The trace is only properly defined if s.dim{1} == s.dim{2}.
+
+      if ~isequal(s.dim{1}, s.dim{2})
+        error('Trace only defined for endomorphisms ("square matrices").')
+      end
+    
+      x = trace(s.data);
+    end
   end
 end

@@ -10,8 +10,12 @@ function a = bloch_vector(s, as_tensor)
 %
 %    A_{ijk...} == \sqrt(D) * \trace(\rho_s  B_{ijk...}),
 %
-%  where D = prod(s.dim). A is always real since \rho_s is Hermitian.
-%  For valid states norm(A) <= sqrt(D) (e.g. for a qubit system norm(A) <= 2).
+%  where D = prod(s.dim).
+%
+%  A is always real since \rho_s is Hermitian.
+%  For normalized states A_{000...} = 1.
+%  For valid states norm(A, 'fro')^2 == D * purity(s) <= D.
+%  (e.g. for a qubit system norm(A, 'fro')^2 <= 2).
 
 % Ville Bergholm 2009-2011
 

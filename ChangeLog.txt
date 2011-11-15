@@ -115,7 +115,9 @@ b bugfix
               + utils/rand_SL
 	      + utils/plot_state_trajectory
 	      + utils/plot_2q_corr
+              + lmap/norm
               + lmap/trace
+              + state/check
               b lmap/reorder now interprets permutations more consistently
 	      b several small bugs fixed in state/propagate
 	      b function names now match file names
@@ -125,3 +127,5 @@ b bugfix
 	        changed to use the full correlation tensor
 	      * Control sequences package implemented in a more general way
 	        to match with the Dynamo optimal control package.
+              * invariant/canonical output normalized more carefully
+                to avoid a failing assert.

@@ -4,13 +4,13 @@ function s = tensor(varargin)
 %
 %  Returns the tensor product state of states s1, s2, ...
 
-% Ville Bergholm 2009-2010
+% Ville Bergholm 2009-2011
 
 
 % if all states are pure, keep the result state pure
 pure = true;
 for k = 1:nargin
-  if (size(varargin{k}.data, 2) ~= 1)
+  if ~is_ket(varargin{k})
     pure = false;
     break;
   end
@@ -24,5 +24,3 @@ if (~pure)
 end
 
 s = tensor@lmap(varargin{:});
-
-s = remove_singletons(s);

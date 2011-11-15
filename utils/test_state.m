@@ -28,9 +28,11 @@ U_p = rand_U(prod(dim));
 % Test script for generalized Bloch vectors.
 % Ville Bergholm 2011
 
-temp = bloch_vector(sigma1);
-assert_o(norm(bloch_state(temp) -sigma1), 0, tol); % need to match
+temp = bloch_vector(sigma1, true);
+assert_o(norm(bloch_state(temp) -sigma1), 0, tol); % consistency
+temp = temp(:);
 assert_o(norm(imag(temp)), 0, tol); % correlation tensor is real
+assert(sqrt(prod(sigma1.dim)) -norm(temp, 'fro') >= -tol); % purity limit
 
 
 % Test scripts for fidelity.m, trace_dist.m

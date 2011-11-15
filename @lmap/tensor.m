@@ -24,4 +24,4 @@ for k = 2:nargin
   s.data = kron(s.data, varargin{k}.data);
 end
 
-%s = remove_singletons(s);
+s = remove_singletons(s);
