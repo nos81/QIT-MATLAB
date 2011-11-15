@@ -17,14 +17,16 @@ f = [1,2,4; 2,3,4; 3,1,4; 3,2,1];
 
 hold off;
 % tetrahedron
-h = patch('Faces',f, 'Vertices',v, 'FaceVertexCData', 0, 'FaceColor', 'flat');
+h = patch('Faces', f, 'Vertices', v, 'FaceVertexCData', 0, 'FaceColor', 'flat');
 hold on;
 alpha(0.2)
-axis equal
 grid on
-xlabel('xx');
-ylabel('yy');
-zlabel('zz');
+xlabel('XX');
+ylabel('YY');
+zlabel('ZZ');
+view(-35, 30)
+axis equal
+
 
 % mark vertices
 plot3(0, 0, 0, 'r.'); % center

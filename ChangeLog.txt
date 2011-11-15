@@ -108,12 +108,13 @@ b bugfix
 	      + examples/qft_circuit
 	      + more testing scripts
 
-2011-10-??    Version 0.9.10 (beta)
+2011-11-??    Version 0.9.10 (beta)
 	      * performance-improving changes from MATLAB profiler
               * better code modularization
 	      + some new physical constants, updated to CODATA 2010 values
               + utils/rand_SL
-	      + utils/plot_bloch_trajectory
+	      + utils/plot_state_trajectory
+	      + utils/plot_2q_corr
               + lmap/trace
               b lmap/reorder now interprets permutations more consistently
 	      b several small bugs fixed in state/propagate
