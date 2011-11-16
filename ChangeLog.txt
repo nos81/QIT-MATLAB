@@ -108,7 +108,7 @@ b bugfix
 	      + examples/qft_circuit
 	      + more testing scripts
 
-2011-11-??    Version 0.9.10 (beta)
+2011-11-16    Version 0.9.10 (beta)
 	      * performance-improving changes from MATLAB profiler
               * better code modularization
 	      + some new physical constants, updated to CODATA 2010 values
