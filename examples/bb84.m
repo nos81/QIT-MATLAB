@@ -16,7 +16,7 @@ if (nargin < 1)
   n = 50; % string len
 end
 
-fprintf('Using %d transmitted qubits.\n\n', n)
+fprintf('Using %d transmitted qubits, intercept-resend attack.\n\n', n)
 
 H  = qit.H;  % Hadamard gate
 sx = qit.sx; % bit flip
@@ -28,11 +28,13 @@ basis_A = rand(1, n) > 0.5;
 % Bob generates one random bit vector
 basis_B = rand(1, n) > 0.5;
 
-disp('Alice transmits a sequence of qubits to Bob using a quantum channel.')
-disp('For every qubit, she randomly chooses a basis (computational or diagonal)')
-disp('and randomly prepares the qubit in either the |0> or the |1> state in that basis.')
-fprintf('\n')
-disp('When Bob receives the qubits, he randomly measures them in either basis');
+fprintf(['Alice transmits a sequence of qubits to Bob using a quantum channel.\n',...
+         'For every qubit, she randomly chooses a basis (computational or diagonal)\n',...
+         'and randomly prepares the qubit in either the |0> or the |1> state in that basis.\n'])
+fprintf('\nAlice''s bits: \t')
+fprintf('%c', sent+'0')
+fprintf('\nAlice''s basis: \t')
+fprintf('%c', basis_A+'0')
 
 temp = state('0');
 for k=1:n
@@ -74,21 +76,47 @@ for k=1:n
   received(1, k) = res-1;
 end
 
+
+fprintf(['\n\nHowever, there''s an evesdropper, Eve, on the line. She intercepts the qubits,\n',...
+         'randomly measures them in either basis (thus destroying the originals!), and then sends\n',...
+         'a new batch of qubits corresponding to her measurements and basis choices to Bob.\n',...
+         'Since Eve on the average can choose the right basis only 50%% of the time,\n',...
+         'about 1/4 of her bits differ from Alice''s.\n'])
+
+fprintf('\nEve''s basis: \t')
+fprintf('%c', basis_E+'0')
+fprintf('\nEve''s bits: \t')
+fprintf('%c', eavesdrop+'0')
+
+fprintf('\n\nWhen Bob receives the qubits, he randomly measures them in either basis.\n');
+fprintf('\nBob''s basis: \t')
+fprintf('%c', basis_B+'0')
+fprintf('\nBob''s bits: \t')
+fprintf('%c', received+'0')
+
 %sum(xor(sent, eavesdrop))/n
 %sum(xor(sent, received))/n
 
-disp('Now Bob announces on a public classical channel that he has received all the qubits.')
-disp('Alice then reveals the bases she used, and Bob compares them to his.')
-disp('Whenever the bases match, so should the prepared/measured values unless there''s an eavesdropper.')
+fprintf(['\n\nNow Bob announces on a public classical channel that he has received all the qubits.\n',...
+         'Alice and Bob then reveal the bases they used. Whenever the bases happen to match,\n',...
+         '(about 50%% of the time on the average), they both add their corresponding bit to\n'...
+         'their personal key. The two keys should be identical unless there''s been an evesdropper.\n'])
 
 match = not(xor(basis_A, basis_B));
 
-key_A = sent(find(match))
-key_B = received(find(match))
-m = length(key_A);
-fprintf('\nMismatch frequency between Alice and Bob: %f\n\n', sum(xor(key_A, key_B))/m)
+fprintf('\n%d matches.', sum(match))
+key_A = sent(find(match));
+key_B = received(find(match));
 
-disp('Alice and Bob then sacrifice k bits of their shared key to compare them.')
-disp('If an nonmatching bit is found, the reason is either an eavesdropper or a noisy channel.')
-disp('Since the probability for each eavesdropped bit to be wrong is 1/4, they will detect')
-disp('Eve''s presence with the probability 1-(3/4)^k.')
+fprintf('\nAlice''s key: \t')
+fprintf('%c', key_A+'0')
+fprintf('\nBob''s key: \t')
+fprintf('%c', key_B+'0')
+
+m = length(key_A);
+fprintf('\n\nMismatch frequency between Alice and Bob: %f\n\n', sum(xor(key_A, key_B))/m)
+
+fprintf(['Alice and Bob then sacrifice k bits of their shared key to compare them publicly.\n',...
+         'If a nonmatching bit is found, the reason is either an eavesdropper or a noisy channel.\n',...
+         'Since the probability for each eavesdropped bit to be wrong is 1/4, they will detect\n',...
+         'Eve''s presence with the probability 1-(3/4)^k.\n'])

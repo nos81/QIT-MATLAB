@@ -18,15 +18,14 @@ classdef lmap
   methods
     function out = lmap(s, dim)
     % constructor
-    %  x = lmap(s [, dim]);
-    %    = lmap(y);                % (y is an lmap) copy constructor
-    %    = lmap(y, dim);           % (y is an lmap) copy constructor, reinterpret dimensions
-    %    = lmap(k, dim);           % standard basis ket |k> or bra <k|. k must be an integer scalar
-    %    = lmap(rand(4,1));        % ket, dim = {4, 1}
-    %    = lmap(rand(4,1), [2 2]); % ket, dim = {[2 2]}
-    %    = lmap(rand(4));          % operator, dim = {4, 4}
-    %    = lmap(rand(6), [3 2]);   % operator
-
+    %  x = lmap(s [, dim]);             % dim == {out_dims, in_dims}
+    %    = lmap(y);                     % (y is an lmap) copy constructor
+    %    = lmap(y, dim);                % (y is an lmap) copy constructor, reinterpret dimensions
+    %    = lmap(rand(4,1));             % ket, 1 -> 4
+    %    = lmap(rand(4,1), {[2 2], 1}); % ket, 1 -> [2 2]
+    %    = lmap(rand(4));               % operator, 4 -> 4
+    %    = lmap(rand(6), {6, [3 2]});   % operator, [3 2] -> 6
+ 
     if (nargin == 0)
       error('No arguments given.');
     elseif (nargin > 2)
@@ -86,12 +85,6 @@ classdef lmap
 	otherwise
 	  error('Lmap class cannot be indexed with that operator.')
       end
-    end
-
-
-    function sys = clean_selection(s, sys)
-    % CLEAN_SELECTION  Internal helper, makes a subsystem set unique and sorted.
-      sys = intersect(1:length(s.dim{1}), sys);
     end
 
 

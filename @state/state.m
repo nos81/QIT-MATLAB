@@ -179,9 +179,14 @@ classdef state < lmap
     function ret = is_ket(s)
       ret = (size(s.data, 2) == 1);
     end
+
+    function sys = clean_selection(s, sys)
+    % CLEAN_SELECTION  Internal helper, makes a subsystem set unique and sorted.
+      sys = intersect(1:length(s.dim{1}), sys);
+    end
   
     function check(s)
-    % Checks the validity of the state.
+    % CHECK  Checks the validity of the state.
 
       global qit;
 
