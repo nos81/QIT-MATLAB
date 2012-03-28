@@ -12,7 +12,7 @@ function C = concurrence(s, sys)
 
 global qit;
 
-if (abs(trace(s)-1) > qit.tol)
+if (abs(normalization(s)-1) > qit.tol)
   disp('Warning: State not properly normalized.')
 end
 

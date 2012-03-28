@@ -11,7 +11,7 @@ classdef state < lmap
 %  If neither of the above is true, both indices must have equal dimensions and the
 %  object represents a state operator.
 
-% Ville Bergholm 2008-2011
+% Ville Bergholm 2008-2012
 
   methods
     function out = state(s, dim)
@@ -169,28 +169,49 @@ classdef state < lmap
     end
 
     function d = dims(s)
+    % DIMS  Returns the dimension vector of the state.
       d = s.dim{1}; % dims of the other index must be equal (or 1)
     end
 
     function ret = equal_dims(s, t)
+    % EQUAL_DIMS  Returns true iff the dimension vectors of states s and t are equal.
       ret = isequal(dims(s), dims(t));
     end
 
     function ret = is_ket(s)
+    % IS_KET  Returns true iff the internal representation of the state is a ket vector.
       ret = (size(s.data, 2) == 1);
     end
 
+    function ret = normalization(s)
+    % NORMALIZATION  Returns the normalization of the state.
+      if is_ket(s)
+        ret = norm(s.data);
+      else
+        ret = trace(s.data);
+      end
+    end
+    
+    function s = normalize(s)
+    % NORMALIZE  Normalize the state.
+    %  q = normalize(s)
+    %
+    %  Returns the state s normalized.
+
+      s.data = s.data / normalization(s);
+    end
+    
     function sys = clean_selection(s, sys)
     % CLEAN_SELECTION  Internal helper, makes a subsystem set unique and sorted.
       sys = intersect(1:length(s.dim{1}), sys);
     end
-  
+
     function check(s)
     % CHECK  Checks the validity of the state.
 
       global qit;
 
-      if abs(trace(s) - 1) > qit.tol
+      if abs(normalization(s) - 1) > qit.tol
           error('State not properly normalized.')
       end
       if ~is_ket(s)
