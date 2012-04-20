@@ -16,3 +16,12 @@ U = rand_U(n); % random unitary
 A = U'*diag(d)*U;
 
 A = (A+A')/2; % eliminate rounding errors
+return
+
+% TODO alternative: inverse purification
+s = state(0, [n, k]); % rank k state op
+s = u_propagate(s, rand_U(n*k)); % expensive and wasteful...
+s = ptrace(s, 2);
+A = s.data;
+
+end

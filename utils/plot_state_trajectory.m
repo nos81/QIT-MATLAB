@@ -91,6 +91,8 @@ function plot_traj(A, ind, ls)
   if size(A, 2) > 1
       plot3(A(ind(1),1), A(ind(2),1), A(ind(3),1), [ls(1), 'x']);
       plot3(A(ind(1),:), A(ind(2),:), A(ind(3),:), ls);
+      plot3(A(ind(1),end), A(ind(2),end), A(ind(3),end), [ls(1), 'o']);
+  else
+      plot3(A(ind(1),end), A(ind(2),end), A(ind(3),end), ls);
   end
-  plot3(A(ind(1),end), A(ind(2),end), A(ind(3),end), [ls(1), 'o']);
 end
