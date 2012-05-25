@@ -2,16 +2,13 @@ function A = rand_positive(n)
 % RAND_POSITIVE  Random n*n positive semidefinite matrix.
 %  A = rand_positive(n)
 %
-%  Normalized as trace(A) = 1.
-%  Since the matrix has purely real eigenvalues, it is also
-%  Hermitian by construction.
+%  Normalized to trace(A) = 1.
+%  Since A has all-real eigenvalues, it is Hermitian by construction.
 
-% Ville Bergholm 2008-2009
+% Ville Bergholm 2008-2012
 
 
-p = sort(rand(n-1,1));  % n-1 points in [0,1]
-d = sort([p;1]-[0;p]);  % n deltas between points = partition of unity
-
+d = rand_pu(n); % random partition of unity
 U = rand_U(n); % random unitary
 A = U'*diag(d)*U;
 
@@ -23,5 +20,4 @@ s = state(0, [n, k]); % rank k state op
 s = u_propagate(s, rand_U(n*k)); % expensive and wasteful...
 s = ptrace(s, 2);
 A = s.data;
-
 end
