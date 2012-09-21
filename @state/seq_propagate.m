@@ -1,4 +1,4 @@
-function [out, t] = seq_propagate(s, seq, out_func)
+function [out, t] = seq_propagate(s, seq, out_func, base_dt)
 % SEQ_PROPAGATE  Propagate the state in time using a control sequence.
 %  [out, t] = propagate(s, seq, out_func)
     
@@ -13,8 +13,10 @@ if (nargin < 3)
     end
 end
 
+if nargin < 4
+    base_dt = 0.1;
+end
 
-base_dt = 0.1;
 n = length(seq.tau); % number of pulses
 t = [0];
 out{1} = out_func(s);

@@ -1,29 +1,40 @@
-function s = u_propagate(s, U)
-% U_PROPAGATE  Propagate the state using a unitary.
-%  q = propagate(s, U)
+function s = u_propagate(s, P)
+% U_PROPAGATE  Propagate the state a finite step in time using a propagator.
+%  q = propagate(s, P)
 %
-%  Propagates the state s using the unitary propagator U,
-%  returns the resulting state.
+%  Propagates the state s using the propagator P, which is either a
+%  unitary Hilbert space propagator or a Liouville space propagator.
+%  Returns the resulting state.
 
-% Ville Bergholm 2009-2010
+% Ville Bergholm 2009-2012
 
-
-if (isa(U, 'lmap'))
-  if (size(s.data, 2) == 1)
+% TODO FIXME P as lmap
+if isa(P, 'lmap')
+  if is_ket(s)
     % state vector
-    s = state(U * s);
+    s = state(P * s);
   else
     % state operator
-    s = state(U * s * U');
+    s = state(P * s * P');
   end
+  
   return
 end
 
-% assume U is a matrix
-if (size(s.data, 2) == 1)
-  % state vector
-  s.data = U*s.data;
+% assume P is a matrix
+
+if length(P) == size(s.data, 1)
+  % unitary
+  if is_ket(s)
+    % state vector
+    s.data = P * s.data;
+  else
+    % state operator
+    s.data = P * s.data * P';
+  end
 else
-  % state operator
-  s.data = U*s.data*U';
+  % Liouvillian propagator
+  s = to_op(s);
+  s.data = inv_vec(P * vec(s.data));
 end
+
