@@ -129,3 +129,6 @@ b bugfix
 	        to match with the Dynamo optimal control package.
               * invariant/canonical output normalized more carefully
                 to avoid a failing assert.
+
+              - state/normalization
+              + state/trace

@@ -182,11 +182,13 @@ classdef state < lmap
     % IS_KET  Returns true iff the internal representation of the state is a ket vector.
       ret = (size(s.data, 2) == 1);
     end
-
-    function ret = normalization(s)
-    % NORMALIZATION  Returns the normalization of the state.
+    
+    function ret = trace(s)
+    % TRACE  Returns the trace of the state operator.
+    %
+    %  For a normalized state this equals 1.
       if is_ket(s)
-        ret = norm(s.data);
+        ret = norm(s.data)^2;
       else
         ret = trace(s.data);
       end
@@ -197,8 +199,11 @@ classdef state < lmap
     %  q = normalize(s)
     %
     %  Returns the state s normalized.
-
-      s.data = s.data / normalization(s);
+      if is_ket(s)
+        s.data = s.data / norm(s.data);
+      else
+        s.data = s.data / trace(s.data);
+      end
     end
     
     function sys = clean_selection(s, sys)
@@ -211,7 +216,7 @@ classdef state < lmap
 
       global qit;
 
-      if abs(normalization(s) - 1) > qit.tol
+      if abs(trace(s) - 1) > qit.tol
           error('State not properly normalized.')
       end
       if ~is_ket(s)
