@@ -9,126 +9,129 @@ b bugfix
 2009-07-18    Version 0.9.0 (first public beta)
 
 2009-09-29    Version 0.9.1 (beta)
-	      + version string in qit namespace
-	      + examples: bb84 and markov_decoherence
-	      * state/propagate redesigned
-	      * Born-Markov noise package redesigned
+              + version string in qit namespace
+              + examples: bb84 and markov_decoherence
+              * state/propagate redesigned
+              * Born-Markov noise package redesigned
 
 2009-12-17    Version 0.9.2 (beta)
-	      + state methods: fidelity, trace_dist, fix_phase
-	      + plots/adiabatic_evolution
-	      + examples/grover_search
-	      b state/display fixed, prints also the imaginary parts
-	      * renamed state methods: purify => to_ket, operator => to_op
-	      * plots/tomography shows relative phases in color
-	      * nicer examples
-	      * lindblad.@bath class
+              + state methods: fidelity, trace_dist, fix_phase
+              + plots/adiabatic_evolution
+              + examples/grover_search
+              b state/display fixed, prints also the imaginary parts
+              * renamed state methods: purify => to_ket, operator => to_op
+              * plots/tomography shows relative phases in color
+              * nicer examples
+              * lindblad.@bath class
 
 2010-01-13    Version 0.9.3 (beta)
-	      + utils/makemovie for making AVI movies of plots
-	      + lindblad/superop
-	      + state arithmetic: plus, minus, mtimes, mrdivide, normalize
-	      + examples/superdense_coding
-	      b state/measure gives correct collapsed states
-	      * gate/qft also handles non-qubit systems
-	      * state/propagate uses ode45 for time-dependent Hamiltonians
-	      * examples/nmr_sequences produces nicer plots
+              + utils/makemovie for making AVI movies of plots
+              + lindblad/superop
+              + state arithmetic: plus, minus, mtimes, mrdivide, normalize
+              + examples/superdense_coding
+              b state/measure gives correct collapsed states
+              * gate/qft also handles non-qubit systems
+              * state/propagate uses ode45 for time-dependent Hamiltonians
+              * examples/nmr_sequences produces nicer plots
 
 2010-01-19    Version 0.9.4 (beta)
-	      + utils: majorize, spectral_decomposition
-	      + Harmonic oscillator package
-	      + ho methods: ladder, displace, squeeze, coherent_state,
-	        momentum_state, position_state, wigner
-	      + examples/qubit_and_resonator
-	      * state/measure also measures arbitrary Hermitian observables
+              + utils: majorize, spectral_decomposition
+              + Harmonic oscillator package
+              + ho methods: ladder, displace, squeeze, coherent_state,
+                momentum_state, position_state, wigner
+              + examples/qubit_and_resonator
+              * state/measure also measures arbitrary Hermitian observables
 
 2010-02-04    Version 0.9.5 (beta)
-	      + state/locc_convertible
-	      - state/overlap (replaced by state/fidelity)
-	      + ho methods: position, momentum, husimi
-	      + utils/asongoficeandfire
-	      b utils/lrmul did unnecessary work
-	      * Born-Markov package again reorganized, uses lookup
-	        tables more efficiently
-	      * neater examples
+              + state/locc_convertible
+              - state/overlap (replaced by state/fidelity)
+              + ho methods: position, momentum, husimi
+              + utils/asongoficeandfire
+              b utils/lrmul did unnecessary work
+              * Born-Markov package again reorganized, uses lookup
+                tables more efficiently
+              * neater examples
 
 2010-03-17    Version 0.9.6 (beta)
-	      + plots/wigner_function
-	      + hamiltonians: heisenberg, hubbard, bose_hubbard, holstein
-	      + utils/fermion_ladder
-	      + utils/op_list
-	      - utils/fidelity (unnecessary)
-	      - hamiltonian/graph (replaced by utils/op_list)
-	      * numerous small improvements
-	      * functions handling large operators use sparse matrices
-	      * Born-Markov package cleaned up and renamed: +lindblad => +markov
-	      * renamed lindblad/superop => utils/superop_lindblad
-	      * utils/angular_momentum returns a cell vector, caches results
+              + plots/wigner_function
+              + hamiltonians: heisenberg, hubbard, bose_hubbard, holstein
+              + utils/fermion_ladder
+              + utils/op_list
+              - utils/fidelity (unnecessary)
+              - hamiltonian/graph (replaced by utils/op_list)
+              * numerous small improvements
+              * functions handling large operators use sparse matrices
+              * Born-Markov package cleaned up and renamed: +lindblad => +markov
+              * renamed lindblad/superop => utils/superop_lindblad
+              * utils/angular_momentum returns a cell vector, caches results
 
 2010-04-04    Version 0.9.7 (beta)
-	      + markov/lindblad_ops
-	      + gates: mod_add, mod_mul, phase
-	      + examples/shor_factorization
-	      * state/propagate also accepts Lindblad operators
-	      * state/entropy also gives entropy of entanglement
-	      * state/measure can discard measured subsystems
-	      * utils/angular_momentum takes a dimension instead of j as a param
-	      * gate/qft caches its results
-	      * invariants: canonical, makhlin, max_concurrence use compatible params
-	      * more functions use sparse matrices
+              + markov/lindblad_ops
+              + gates: mod_add, mod_mul, phase
+              + examples/shor_factorization
+              * state/propagate also accepts Lindblad operators
+              * state/entropy also gives entropy of entanglement
+              * state/measure can discard measured subsystems
+              * utils/angular_momentum takes a dimension instead of j as a param
+              * gate/qft caches its results
+              * invariants: canonical, makhlin, max_concurrence use compatible params
+              * more functions use sparse matrices
 
 2010-08-26    Version 0.9.8 (beta)
-	      - removed the plots package
-	      * renamed plots:
-	        tomography          => state/plot,
-	        weyl_chamber        => invariant/plot_weyl_2q,
-	        makhlin_gates       => invariant/plot_makhlin_2q,
-	        bloch_sphere        => utils/plot_bloch_sphere,
-	        adiabatic_evolution => utils/plot_adiabatic_evolution,
-	        wigner_function     => utils/plot_pcolor
-	      * renamed ho/ladder => utils/boson_ladder
-	      * renamed gates: mod_add => mod_inc
-	      + gate/mod_add
-	      * gates: mod_inc, mod_mul input syntax
-	      * examples: teleportation and superdense_coding now can use qudits
-	      * restored Matlab 7.6 compatibility
+              - removed the plots package
+              * renamed plots:
+                tomography          => state/plot,
+                weyl_chamber        => invariant/plot_weyl_2q,
+                makhlin_gates       => invariant/plot_makhlin_2q,
+                bloch_sphere        => utils/plot_bloch_sphere,
+                adiabatic_evolution => utils/plot_adiabatic_evolution,
+                wigner_function     => utils/plot_pcolor
+              * renamed ho/ladder => utils/boson_ladder
+              * renamed gates: mod_add => mod_inc
+              + gate/mod_add
+              * gates: mod_inc, mod_mul input syntax
+              * examples: teleportation and superdense_coding now can use qudits
+              * restored Matlab 7.6 compatibility
 
 2011-01-31    Version 0.9.9 (beta)
-	      + lmap class for multilinear maps, used as a base class for state
-	      + lmap/mpower
-	      - several methods from state moved to lmap
-	      * state/concurrence fixed
-	      * state/purity does not normalize the state first
-	      * gates: qubits-as-a-default syntax removed as dangerous
-	      * gates: now return lmaps
-	      * gate/two: any dimensions, non-sequential targets OK
-	      * gate/controlled: any dimensions OK
-	      + gate/swap: swaps two subsystems
-	      * gate/phase: does not assume the first phase is always zero
-	      + examples/qft_circuit
-	      + more testing scripts
+              + lmap class for multilinear maps, used as a base class for state
+              + lmap/mpower
+              - several methods from state moved to lmap
+              * state/concurrence fixed
+              * state/purity does not normalize the state first
+              * gates: qubits-as-a-default syntax removed as dangerous
+              * gates: now return lmaps
+              * gate/two: any dimensions, non-sequential targets OK
+              * gate/controlled: any dimensions OK
+              + gate/swap: swaps two subsystems
+              * gate/phase: does not assume the first phase is always zero
+              + examples/qft_circuit
+              + more testing scripts
 
 2011-11-16    Version 0.9.10 (beta)
-	      * performance-improving changes from MATLAB profiler
+              * performance-improving changes from MATLAB profiler
               * better code modularization
-	      + some new physical constants, updated to CODATA 2010 values
+              + some new physical constants, updated to CODATA 2010 values
               + utils/rand_SL
-	      + utils/plot_state_trajectory
-	      + utils/plot_2q_corr
+              + utils/plot_state_trajectory
+              + utils/plot_2q_corr
               + lmap/norm
               + lmap/trace
               + state/check
               b lmap/reorder now interprets permutations more consistently
-	      b several small bugs fixed in state/propagate
-	      b function names now match file names
-	      b lmap/display can now handle sparse lmaps as well
-	      * utils/tensorbasis now includes identity in the basis,
-	        state/bloch_vector and utils/bloch_state correspondingly
-	        changed to use the full correlation tensor
-	      * Control sequences package implemented in a more general way
-	        to match with the Dynamo optimal control package.
+              b several small bugs fixed in state/propagate
+              b function names now match file names
+              b lmap/display can now handle sparse lmaps as well
+              * utils/tensorbasis now includes identity in the basis,
+                state/bloch_vector and utils/bloch_state correspondingly
+                changed to use the full correlation tensor
+              * Control sequences package implemented in a more general way
+                to match with the Dynamo optimal control package.
               * invariant/canonical output normalized more carefully
                 to avoid a failing assert.
 
+
+2012-10-??    Version 0.9.11a
               - state/normalization
               + state/trace
+              + utils/nullspace
