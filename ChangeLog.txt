@@ -135,3 +135,4 @@ b bugfix
               - state/normalization
               + state/trace
               + utils/nullspace
+              + utils/nullspace_hermitian
