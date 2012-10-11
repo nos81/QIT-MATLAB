@@ -1,9 +1,9 @@
 function [s] = bb1(theta, phi, location)
-% BB1  Sequence for fixing off-resonance (\sigma_z bias) errors.
+% BB1  Sequence for correcting pulse length errors.
 %  s = bb1(theta [, phi])
 %
 %  Returns the Broadband number 1 control sequence s for fixing
-%  errors in pulse lenght (or amplitude).
+%  proportional errors in pulse lenght (or amplitude).
 %
 %  The target rotation is \theta_\phi in the NMR notation.
 

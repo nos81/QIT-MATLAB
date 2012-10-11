@@ -32,7 +32,7 @@ qit.hbar = 1.054571726e-34; % Planck constant / (2 pi), J s
 qit.kB   = 1.3806488e-23;   % Boltzmann constant, J/K
 qit.eV   = 1.602176565e-19; % electron volt, J
 qit.c    = 299792458;       % speed of light in vacuum, m/s
-
+qit.muB  = 9.27400968e-24;  % Bohr magneton, J/T
 
 % caching
 qit.gellmann = {};

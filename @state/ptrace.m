@@ -56,17 +56,3 @@ if (length(dim) == 0)
 end
 
 s = state(s, dim);
-return
-
-
-
-function c = tensorsum(a,b)
-
-%c = log(kron(exp(a), exp(b))); % a perverted way of doing it, the exp overflows...
-
-c = [];
-for k=1:length(a)
-  c = [c, a(k)+b];
-end
-
-return
