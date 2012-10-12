@@ -136,3 +136,5 @@ b bugfix
               + state/trace
               + utils/nullspace
               + utils/nullspace_hermitian
+              + utils/liouvillian_fp
+              + utils/orthonormalize
