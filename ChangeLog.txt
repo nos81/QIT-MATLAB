@@ -139,4 +139,5 @@ b bugfix
               + utils/nullspace_hermitian
               + utils/liouvillian_fp
               + utils/orthonormalize
+	      + utils/tensorsum
               * lmap/tensor, state/tensor: singleton handling...
