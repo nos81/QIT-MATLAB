@@ -8,7 +8,7 @@ addpath([pwd '/examples']);
 global qit;
 
 % toolkit version number
-qit.version = '0.9.10';
+qit.version = '0.9.11a';
 fprintf('MATLAB Quantum Information Toolkit, version %s\n', qit.version)
 
 % Pauli matrices
@@ -33,6 +33,8 @@ qit.kB   = 1.3806488e-23;   % Boltzmann constant, J/K
 qit.eV   = 1.602176565e-19; % electron volt, J
 qit.c    = 299792458;       % speed of light in vacuum, m/s
 qit.muB  = 9.27400968e-24;  % Bohr magneton, J/T
+qit.muN  = 5.05078353e-27;  % nuclear magneton, J/T
+
 
 % caching
 qit.gellmann = {};
