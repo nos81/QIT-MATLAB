@@ -1,6 +1,6 @@
-function nmr_sequences
+function nmr_sequences(seqs, titles)
 % NMR_SEQUENCES  NMR control sequences example.
-%  nmr_sequences
+%  nmr_sequences([seqs, titles])
 %
 %  Compares the performance of different single-qubit NMR control
 %  sequences in the presence of systematic errors.
@@ -15,8 +15,14 @@ fprintf('\n\n=== NMR control sequences for correcting systematic errors ===\n')
 
 global qit;
 
-seqs = {seq.nmr([pi, 0]), seq.corpse(pi), seq.scrofulous(pi), seq.bb1(pi)};
-titles = {'Plain \pi pulse', 'CORPSE', 'SCROFULOUS', 'BB1'};
+if nargin < 1
+    seqs = {seq.nmr([pi, 0]), seq.corpse(pi), seq.scrofulous(pi), seq.bb1(pi)};
+    titles = {'Plain \pi pulse', 'CORPSE', 'SCROFULOUS', 'BB1'};
+else
+    if nargin < 2
+        titles = {'User-given seq'};
+    end
+end
 
 psi = state('0'); % initial state
 

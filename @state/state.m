@@ -152,15 +152,23 @@ classdef state < lmap
 
     function x = subsref(s, index)
     % SUBSREF  Direct access to the data members.
-      switch (index.type)
+
+        switch index(1).type
         case '.'
-          switch (index.subs)
+          switch index(1).subs
             case 'data'
               x = s.data;
             case 'dim'
+              % NOTE this is the only reason we overload subsref in the first place.
               x = s.dim{1}; % since for a state the indices must be identical or singletons
             otherwise
-              error('Unknown state property.')
+              % MATLAB is the worst language
+              x = builtin('subsref', s, index);
+              return
+          end
+          % let MATLAB take it from here
+          if length(index) > 1
+              x = subsref(x, index(2:end));
           end
 
         otherwise
@@ -216,16 +224,23 @@ classdef state < lmap
 
       global qit;
 
+      ok = true;
       if abs(trace(s) - 1) > qit.tol
-          error('State not properly normalized.')
+          disp('State not properly normalized.')
+          ok = false;
       end
       if ~is_ket(s)
         if norm(s.data - s.data') > qit.tol
-            error('State operator not Hermitian.')
+            disp('State operator not Hermitian.')
+            ok = false;
         end
         if min(real(eig(s.data))) < -qit.tol
-            error('State operator not semipositive.')
+            disp('State operator not semipositive.')
+            ok = false;
         end
+      end
+      if ~ok
+          error('Not a valid state.')
       end
     end
   end

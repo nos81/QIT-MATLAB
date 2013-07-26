@@ -1,18 +1,18 @@
-function display(s, short)
+function display(s, no_dims, labels)
 % DISPLAY  Display the lmap in a neat format.
 
-% Ville Bergholm 2008-2010
+% Ville Bergholm 2008-2013
 
 
 global qit;
 
-if (nargin < 2)
-  short = false;
+if nargin < 2
+  no_dims = false;
 end
 
 out = [inputname(1) ' ='];
 
-if (~short)
+if ~no_dims
   % long format
   disp(out);
   out = '  ';
@@ -21,11 +21,11 @@ end
 % number of indices
 n_ind = order(s);
 
-if (n_ind == 1 || (n_ind == 2 && (isequal(s.dim{1}, 1) || isequal(s.dim{2}, 1))))
-  % vector or a map with a singleton domain or codomain dimension
+if n_ind == 1 || (n_ind == 2 && (isequal(s.dim{1}, 1) || isequal(s.dim{2}, 1)))
+  % vector, or a map with a singleton domain or codomain dimension
 
   % ket or bra?
-  if (n_ind == 1 || isequal(s.dim{2}, 1))
+  if n_ind == 1 || isequal(s.dim{2}, 1)
     dim = s.dim{1};
     is_ket = true;
   else
@@ -33,40 +33,54 @@ if (n_ind == 1 || (n_ind == 2 && (isequal(s.dim{1}, 1) || isequal(s.dim{2}, 1)))
     is_ket = false;
   end
 
-  if (length(s.data) > 128)
+  % TEST define state labels
+  if nargin < 3
+    temp = max(dim);
+    labels = char((1:temp) -1 +'0');
+  end
+  
+  D = prod(dim);
+  if nnz(s.data) > 128
     % sanity check, do not display lmaps with hundreds of terms
     out = [out, ' (long)'];
+  
+  elseif D == 1
+    % scalar, just print the value
+    out = [out, sprintf(' %g', s.data)];
+    no_dims = true;
+    
   else
+    % vector, print ket (or bra) symbols
+    n = length(dim);
 
-  n = length(dim);
-
-  for ind = 1:prod(dim)
-    temp = full(s.data(ind)); % sprintf can't handle sparse arrays, not even scalars
-    if (abs(temp) >= qit.tol)
-      if (abs(imag(temp)) <= qit.tol)
-        out = [out, sprintf(' %+2g', real(temp))];
-      elseif (abs(real(temp)) <= qit.tol)
-        out = [out, sprintf(' %+2gi', imag(temp))];
-      else
-        out = [out, sprintf(' +(%s)', num2str(temp))];
-      end
+    for ind = 1:D
+      temp = full(s.data(ind)); % sprintf can't handle sparse arrays, not even scalars
+      if abs(temp) >= qit.tol
+        if abs(imag(temp)) <= qit.tol
+          out = [out, sprintf(' %+2g', real(temp))];
+        elseif abs(real(temp)) <= qit.tol
+          out = [out, sprintf(' %+2gi', imag(temp))];
+        else
+          out = [out, sprintf(' +(%s)', num2str(temp))];
+        end
       
-      d = fliplr(dim); % big-endian convention makes this way more complicated than it should be
-      carry = ind;
-      for k = 1:n % start from least significant digit
-        %ind2sub with 2 output parms uses up the first dim given
-        [ket(k), carry] = ind2sub(d(k:n), carry);
-      end
-      ket = fliplr(ket); % big-endian again
+        d = fliplr(dim); % big-endian convention makes this way more complicated than it should be
+        carry = ind;
+        for k = 1:n % start from least significant digit
+          %ind2sub with 2 output parms uses up the first dim given
+          [ket(k), carry] = ind2sub(d(k:n), carry);
+          symbol(k) = labels(ket(k));
+        end
+        symbol = fliplr(symbol); % big-endian again
 
-      % ket or bra?
-      if (is_ket)
-        out = [out, ' |', char(ket - 1 + '0'), '>'];
-      else
-        out = [out, ' <', char(ket - 1 + '0'), '|'];
+        % ket or bra?
+        if is_ket
+          out = [out, ' |', symbol, '>'];
+        else
+          out = [out, ' <', symbol, '|'];
+        end
       end
     end
-  end
   end
   disp(out);
 else
@@ -75,7 +89,7 @@ else
 end
 
 
-if (~short)
+if ~no_dims
   disp('dim:');
   out = '  ';
   for k = 1:n_ind

@@ -1,4 +1,5 @@
 General
+- user-defined local state labels "+0-" etc.
 - more comprehensive test scripts with asserts
 - use logical indexing instead of find()?
 

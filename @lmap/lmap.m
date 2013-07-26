@@ -69,25 +69,6 @@ classdef lmap
     end
 
 
-    function x = subsref(s, index)
-    % SUBSREF  Direct access to the data members.
-      switch (index.type)
-	case '.'
-	  switch (index.subs)
-	    case 'data'
-	      x = s.data;
-	    case 'dim'
-	      x = s.dim;
-  	    otherwise
-	      error('Unknown lmap property.')
-	  end
-
-	otherwise
-	  error('Lmap class cannot be indexed with that operator.')
-      end
-    end
-
-
     function s = remove_singletons(s)
     % REMOVE_SINGLETONS  Eliminate unnecessary singleton dimensions.
 

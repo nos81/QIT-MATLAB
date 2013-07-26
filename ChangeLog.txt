@@ -131,13 +131,20 @@ b bugfix
                 to avoid a failing assert.
 
 
-2012-12-??    Version 0.9.11a
+2013-07-26    Version 0.9.11 (beta)
               - state/normalization
-	      + new physical constants
+              - lmap/subsref, not very useful
+              + new physical constants
               + state/trace
               + utils/nullspace
               + utils/nullspace_hermitian
               + utils/liouvillian_fp
               + utils/orthonormalize
-	      + utils/tensorsum
+              + utils/tensorsum
+              b state/subsref: works now
               * lmap/tensor, state/tensor: singleton handling...
+              * lmap/display: scalars, labels, low-nnz lmaps
+              * state/check: checks all properties before raising an error
+              * state/prob: assume state ops are hermitian
+              * utils/spectral_decomposition: sorting added
+              * examples/nmr_sequences now accepts user-given seqs as well

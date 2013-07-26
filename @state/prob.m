@@ -13,5 +13,5 @@ if is_ket(s)
   p = abs(s.data).^2;
 else
   % state operator
-  p = diag(s.data);
+  p = real(diag(s.data));
 end

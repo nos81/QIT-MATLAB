@@ -1,17 +1,23 @@
-function [a, P] = spectral_decomposition(A)
+function [a, P] = spectral_decomposition(A, do_sort)
 % SPECTRAL_DECOMPOSITION  Spectral decomposition of a Hermitian matrix.
-%  [a, P] = spectral_decomposition(A)
+%  [a, P] = spectral_decomposition(A[, sort])
 %
 %  Returns the unique eigenvalues a and the corresponding projectors P
 %  for the Hermitian matrix A, such that  A = \sum_k a_k P_k.
+%  If sort is true, the eigenvalues are sorted in ascending order.
 
-% Ville Bergholm 2010
+% Ville Bergholm 2010-2013
 
 
 global qit
 
 [v,d] = eig(A);
 d = real(diag(d)); % A is assumed Hermitian
+
+if nargin >= 2 && do_sort
+    [d, ind] = sort(d); % ascending order
+    v = v(:, ind);
+end
 
 % combine projectors for degenerate eigenvalues
 s = 1;
