@@ -4,21 +4,8 @@ function S = lrmul(L, R)
 %
 %  L*rho*R == inv_vec(lrmul(L, R)*vec(rho))
 
-% Ville Bergholm 2009-2010
+% Ville Bergholm 2009-2013
 
 
-if (issquare(L) && issquare(R))
-  S = kron(R.', L); % simplifies to this when L and R are both square
-  return
-end
-
-n = size(L, 1);
-q = size(R, 1);
-
-S = kron(R.', speye(n)) * kron(speye(q), L);
-end
-
-function b = issquare(A)
-  s = size(A);
-  b = (s(1) == s(2));
-end
+% L and R fix the shape of rho completely
+S = kron(R.', L);

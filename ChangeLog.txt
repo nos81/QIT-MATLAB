@@ -130,7 +130,6 @@ b bugfix
               * invariant/canonical output normalized more carefully
                 to avoid a failing assert.
 
-
 2013-07-26    Version 0.9.11 (beta)
               - state/normalization
               - lmap/subsref, not very useful
@@ -148,3 +147,6 @@ b bugfix
               * state/prob: assume state ops are hermitian
               * utils/spectral_decomposition: sorting added
               * examples/nmr_sequences now accepts user-given seqs as well
+
+2013-??-??    Version 0.9.12a
+              * utils/lrmul simplified
