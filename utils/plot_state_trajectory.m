@@ -41,6 +41,30 @@ switch size(A, 1)
       plot_bloch_sphere();
     end
     plot_traj(A, [2, 3, 4], ls);
+
+  case 9
+    % single qutrit
+    if reset
+        %plot_bloch_sphere();
+        subplot(1,3,1)
+        axis square; hold on;
+        plot_bloch_sphere();
+        subplot(1,3,2)
+        axis square; hold on;
+        plot_bloch_sphere();
+        subplot(1,3,3)
+        axis square; hold on;
+        plot_2q_corr('none');
+    end
+    subplot(1,3,1)
+    plot_traj(A, [2, 3, 4], ls);
+
+    subplot(1,3,2)
+    plot_traj(A, [5, 6], ls);
+
+    subplot(1,3,3)
+    plot_traj(A, [7, 8, 9], ls);
+    %plot_traj(A, [4, 8, 9], ls); % cone...
   
   case 16
     % two qubits (or a single ququat...)
@@ -87,12 +111,20 @@ end
 function plot_traj(A, ind, ls)
 % Plots the trajectory formed by the correlations given in ind.
 
-  % if we only have a single point, do not bother with these
-  if size(A, 2) > 1
-      plot3(A(ind(1),1), A(ind(2),1), A(ind(3),1), [ls(1), 'x']);
+  d = length(ind);
+  if d == 3
+      % if we only have a single point, do not use start and end markers
+      if size(A, 2) > 1
+          plot3(A(ind(1),1), A(ind(2),1), A(ind(3),1), [ls(1), 'x']);
+          plot3(A(ind(1),end), A(ind(2),end), A(ind(3),end), [ls(1), 'o']);
+      end
       plot3(A(ind(1),:), A(ind(2),:), A(ind(3),:), ls);
-      plot3(A(ind(1),end), A(ind(2),end), A(ind(3),end), [ls(1), 'o']);
-  else
-      plot3(A(ind(1),end), A(ind(2),end), A(ind(3),end), ls);
+  
+  elseif d == 2
+      if size(A, 2) > 1
+          plot(A(ind(1),1), A(ind(2),1), [ls(1), 'x']);
+          plot(A(ind(1),end), A(ind(2),end), [ls(1), 'o']);
+      end
+      plot(A(ind(1),:), A(ind(2),:), ls);
   end
 end

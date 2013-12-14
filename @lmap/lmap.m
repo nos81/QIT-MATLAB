@@ -116,6 +116,16 @@ classdef lmap
     end
 
 
+    function s = conj(s)
+    % CONJ  Complex conjugate of the lmap.
+    %  q = conj(s)
+    %
+    %  Returns the lmap complex conjugated in the computational basis.
+
+        s.data = conj(s.data);
+    end
+
+
     function x = trace(s)
     % TRACE  Trace of the lmap.
     %  x = trace(s)

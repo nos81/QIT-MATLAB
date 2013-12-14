@@ -3,13 +3,20 @@ function I = LU_inv(rho, k, perms)
 %  I = LU_inv(rho, k, perms)
 %
 %  Computes the permutation invariant I_{k; p1, p2, ..., pn} for the state rho.
-%  perms is a cell vector containing n permutation vectors.
+%  perms is a cell vector containing n permutation vectors, one for
+%  each subsystem in the state.
+%  NOTE: Full permutation vectors, NOT cycles!
+%
+%  k is the order/degree of the invariant (number of copies of rho in the
+%  corresponding diagram). Each pj must thus be a k-permutation.
 %
 %  Example: I_{3; (123),(12)}(rho) = LU_inv(rho, 3, {[2 3 1], [2 1 3]})
 %
 %  This function can be very inefficient for some invariants, since
 %  it does no partial traces etc. which might simplify the calculation.
-    
+
+% shortcut: permutation [a b] means swap a with b...
+
 % Ville Bergholm 2011
 
 

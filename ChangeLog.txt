@@ -150,3 +150,5 @@ b bugfix
 
 2013-??-??    Version 0.9.12a
               * utils/lrmul simplified
+	      + lmap/conj
+
