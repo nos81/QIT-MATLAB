@@ -148,7 +148,7 @@ b bugfix
               * utils/spectral_decomposition: sorting added
               * examples/nmr_sequences now accepts user-given seqs as well
 
-2013-??-??    Version 0.9.12a
+2014-??-??    Version 0.9.12a
               * utils/lrmul simplified
-	      + lmap/conj
-
+              + lmap/conj
+              b utils/plot_adiabatic_evolution: eigs call now works for non-real matrices as well

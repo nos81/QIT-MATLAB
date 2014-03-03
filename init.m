@@ -14,7 +14,7 @@ fprintf('MATLAB Quantum Information Toolkit, version %s\n', qit.version)
 % Pauli matrices
 qit.I  = eye(2);
 qit.sx = [0 1; 1 0];
-qit.sy = [0 -i; i 0];
+qit.sy = [0 -1i; 1i 0];
 qit.sz = [1 0; 0 -1];
 
 % qubit projectors

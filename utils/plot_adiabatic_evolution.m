@@ -23,7 +23,7 @@ end
 n = min(n, length(H));
 
 % find the n lowest eigenstates of the final Hamiltonian
-[v,d] = eigs(H, n, 'SA');
+[v,d] = eigs(H, n, 'SR');
 [S,I] = sort(diag(d), 'ascend');
 for j=1:n
   lowest{j} = state(v(:, I(j)));
@@ -58,7 +58,7 @@ xlabel('Adiabatic time');
 ylabel('Probability');
 temp = char([]);
 for k=1:n
-  temp(k,:) = sprintf('|%d\\rangle', k-1);
+  temp(k,:) = sprintf('|%d>', k-1);
 end
 legend(temp);
 axis([0, 1, 0, 1]);
