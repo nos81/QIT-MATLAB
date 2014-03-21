@@ -152,3 +152,4 @@ b bugfix
               * utils/lrmul simplified
               + lmap/conj
               b utils/plot_adiabatic_evolution: eigs call now works for non-real matrices as well
+              b state/negativity: extra sqrt removed
