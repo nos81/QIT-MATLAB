@@ -1,4 +1,4 @@
-Changelog for Quantum Information Toolkit
+Changelog for Quantum Information Toolkit (MATLAB version)
 
 + added
 - removed
@@ -149,10 +149,17 @@ b bugfix
               * examples/nmr_sequences now accepts user-given seqs as well
 
 0.9.12      in progress
+              - state/is_ket
+              + lmap/is_ket
               + lmap/conj
               + state/subsystems
+              + utils/comm
+              + utils/acomm
               + invariant/LU
               b utils/plot_adiabatic_evolution: eigs call now works for non-real matrices as well
               b state/negativity: extra sqrt removed
               * utils/lrmul simplified
-              * renamed utils/liouvillian_fp   =>   utils/superop_fp
+              * renames:
+                 state/seq_propagate    =>   seq/propagate
+                 utils/liouvillian_fp   =>   utils/superop_fp
+                 utils/plot_2q_corr     =>   utils/plot_correlation_simplex

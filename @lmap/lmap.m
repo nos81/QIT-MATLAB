@@ -88,7 +88,7 @@ classdef lmap
 
 
     function ret = is_compatible(s, t)
-    % IS_COMPATIBLE  True iff s and t have same order and equal dimensions.
+    % IS_COMPATIBLE  True iff s and t have same order and equal dimensions and can thus be added.
 
       n = order(s);
       m = order(t);
@@ -105,13 +105,18 @@ classdef lmap
       ret = true;
     end
 
+
+    function ret = is_ket(s)
+    % IS_KET  Returns true iff the lmap is a ket vector.
+        ret = (size(s.data, 2) == 1);
+    end
+    
     
     function x = norm(s)
-    % NORM  Norm of the lmap.
+    % NORM  Matrix norm of the lmap.
     %  x = norm(s)
     %
     %  Returns the 2-norm of the lmap s.
-
       x = norm(s.data);
     end
 

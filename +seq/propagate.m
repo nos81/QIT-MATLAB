@@ -1,14 +1,14 @@
-function [out, t] = seq_propagate(s, seq, out_func, base_dt)
-% SEQ_PROPAGATE  Propagate the state in time using a control sequence.
+function [out, t] = propagate(s, seq, out_func, base_dt)
+% PROPAGATE  Propagate a state in time using a control sequence.
 %  [out, t] = propagate(s, seq, out_func)
     
-% Ville Bergholm 2009-2011
+% Ville Bergholm 2009-2014
 
 
-if (nargin < 3)
+if nargin < 3
     out_func = @(x) x; % no output function given, use a NOP
     
-    if (nargin < 2)
+    if nargin < 2
         error('Needs a control sequence.');
     end
 end
@@ -18,9 +18,10 @@ if nargin < 4
 end
 
 n = length(seq.tau); % number of pulses
-t = [0];
+t = [0];  % initial time
 out{1} = out_func(s);
 
+% loop over the sequence
 for j=1:n
     G = seq.A;
     for k = 1:length(seq.B)
@@ -34,7 +35,7 @@ for j=1:n
 
     P = expm(-dt * G);
     for q=1:n_steps
-        s = u_propagate(s, P);
+        s = s.u_propagate(P);
         out{end+1} = out_func(s);
     end
 

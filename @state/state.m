@@ -191,11 +191,6 @@ classdef state < lmap
       ret = isequal(dims(s), dims(t));
     end
 
-    function ret = is_ket(s)
-    % IS_KET  Returns true iff the internal representation of the state is a ket vector.
-      ret = (size(s.data, 2) == 1);
-    end
-    
     function ret = trace(s)
     % TRACE  Returns the trace of the state operator.
     %

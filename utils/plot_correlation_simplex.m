@@ -1,6 +1,6 @@
-function [h, ind] = plot_2q_corr(labels)
-% PLOT_2Q_CORR  Plots the correlations simplex for two-qubit states.
-%  [h, ind] = plot_2q_corr(group)
+function [h, ind] = plot_correlation_simplex(labels)
+% PLOT_CORRELATION_SIMPLEX  Plots the correlations simplex for two-qubit states.
+%  [h, ind] = plot_correlation_simplex(group)
 %
 %  Plots the geometrical representation of the set of allowed
 %  correlations in a two-qubit state. For each group of three
@@ -15,7 +15,7 @@ function [h, ind] = plot_2q_corr(labels)
 % NOTE the strange logic in the ordering of the pos and neg
 % correlations follows the logic of the Bell state labeling convention, kind of.
 
-% Ville Bergholm  2011-2012
+% Ville Bergholm  2011-2014
 
 
 if nargin < 1

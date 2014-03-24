@@ -54,7 +54,7 @@ switch size(A, 1)
         plot_bloch_sphere();
         subplot(1,3,3)
         axis square; hold on;
-        plot_2q_corr('none');
+        plot_correlation_simplex('none');
     end
     subplot(1,3,1)
     plot_traj(A, [2, 3, 4], ls);
@@ -78,13 +78,13 @@ switch size(A, 1)
       title('qubit B')
 
       subplot(2,3,3)
-      plot_2q_corr('diagonal');
+      plot_correlation_simplex('diagonal');
       
       subplot(2,3,4)
-      plot_2q_corr('pos');
+      plot_correlation_simplex('pos');
       
       subplot(2,3,5)
-      plot_2q_corr('neg');
+      plot_correlation_simplex('neg');
     end
 
     subplot(2,3,1)
