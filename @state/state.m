@@ -176,6 +176,11 @@ classdef state < lmap
       end
     end
 
+    function n = subsystems(s)
+    % SUBSYSTEMS  Returns the number of subsystems in the state.
+      n = length(s.dim{1});
+    end
+    
     function d = dims(s)
     % DIMS  Returns the dimension vector of the state.
       d = s.dim{1}; % dims of the other index must be equal (or 1)

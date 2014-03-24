@@ -1,6 +1,6 @@
-function [A, spectrum] = liouvillian_fp(L, rtol)
-% LIOUVILLIAN_FP  Fixed point states of a Liouvillian.
-%  [A, spectrum] = liouvillian_fp(L, tol)
+function [A, spectrum] = superop_fp(L, rtol)
+% SUPEROP_FP  Fixed point states of a Liouvillian superoperator.
+%  [A, spectrum] = superop_fp(L, tol)
 %
 %  Finds the intersection of the kernel of the Liouvillian L
 %  with the set of valid state operators, thus giving the set of
@@ -37,7 +37,7 @@ function [A, spectrum] = liouvillian_fp(L, rtol)
 %
 % Especially if rho \in Ker L, also rho' \in Ker L.
 
-% Ville Bergholm 2011-2012
+% Ville Bergholm 2011-2014
 
 
 if nargin < 2

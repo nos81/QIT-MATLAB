@@ -1,6 +1,6 @@
-function I = LU_inv(rho, k, perms)
+function I = LU(rho, k, perms)
 % Local unitary polynomial invariants of quantum states.
-%  I = LU_inv(rho, k, perms)
+%  I = LU(rho, k, perms)
 %
 %  Computes the permutation invariant I_{k; p1, p2, ..., pn} for the state rho.
 %  perms is a cell vector containing n permutation vectors, one for
@@ -17,12 +17,11 @@ function I = LU_inv(rho, k, perms)
 
 % shortcut: permutation [a b] means swap a with b...
 
-% Ville Bergholm 2011
+% Ville Bergholm 2011-2014
 
 
 n = length(perms);
-d = dims(rho);
-if n ~= length(d)
+if n ~= rho.subsystems()
     error('Need one permutation per subsystem.')
 end
 

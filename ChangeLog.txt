@@ -149,7 +149,10 @@ b bugfix
               * examples/nmr_sequences now accepts user-given seqs as well
 
 2014-??-??    Version 0.9.12a
-              * utils/lrmul simplified
               + lmap/conj
+              + state/subsystems
+              + invariant/LU
               b utils/plot_adiabatic_evolution: eigs call now works for non-real matrices as well
               b state/negativity: extra sqrt removed
+              * utils/lrmul simplified
+              * renamed utils/liouvillian_fp   =>   utils/superop_fp
