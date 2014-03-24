@@ -4,7 +4,7 @@ function P = projector(s)
 %
 %  Returns the projection operator P defined by the state s.
 
-% Ville Bergholm 2009-2010
+% Ville Bergholm 2009-2014
 
 
 global qit;
@@ -13,10 +13,5 @@ if (abs(purity(s) - 1) > qit.tol)
   error('The state is not pure, and thus does not correspond to a projector.')
 end
 
-if is_ket(s)
-  % state vector
-  P = s.data * s.data';
-else
-  % state operator
-  P = s.data;
-end
+s = to_op(s);
+P = lmap(s);
