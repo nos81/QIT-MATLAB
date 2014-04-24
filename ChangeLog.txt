@@ -159,7 +159,9 @@ b bugfix
               b utils/plot_adiabatic_evolution: eigs call now works for non-real matrices as well
               b state/negativity: extra sqrt removed
               * utils/lrmul simplified
+              * hamiltonian/heisenberg takes now a connection graph as input
               * renames:
                  state/seq_propagate    =>   seq/propagate
                  utils/liouvillian_fp   =>   utils/superop_fp
                  utils/plot_2q_corr     =>   utils/plot_correlation_simplex
+
