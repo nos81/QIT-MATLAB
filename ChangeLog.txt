@@ -163,3 +163,5 @@ b bugfix
                  state/seq_propagate    =>   seq/propagate
                  utils/liouvillian_fp   =>   utils/superop_fp
                  utils/plot_2q_corr     =>   utils/plot_correlation_simplex
+
+              + gate/werner
