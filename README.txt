@@ -1,6 +1,6 @@
 README file for the Quantum Information Toolkit.
-Version 0.9.10 (beta)
-Released 2011-11-16
+Version 0.9.12 (beta)
+Released 2014-06-??
 
 
 
@@ -14,7 +14,7 @@ The latest version can be downloaded from the project website,
   http://sourceforge.net/projects/qit/
 
 The toolkit is installed by simply unzipping it, or downloading it
-directly from the SVN server. To initialize the toolkit in MATLAB, run
+directly from the Git repository. To initialize the toolkit in MATLAB, run
 the init.m script in the toolkit root directory. To get an overview of
 the features and capabilities of the toolkit, run examples/tour.m.
 
@@ -64,6 +64,7 @@ Some of the m-files have literature references relevant to the
 algorithms or concepts used. Each reference is on its own line starting
 with the characters "%!". One can compile a list of all the references
 in the toolkit using the shell command "grep '%!' */*.m".
+All the references are listed in refs.bib in Bibtex format.
 
 
 
@@ -91,6 +92,6 @@ coding guidelines:
 
 === Authors ===
 
-Ville Bergholm                2008-2011
+Ville Bergholm                2008-2014
 Jacob D. Biamonte             2008-2009
 James D. Whitfield	      2009-2010

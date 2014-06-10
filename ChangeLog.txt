@@ -150,6 +150,7 @@ b bugfix
 
 0.9.12      in progress
               - state/is_ket
+              + refs.bib
               + lmap/is_ket
               + lmap/conj
               + state/subsystems
