@@ -28,12 +28,14 @@ qit.H = [1 1; 1 -1]/sqrt(2);
 qit.tol = max(1e-10, eps);
 
 % some relevant physical constants (CODATA 2010)
-qit.hbar = 1.054571726e-34; % Planck constant / (2 pi), J s
-qit.kB   = 1.3806488e-23;   % Boltzmann constant, J/K
-qit.eV   = 1.602176565e-19; % electron volt, J
-qit.c    = 299792458;       % speed of light in vacuum, m/s
-qit.muB  = 9.27400968e-24;  % Bohr magneton, J/T
-qit.muN  = 5.05078353e-27;  % nuclear magneton, J/T
+qit.hbar   = 1.054571726e-34; % Planck constant / (2 pi), J s
+qit.kB     = 1.3806488e-23;   % Boltzmann constant, J/K
+qit.eV     = 1.602176565e-19; % electron volt, J
+qit.c      = 299792458;       % speed of light in vacuum, m/s
+qit.muB    = 9.27400968e-24;  % Bohr magneton, J/T
+qit.muN    = 5.05078353e-27;  % nuclear magneton, J/T
+qit.alpha  = 7.2973525698e-3; % fine structure constant, dimensionless
+qit.m_e    = 9.10938291e-31;  % electron rest mass, kg
 
 
 % caching
