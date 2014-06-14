@@ -163,6 +163,7 @@ b bugfix
               b utils/plot_adiabatic_evolution: eigs call now works for non-real matrices as well
               b state/negativity: extra sqrt removed
               b examples/qft_circuit: now nonpalindromic dimension vectors work too
+              * state/entropy also gives Rényi entropies.
               * utils/lrmul simplified
               * hamiltonian/heisenberg takes now a connection graph as input
               * renames:
