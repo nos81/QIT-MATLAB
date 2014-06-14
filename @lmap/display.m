@@ -63,15 +63,9 @@ if n_ind == 1 || (n_ind == 2 && (isequal(s.dim{1}, 1) || isequal(s.dim{2}, 1)))
         else
           out = [out, sprintf(' +(%s)', num2str(temp))];
         end
-      
-        d = fliplr(dim); % big-endian convention makes this way more complicated than it should be
-        carry = ind;
-        for k = 1:n % start from least significant digit
-          %ind2sub with 2 output parms uses up the first dim given
-          [ket(k), carry] = ind2sub(d(k:n), carry);
-          symbol(k) = labels(ket(k));
-        end
-        symbol = fliplr(symbol); % big-endian again
+
+        ket = unravel_index(ind, dim);
+        symbol = labels(ket);
 
         % ket or bra?
         if is_ket

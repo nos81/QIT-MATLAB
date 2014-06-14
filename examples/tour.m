@@ -27,6 +27,10 @@ pause
 quantum_channels(0.3)
 pause
 
+bernstein_vazirani(6, true);
+bernstein_vazirani(6, false);
+pause
+
 grover_search(6);
 pause
 
@@ -43,4 +47,4 @@ pause
 qubit_and_resonator();
 pause
 
-%qft_circuit([2 3 2]);
+qft_circuit([2, 3, 2]);

@@ -45,7 +45,7 @@ s_error = s;
 s_error.A = 0.1 * 1i * 0.5 * qit.sz; % add off-resonance error (constant \sigma_z drift term)
 
 % apply sequence on state psi, plot the evolution
-[out, t] = seq_propagate(psi, s_error, @bloch_vector);
+[out, t] = seq.propagate(psi, s_error, @bloch_vector);
 
 subplot(2,2,1);
 plot_state_trajectory(out);
@@ -56,7 +56,7 @@ s_error = s;
 s_error.tau = s.tau * 1.1; % proportional pulse lenght error
 
 % apply sequence on state psi, plot the evolution
-[out, t] = seq_propagate(psi, s_error, @bloch_vector);
+[out, t] = seq.propagate(psi, s_error, @bloch_vector);
 
 subplot(2,2,3);
 plot_state_trajectory(out);

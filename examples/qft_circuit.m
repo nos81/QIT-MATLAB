@@ -18,10 +18,11 @@ function U = qft_circuit(dim)
 fprintf('\n\n=== Quantum Fourier transform using a quadratic circuit ===\n\n')
 
 if (nargin < 1)
-  dim = [2 3 3 2]
+  dim = [2 3 3 2];
 end
+dim
 
-n = length(dim)
+n = length(dim);
 U = gate.id(dim);
 
 for k=1:n
@@ -33,14 +34,17 @@ for k=1:n
   end
 end
 
+% Here the SWAPs may change the ordering of the dimensions if dim
+% is not palindromic.
 for k=1:n/2
   temp = gate.swap(dim(k), dim(n+1-k));
-  U = gate.two(temp, [k, n+1-k], dim) * U;
+  U = gate.two(temp, [k, n+1-k], U.dim{1}) * U;
 end
 
 U.data = full(U.data); % it's a QFT anyway
 
-U
+err = norm(U.data -gate.qft(dim).data);
+fprintf('Error: %g\n', err);
 %temp = U - gate.qft(dim);
 %norm(temp.data)
 end
