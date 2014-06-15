@@ -186,9 +186,12 @@ classdef state < lmap
       d = s.dim{1}; % dims of the other index must be equal (or 1)
     end
 
-    function ret = equal_dims(s, t)
-    % EQUAL_DIMS  Returns true iff the dimension vectors of states s and t are equal.
+    function ret = is_compatible(s, t)
+    % IS_COMPATIBLE  True iff s and t have the same dimensions.
       ret = isequal(dims(s), dims(t));
+      if ~ret
+          error('The states have different dimensions.')
+      end
     end
 
     function ret = trace(s)

@@ -26,29 +26,29 @@ classdef lmap
     %    = lmap(rand(4));               % operator, 4 -> 4
     %    = lmap(rand(6), {6, [3 2]});   % operator, [3 2] -> 6
  
-    if (nargin == 0)
+    if nargin == 0
       error('No arguments given.');
-    elseif (nargin > 2)
+    elseif nargin > 2
       error('Too many arguments.');
     end
 
-    if (nargin == 2)
+    if nargin == 2
       % cover for lazy users, convert a dim vector into a cell vector with one entry
-      if (isnumeric(dim))
+      if isnumeric(dim)
         dim = {dim};
       end
     end
 
-    if (isa(s, 'lmap'))
+    if isa(s, 'lmap')
       % copy constructor
-      if (nargin == 1)
+      if nargin == 1
         dim = s.dim; % copy also dimensions
       end
       s = s.data;
 
-    elseif (isnumeric(s))
+    elseif isnumeric(s)
       % full tensor
-      if (nargin == 1)
+      if nargin == 1
         dim = num2cell(size(s)); % no dim given, infer from s
       end
     end
@@ -56,11 +56,11 @@ classdef lmap
     % error checking
     n = length(dim);
     for k=1:n
-      if (size(s, k) ~= prod(dim{k}))
+      if size(s, k) ~= prod(dim{k})
         error('Dimensions of index %d do not match the combined dimensions of the subsystems.', k)
       end
     end
-    if (size(s, k+1) ~= 1)
+    if size(s, k+1) ~= 1
       error('The dimension cell vector does not have an entry for each tensor index.');
     end
 
@@ -74,7 +74,7 @@ classdef lmap
 
       for k = 1:length(s.dim)
 	s.dim{k}(find(s.dim{k} == 1)) = []; % remove all ones
-	if (isempty(s.dim{k}))
+	if isempty(s.dim{k})
 	  s.dim{k} = 1; % restore a single one if necessary
 	end
       end
@@ -93,7 +93,7 @@ classdef lmap
       n = order(s);
       m = order(t);
 
-      if (n ~= m)
+      if n ~= m
         error('The orders of the lmaps do not match.')
       end
 
@@ -106,6 +106,25 @@ classdef lmap
     end
 
 
+    function ret = is_concatenable(s, t)
+    % IS_CONCATENABLE  True iff s * t is a meaningful expression.
+    %  ret = is_concatenable(s, t)
+    %  
+    %  s and t can be concatenated (multiplied) if they are both
+    %  order-2 lmaps and the input dimensions of s match the output
+    %  dimensions of t.
+
+      if order(s) ~= 2 || order(t) ~= 2
+        error('Concatenation only defined for order-2 lmaps.')
+      end
+
+      ret = isequal(s.dim{2}, t.dim{1});
+      if ~ret
+          error('The input and output dimensions do not match.')
+      end
+    end
+    
+    
     function ret = is_ket(s)
     % IS_KET  Returns true iff the lmap is a ket vector.
         ret = (size(s.data, 2) == 1);

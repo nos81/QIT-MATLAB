@@ -152,8 +152,9 @@ b bugfix
               - state/is_ket
               + new physical constants
               + refs.bib: list of references
-              + lmap/is_ket
               + lmap/conj
+              + lmap/is_ket
+              + lmap/is_concatenable
               + state/subsystems
               + utils/comm
               + utils/acomm

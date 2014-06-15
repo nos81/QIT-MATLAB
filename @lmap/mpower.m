@@ -4,23 +4,16 @@ function x = mpower(a, b)
 %
 %  Returns a^b.
 
-% Ville Bergholm 2010
+% Ville Bergholm 2010-2014
 
 
-if (isa(a, 'lmap') && isscalar(b) && isnumeric(b))
+if isa(a, 'lmap') && isscalar(b) && isnumeric(b)
 
-  if (floor(b) ~= b)
+  if floor(b) ~= b
     error('Can only handle positive integer exponents for now.')
   end
 
-  n = order(a);
-  if (n ~= 2)
-    error('a is not a matrix.');
-  end
-
-  if (~isequal(a.dim{2}, a.dim{1}))
-    error('The dimensions do not match.')
-  end
+  is_concatenable(a, a);
   dim = a.dim{1};
 
   % exponentiation by repeated squaring
