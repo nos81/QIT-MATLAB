@@ -1,9 +1,0 @@
-#! /bin/bash
-# Restores the toolkit in pristine state after running octavize
-
-for x in */*.orig; do mv ${x} ${x/.orig/}; done
-
-cd @state
-mv state_disabled.m state.m
-mv trace_disabled.m trace.m
-cd ..
