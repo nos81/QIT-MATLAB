@@ -148,7 +148,7 @@ b bugfix
               * utils/spectral_decomposition: sorting added
               * examples/nmr_sequences now accepts user-given seqs as well
 
-0.10.0      in progress
+0.10.0      2014-07-08
               - Octave 3.0 hacks removed
               - state/is_ket
               + new physical constants
