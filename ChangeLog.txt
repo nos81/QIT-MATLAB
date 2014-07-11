@@ -164,4 +164,8 @@ b bugfix
                  utils/liouvillian_fp   =>   utils/superop_fp
                  utils/plot_2q_corr     =>   utils/plot_correlation_simplex
 
+
               + gate/werner
+              + gate/isotropic
+              + gate/copydot
+              + examples/werner_states
