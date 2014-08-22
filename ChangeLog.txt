@@ -165,7 +165,9 @@ b bugfix
                  utils/plot_2q_corr     =>   utils/plot_correlation_simplex
 
 
+              + lmap/tensorpow
               + gate/werner
               + gate/isotropic
               + gate/copydot
               + examples/werner_states
+              + examples/magic_state_distillation
