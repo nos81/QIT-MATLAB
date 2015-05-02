@@ -181,3 +181,4 @@ b bugfix
               + gate/copydot
               + examples/werner_states
               + examples/magic_state_distillation
+              * utils/unravel_index works on vectors of indices
