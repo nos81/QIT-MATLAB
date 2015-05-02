@@ -173,3 +173,11 @@ b bugfix
                  utils/liouvillian_fp   =>   utils/superop_fp
                  utils/plot_2q_corr     =>   utils/plot_correlation_simplex
 
+0.10.1  in progress
+              b markov/ops: warns of possible RWA violations
+              + lmap/tensorpow
+              + gate/werner
+              + gate/isotropic
+              + gate/copydot
+              + examples/werner_states
+              + examples/magic_state_distillation
