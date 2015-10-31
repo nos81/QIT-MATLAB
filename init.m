@@ -41,6 +41,6 @@ qit.m_e    = 9.10938291e-31;  % electron rest mass, kg
 % caching
 qit.gellmann = {};
 qit.tensorbasis = {};
-qit.tensorbasislocal = {};
+qit.tensorbasis_locality = {};
 qit.angular_momentum = {};
 qit.qft = {};

@@ -1,4 +1,4 @@
-function [B, local] = tensorbasis(n, d)
+function [B, locality] = tensorbasis(n, d)
 % TENSORBASIS  Hermitian tensor-product basis for End(H).
 %  B = tensorbasis(n, d)  % H = C_d^{\otimes n}.
 %  B = tensorbasis(dim)   % H = C_{dim(1)} \otimes ... \otimes C_{dim(n)}
@@ -14,14 +14,14 @@ function [B, local] = tensorbasis(n, d)
 %  In addition to expanding Hermitian operators on H, this basis can be multiplied by
 %  the imaginary unit i to obtain the antihermitian generators of U(prod(dim)).
 
-% Ville Bergholm 2005-2011
+% Ville Bergholm 2005-2015
 
 
 global qit;
 
-if (nargin == 2)
+if nargin == 2
   dim = ones(n,1) * d;
-elseif (nargin == 1)
+elseif nargin == 1
   dim = n;
   n = length(dim);
 else
@@ -30,11 +30,11 @@ end
 
 % check cache first (we only cache "n qu(d)its" -type bases for convenience)
 cache = false;
-if (dim == dim(1))
+if dim == dim(1)
   d = dim(1);
-  if (all(size(qit.tensorbasis) >= [n, d]) && ~isempty(qit.tensorbasis{n,d}))
+  if all(size(qit.tensorbasis) >= [n, d]) && ~isempty(qit.tensorbasis{n,d})
     B = qit.tensorbasis{n,d};
-    local = qit.tensorbasislocal{n,d};
+    locality = qit.tensorbasis_locality{n,d};
     return;
   end
   cache = true;
@@ -44,7 +44,7 @@ n_elements = dim.^2;      % number of basis elements for each subsystem, incl. i
 n_all = prod(n_elements); % number of all tensor basis elements, incl. identity
 
 B = cell(1, n_all); % basis
-local = false(1, n_all); % logical array, is the corresponding basis element local?
+locality = zeros(1, n_all); % locality of the corresponding basis element
 
 % create the tensor basis
 for k = 0:(n_all-1)  % loop over all basis elements
@@ -64,12 +64,12 @@ for k = 0:(n_all-1)  % loop over all basis elements
   end
 
   B{k+1} = temp;  
-  local(k+1) = (sum < 2); % at least two non-identities => nonlocal element
+  locality(k+1) = sum; % at least two non-identities => nonlocal element
 end
 
 
 % store into cache
-if (cache)
+if cache
   qit.tensorbasis{n,d} = B;
-  qit.tensorbasislocal{n,d} = local;
+  qit.tensorbasis_locality{n,d} = locality;
 end
