@@ -2,7 +2,7 @@ function [out, t] = propagate(s, seq, out_func, base_dt)
 % PROPAGATE  Propagate a state in time using a control sequence.
 %  [out, t] = propagate(s, seq, out_func)
     
-% Ville Bergholm 2009-2014
+% Ville Bergholm 2009-2015
 
 
 if nargin < 3
@@ -33,7 +33,7 @@ for j=1:n
     n_steps = ceil(T / base_dt);
     dt = T / n_steps;
 
-    P = expm(-dt * G);
+    P = expm(dt * G);
     for q=1:n_steps
         s = s.u_propagate(P);
         out{end+1} = out_func(s);

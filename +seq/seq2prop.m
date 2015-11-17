@@ -4,11 +4,11 @@ function P = seq2prop(s)
 %
 %  Returns the matrix P corresponding to the action of the control sequence s.
 %  
-%  Governing equation: \dot(X)(t) = -(A +\sum_k u_k(t) B_k) X(t) = -G(t) X(t)
+%  Governing equation: \dot(X)(t) = (A +\sum_k u_k(t) B_k) X(t) = G(t) X(t)
 
 %  [a, theta] ^= R_a(theta) = expm(-i*a*sigma*theta/2) = expm(-i*H*t) => H = a*sigma/2, t = theta
 
-% Ville Bergholm 2009-2011
+% Ville Bergholm 2009-2015
 
 
 n = length(s.tau);
@@ -20,6 +20,6 @@ for j=1:n
       G = G + s.control(j, k) * s.B{k};
   end
 
-  temp = expm(-s.tau(j) * G);
+  temp = expm(s.tau(j) * G);
   P = temp * P;
 end
