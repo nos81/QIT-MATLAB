@@ -7,25 +7,25 @@ function L = superop(H, D, baths)
 %  base Hamiltonian H and a (Hermitian) interaction operator D
 %  coupling the system to bath B.
 %
-%  Returns L/omega0, which includes the system Hamiltonian, the Lamb shift,
+%  Returns L * TU, which includes the system Hamiltonian, the Lamb shift,
 %  and the Lindblad dissipator.
 %
 %  B can also be a cell vector of baths, in which case D has to be
 %  a cell vector of the corresponding interaction operators.
 
-% Ville Bergholm 2009-2010
+% Ville Bergholm 2009-2015
 
 
-if (~iscell(baths))
+if ~iscell(baths)
   baths = {baths}; % needs to be a cell array, even if it has just one element
 end
 n_baths = length(baths); % number of baths
 
-% make sure the baths have the same omega0!
-temp = baths{1}.omega0;
+% make sure the baths have the same TU!
+temp = baths{1}.TU;
 for k=2:n_baths
-  if (baths{k}.omega0 ~= temp)
-    error('All the baths must have the same energy scale omega0!')
+  if baths{k}.TU ~= temp
+    error('All the baths must have the same time unit!')
   end
 end
 
@@ -41,26 +41,22 @@ for n=1:n_baths
   b = baths{n};
 
   % we build the Liouvillian in a funny order to be a bit more efficient
-
-  % dH == 0 terms
-  [g, s] = corr(b, 0);
-  temp = A{1}' * A{1};
-
-  iH_LS = iH_LS +i * s * temp; % Lamb shift
-  acomm = acomm -0.5 * g * temp; % anticommutator
-  diss = diss +lrmul(g * A{1}, A{1}'); % dissipator (part)
-
-  for k=2:length(dH)
+  for k=1:length(dH)
     % first the positive energy shift
-    [g, s] = corr(b, dH(k));
+    [g, s] = b.corr(dH(k));
     temp = A{k}' * A{k};
 
     iH_LS = iH_LS +i * s * temp;
     acomm = acomm -0.5 * g * temp;
     diss = diss +lrmul(g * A{k}, A{k}');
 
+    if dH(k) == 0
+        % no negative shift
+        continue
+    end
+
     % now the corresponding negative energy shift
-    [g, s] = corr(b, -dH(k));
+    [g, s] = b.corr(-dH(k));
     temp = A{k} * A{k}'; % note the difference here, A(-omega) = A'(omega)
 
     iH_LS = iH_LS +i * s * temp;

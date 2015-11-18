@@ -12,12 +12,12 @@ function L = superop_lindblad(A, H)
 %    = -i [H, \rho] +\sum_k (A_k \rho A_k^\dagger -0.5*\{A_k^\dagger A_k, \rho\})
 
 % James D. Whitfield 2009
-% Ville Bergholm 2009-2010
+% Ville Bergholm 2009-2015
 
 
-if (nargin == 2)
+if nargin == 2
   % Hamiltonian
-  iH = i*H;
+  iH = 1i*H;
 else
   iH = sparse(0);
 end

@@ -1,159 +1,299 @@
 classdef bath < handle
 % BATH  Handle class for heat baths.
 %
-%  Currently only one type of bath is supported, a bosonic
-%  canonical ensemble at absolute temperature T, with a
-%  single-term coupling to the system.
+%  Currently supports bosonic and fermionic canonical ensembles at
+%  absolute temperature T, with an ohmic spectral density.
 %
-%  The bath spectral density is Ohmic with a cutoff.
-%    J(omega) = hbar^2*omega*cut(omega)*heaviside(omega);
+%  The system-bath coupling is assumed to be of the form
+%    H_int = A \otimes \sum_k \lambda_k (a_k +a_k')
 %
-%  Two types of cutoffs are supported: exponential and sharp.
-%    cut(omega) = exp(-omega/omega_c)
-%    cut(omega) = heaviside(omega_c - omega)
+%  The bath spectral density is ohmic with a cutoff:
+%    J(\omega) = \omega * cut_func(\omega) * heaviside(\omega)
+%
+%  Three types of cutoffs are supported:
+%    cut_func(x * \omega_c) =
+%       exponential:  exp(-x)
+%       smooth:       (1+x^2)^{-1}
+%       sharp:        heaviside(1-x)
 
-% gamma(omega) == 2*pi/hbar^2 (J(omega)-J(-omega))(1+n(omega))
+% \gamma(omega) == 2*pi (J(omega)-J(-omega))(1+n(omega))
 
-% Ville Bergholm 2009-2010
+% Ville Bergholm 2009-2015
 
 
 properties (SetAccess = protected)
   % basic parameters
   type   % Bath type. Currently only 'ohmic' is supported.
-  omega0 % hbar*omega0 is the unit of energy for all Hamiltonians (omega0 in Hz)
+  stat   % Bath statistics ('boson' or 'fermion').
+  TU     % Time unit (in s). All Hamiltonians have been made dimensionless by multiplying with TU/\hbar.
   T      % Absolute temperature of the bath (in K).
 
   % shorthand
-  scale  % dimensionless temperature scaling parameter hbar*omega0/(kB * T)
+  scale  % dimensionless temperature scaling parameter \hbar/(kB * T * TU)
 
   % additional parameters with default values
   cut_type  % spectral density cutoff type
-  cut_limit % spectral density cutoff angular frequency/omega0
+  cut_omega % spectral density cutoff angular frequency (in 1/TU)
     
   % spectral density
-  % J(omega0 * x)/omega0 = \hbar^2 * j(x) * heaviside(x) * cut_func(x);
-  j        % spectral density profile
+  % J(omega/TU) * TU = omega * heaviside(omega) * cut_func(omega);
   cut_func % cutoff function
 
   % lookup tables / function handles for g and s
-  % gamma(omega0 * x)/omega0 = g_func(x) * cut_func(x)
-  % gamma(omega0 * dh(k))/omega0 = gs_table(1,k)
-  %     S(omega0 * dh(k))/omega0 = gs_table(2,k)
+  % \gamma(omega/TU) * TU = g_func(omega)
+  %      S(omega/TU) * TU = s_func(omega)
+  % \gamma(omega(k)/TU) * TU = gs_table(1,k)
+  %      S(omega(k)/TU) * TU = gs_table(2,k)
   g_func
-  g0
-  s0
-  dH
+  s_func
+  g0      % limit of g at x == 0
+  s0      % limit of S at x == 0
+  omega
   gs_table
+  
+  % HACKs
+  int_end  % integration interval endpoint for improper integrals
 end  
 
 
+methods (Static)
+function y = interpolate(ee, tt, x)
+  % interp1 does way too many checks
+  y = tt(:,1) + ((x - ee(1))/(ee(2) - ee(1)))*(tt(:,2) - tt(:,1));
+end
+end
+
+
 methods
-function b = bath(type, omega0, T)
+function b = bath(type, stat, TU, T)
   % constructor
-  %  b = bath(type, omega0, T)
+  %  b = bath(type, TU, T)
   %
   %  Sets up a descriptor for a heat bath coupled to a quantum system.
     
     
   global qit;
 
-  if (nargin ~= 3)
-    error('Usage: bath(type, omega0, T)')
+  if nargin ~= 4
+    error('Usage: bath(...)')
   end
 
   % basic bath parameters
   b.type   = type;
-  b.omega0 = omega0;
+  b.stat   = stat;
+  b.TU     = TU;
   b.T      = T;
 
-  % shorthand
-  b.scale = qit.hbar * omega0 / (qit.kB * T);
+  % dimensionless physical scale factor
+  b.scale = qit.hbar / (qit.kB * T * TU);
 
-  switch type
+  % bath spectral density
+  switch b.type
     case 'ohmic'
-      % Ohmic bosonic bath, canonical ensemble, single-term coupling
-
-      b.g_func = @(x) 2*pi*x.*(1 +1./(exp(b.scale*x)-1));
-      b.g0 = 2*pi/b.scale; % limit of g at x == 0
-      b.j = @(x) x;
-
     otherwise
       error('Unknown bath type.')
   end
 
   % defaults, can be changed later
-  set_cutoff(b, 'sharp', 20);
-end
-
-
-function build_LUT(b)
-  % Build a lookup table for the S integral.
-
-  error('unused')
-
-  % TODO justify limits for S lookup
-  if (limit > 10)
-    temp = logspace(log10(10.2), log10(limit), 50);
-    temp = [linspace(0.1, 10, 100), temp]; % sampling is denser near zero, where S changes more rapidly
-  else
-    temp = linspace(0.1, limit, 10);
-  end
-  b.dH = [-fliplr(temp), 0, temp]
-
-  b.s_table = [];
-  for k=1:length(b.dH)
-    b.s_table(k) = S_func(b, b.dH(k));
-  end
-
-  b.dH      = [-inf, b.dH, inf];
-  b.s_table = [0, b.s_table, 0];
-
-  plot(b.dH, b.s_table, 'k-x');
-end
-
-
-function S = S_func(b, dH)
-% Compute S(dH*omega0)/omega0 = P\int_0^\infty dv J(omega0*v)/(hbar^2*omega0) (dH*coth(scale/2 * v) +v)/(dH^2 -v^2)
-
-  ep = 1e-5; % epsilon for Cauchy principal value
-  if (abs(dH) <= 1e-8)
-    S = b.s0;
-  else
-    % Cauchy principal value, integrand has simple poles at \nu = \pm dH.
-    f = @(nu) b.j(nu) .* b.cut_func(nu) .* (dH*coth(b.scale * nu/2) +nu) ./ (dH^2 -nu.^2);
-    S = quad(f, ep, abs(dH)-ep)...
-        +quad(f, abs(dH)+ep, 100*b.cut_limit); % FIXME upper limit should be inf, this is arbitrary
-  end
+  b.set_cutoff('exp', 10);
 end
 
 
 function set_cutoff(b, type, lim)
-  b.cut_type = type;
-  b.cut_limit = lim; % == omega_c/omega0
+% Define the cutoff function for J
+% We assume that cut_func(0) == 1.
 
-  % update cutoff function (at least Octave uses early binding, so when
-  % parameters change we need to redefine it)
+  b.cut_type = type;
+  b.cut_omega = lim;  % == \omega_c * TU
+  
+  % update cutoff function (Matlab uses early binding, so when parameters change we need to redefine it)
   switch b.cut_type
     case 'sharp'
-      b.cut_func = @(x) (abs(x) <= b.cut_limit); % Heaviside theta cutoff
+      b.cut_func = @(x) heaviside(b.cut_omega -x); % Heaviside theta cutoff
+    case 'smooth'
+      b.cut_func = @(x) 1/(1 +(x/b.cut_omega)^2);  % rational cutoff
     case 'exp'
-      b.cut_func = @(x) exp(-abs(x)/b.cut_limit); % exponential cutoff
+      b.cut_func = @(x) exp(-x / b.cut_omega);     % exponential cutoff
     otherwise
       error('Unknown cutoff type "%s"', b.cut_type)
   end
+  b.setup();
+end
 
-  switch b.type
-    case 'ohmic'
-      b.s0 = -b.cut_limit; % limit of S at dH == 0
+
+function setup(b)
+% Initialize the g and s functions, and the LUT.
+% Must be called after parameters change.
+
+  % TODO quad cannot handle improper integrals, switch to int() or quadgk()
+  b.int_end = b.cut_omega * 10;
+    
+  % bath statistics
+  switch b.stat
+    case 'boson'
+      b.g_func = @(x) 2*pi * x .* b.cut_func(abs(x)) .* (1 +1./(exp(b.scale * x)-1));
+      % s_func has simple poles at \nu = \pm x.
+      b.s_func = @(x,nu) nu .* b.cut_func(nu) .* (x * coth(b.scale * nu/2) +nu) ./ (x^2 -nu.^2);
+      b.g0 = 2*pi / b.scale;
+      b.s0 = -quad(b.cut_func, 0, b.int_end);
+      
+    case 'fermion'
+      temp = @(x) 1./(exp(b.scale * x) + 1);
+      b.g_func = @(x) 2*pi * abs(x) .* b.cut_func(abs(x)) .* (1 -temp(x));
+      % s_func has simple poles at \nu = \pm x.
+      b.s_func = @(x,nu) nu .* b.cut_func(nu) .* ((1-temp(x))./(x-nu) +temp(x)./(x+nu));
+      b.g0 = 0;
+      b.s0 = -quad(@(x) b.cut_func(x) .* tanh(x*b.scale/2), 0, b.int_end);
+      
+    otherwise
+      error('Unknown statistics.')
   end
   
-  % clear lookup tables, since changing the cutoff requires recalc of S
+  % clear lookup tables
   % start with a single point precomputed
-  b.dH = [-inf, 0, inf];
+  b.omega = [-Inf, 0, Inf];
   b.gs_table = [0, b.g0, 0;
 		0, b.s0, 0];
 end
 
+
+function build_LUT(b, omegas)
+  % Build gs_table.
+
+  % TODO justify limits for S lookup
+  if nargin < 2
+    omegas = logspace(log10(10.2), log10(9 * b.cut_omega), 20);
+    omegas = [linspace(0.1, 10, 10), omegas]; % sampling is denser near zero, where S changes more rapidly
+    %omegas = linspace(0.1, 2*b.cut_omega, 30);
+  end
+  b.omega = [-fliplr(omegas), 0, omegas];
+
+  b.gs_table = zeros(2, length(b.omega));
+  for k=1:length(b.omega)
+    k
+    b.gs_table(:,k) = b.compute_gs(b.omega(k));
+  end
+
+  if true
+      plot(b.omega, b.gs_table, '-o');
+      xlabel('omega')
+      legend('gamma', 'S')
+      title(sprintf('Bath correlation tensor Gamma: %s, %s, cutoff: %s, %g, relative T: %g', b.type, b.stat, b.cut_type, b.cut_omega, 1/b.scale));
+      grid on
+  end
+
+  % add the limits at infinity
+  b.omega   = [-Inf, b.omega, Inf];
+  b.gs_table = [[0; 0], b.gs_table, [0; 0]];
 end
 
+
+function ret = compute_gs(b, omega)
+% Compute and return [\gamma(omega/TU) * TU, S(omega/TU) * TU]
+
+    ep = 1e-5; % epsilon for Cauchy principal value
+    tol_omega0 = 1e-8;
+
+    ret = [0; 0];
+
+    if abs(omega) <= tol_omega0
+      ret = [b.g0; b.s0];  % limit at omega == 0
+    else
+      ret(1) = b.g_func(omega);
+
+      % Cauchy principal value. Integrand has simple poles at \nu = \pm omega,
+      % only the positive one hits the integration region.
+      fun = @(nu) b.s_func(omega, nu);
+      ret(2) = quad(fun, tol_omega0, abs(omega)-ep)...
+              +quad(fun, abs(omega)+ep, b.int_end);
+      % TODO justify tol_omega0 here
+  end
+end
+
+
+function [g, s] = corr(b, x)
+% CORR  Bath spectral correlation tensor.
+%
+%  [g, s] = bath.corr(omega)
+%
+%  Returns the bath spectral correlation tensor evaluated at omega,
+%  split into the real and imaginary parts:
+%
+%    \Gamma(omega / TU) * TU == 0.5*g +1i*s
+
+  tol_omega = 1e-8;
+  max_ip_omega = 0.1; % maximum interpolation distance TODO justify
+
+
+  % assume parameters are set and lookup table computed
+  %s = interp1(b.dH, b.s_table, x, 'linear', 0);
+
+  % use the lookup table
+  % binary search for the interval in which omega falls
+  first = 1;
+  last = length(b.omega);
+  while first+1 ~= last
+    pivot = round((first + last)/2);
+    if x < b.omega(pivot)
+      last = pivot;
+    else
+        first = pivot;
+    end
+  end
+  ee = b.omega([first, last]);
+  tt = b.gs_table(:, [first, last]);
+  % now x is in [ee(1), ee(2))
+
+  % distances of x to the endpoints
+  gap = ee(2) -ee(1);
+  d1 = abs(x -ee(1));
+  d2 = abs(x -ee(2));
+
+  % do we need to compute a new point, or just interpolate?
+  if d1 <= tol_omega  % close enough to either endpoint?
+    temp = b.gs_table(:, first);
+
+  elseif d2 <= tol_omega
+    temp = b.gs_table(:, last);
+
+  elseif gap <= max_ip_omega + tol_omega  % short enough gap to interpolate?
+    temp = b.interpolate(ee, tt, x);
+
+  else  % compute a new point, add it into the LUT
+    if gap <= 2*max_ip_omega  % split the gap in half
+      p = ee(1) +gap/2;
+      if x < p
+        idx = 2; % which ee p will replace
+      else
+          idx = 1;
+      end
+    elseif d1 <= max_ip_omega  % max interpolation distance from endpoint
+      p = ee(1)+max_ip_omega;
+      idx = 2;
+    elseif d2 <= max_ip_omega
+      p = ee(2)-max_ip_omega;
+      idx = 1;
+    else  % just use x as the new point
+      p = x;
+      idx = 1;
+    end
+
+    % compute new g, s values at p
+    temp = b.compute_gs(p);
+
+    % insert them into the LUT
+    b.omega = [b.omega(1:first), p, b.omega(last:end)];
+    b.gs_table = [b.gs_table(:, 1:first), temp, b.gs_table(:, last:end)];
+
+    % now interpolate the required value
+    ee(idx) = p;
+    tt(:, idx) = temp;
+    temp = b.interpolate(ee, tt, x);
+  end
+
+  g = temp(1);
+  s = temp(2);
+end
+
+end
 end

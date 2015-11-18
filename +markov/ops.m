@@ -9,7 +9,7 @@ function [dH, A] = ops(H, D)
 %  eigenvalues of H, and A, a cell array of the corresponding jump operators.
 %  size(A) == [length(D), length(dH)]
 
-% Ville Bergholm 2009-2010, 2015
+% Ville Bergholm 2009-2015
 
 
 global qit;
@@ -37,40 +37,30 @@ n_D = length(D); % number of bath coupling ops
 % jump ops
 A = cell(n_D, 0);
 
-s = 1; % index of the currently built jump op
-% start the first jump op
-add_projection(1, s);
-dH(s) = deltaE(1);
+s = 0; % index of the currently built jump op
+current_dH = Inf;
 
 % combine degenerate deltaE, build jump ops
-for k = 2:length(deltaE)
-  diff = abs(deltaE(k) - dH(s));
+for k = 1:length(deltaE)
+  diff = abs(deltaE(k) -current_dH);
   if diff > qit.tol
     % new omega value, new jump op
+    % otherwise just extend current op
     s = s+1;
     dH(s) = deltaE(k);
-    add_projection(k, s);
-  else
-    % extend current op
-    add_projection(k, s);
+    current_dH = dH(s);
+    A(:,s) = num2cell(zeros(n_D, 1));
+  end
+  % given k, find corresponding row and column in the deltaE matrix
+  [r, c] = ind2sub([m, m], ind(k));
+  % add projection of D corresponding to the index k to the jump op number s
+  for op=1:n_D
+      A{op, s} = A{op, s} +P{c} * D{op} * P{r};
   end
 end
 
-    function add_projection(X_k, X_s)
-    % Adds a projection of D corresponding to the index X_k to the
-    % jump op number X_s.
-    % NOTE shares scope with parent function! We use the X_ prefix
-    % for local variables to avoid accidentally overwriting parent
-    % function stuff.
-    [X_r, X_c] = ind2sub([m, m], ind(X_k));
-
-    for X_op=1:n_D
-        A{X_op, X_s} = P{X_c} * D{X_op} * P{X_r};
-    end
-    end
-
 % eliminate zero As and corresponding dHs
-temp = [];
+temp = zeros(size(A));
 for k=1:length(dH)
     for op=1:n_D
         temp(op, k) = norm(A{op, k}) < qit.tol;
