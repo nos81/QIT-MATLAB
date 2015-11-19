@@ -15,6 +15,8 @@ function [A, H_LS] = lindblad_ops(H, D, baths)
 % Ville Bergholm 2009-2015
 
 
+global qit
+
 if ~iscell(baths)
   baths = {baths}; % needs to be a cell array, even if it has just one element
 end
@@ -38,10 +40,15 @@ for n=1:n_baths
   ind = 1;
   for k=1:length(dH)
     % first the positive energy shift
-    [g, s] = corr(b, dH(k));
-    A{n, ind} = sqrt(g) * V{n,k};
+    [g, s] = b.corr(dH(k));
+    % is the dissipation significant?
+    if abs(g) >= qit.tol
+        A{n, ind} = sqrt(g) * V{n,k};
+        %NA(n, ind) = norm(A{n, ind}, 'fro'); % how significant is this op?
+        ind = ind+1;
+    end
+    % contribution to Lamb shift
     H_LS = H_LS +s * V{n,k}' * V{n,k};
-    ind = ind+1;
 
     if dH(k) == 0
         % no negative shift
@@ -49,12 +56,17 @@ for n=1:n_baths
     end
 
     % now the corresponding negative energy shift
-    [g, s] = corr(b, -dH(k));
-    A{n, ind} = sqrt(g) * V{n,k}';   % note the difference here, V(-omega) = V'(omega)
+    [g, s] = b.corr(-dH(k));
+    if abs(g) >= qit.tol
+        A{n, ind} = sqrt(g) * V{n,k}';   % note the difference here, V(-omega) = V'(omega)
+        %NA(n, ind) = norm(A{n, ind}, 'fro');
+        ind = ind+1;
+    end
     H_LS = H_LS +s * V{n,k} * V{n,k}'; % here too
-    ind = ind+1;
   end
 end
+%NA
+
 
 % TODO ops for different baths can be combined into a single basis,
 % N^2-1 ops max in total

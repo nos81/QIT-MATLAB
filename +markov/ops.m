@@ -73,6 +73,7 @@ A(:,temp) = [];
 dH(temp) = [];
 
 % Are some of the remaining dH differences too low for RWA to hold properly?
+% TODO justify the numerical tolerance used
 for k=2:length(dH)
     if abs(dH(k)-dH(k-1)) < 1e-3
         fprintf('Warning: Small difference between dH(%d) and dH(%d) may break the RWA.\n', k-1, k);

@@ -55,6 +55,10 @@ properties (SetAccess = protected)
   int_end  % integration interval endpoint for improper integrals
 end  
 
+properties (SetAccess = public)
+  int_pv = 1;
+end
+
 
 methods (Static)
 function y = interpolate(ee, tt, x)
@@ -111,7 +115,7 @@ function set_cutoff(b, type, lim)
     case 'sharp'
       b.cut_func = @(x) heaviside(b.cut_omega -x); % Heaviside theta cutoff
     case 'smooth'
-      b.cut_func = @(x) 1/(1 +(x/b.cut_omega)^2);  % rational cutoff
+      b.cut_func = @(x) 1./(1 +(x/b.cut_omega).^2);  % rational cutoff
     case 'exp'
       b.cut_func = @(x) exp(-x / b.cut_omega);     % exponential cutoff
     otherwise
@@ -141,7 +145,7 @@ function setup(b)
       temp = @(x) 1./(exp(b.scale * x) + 1);
       b.g_func = @(x) 2*pi * abs(x) .* b.cut_func(abs(x)) .* (1 -temp(x));
       % s_func has simple poles at \nu = \pm x.
-      b.s_func = @(x,nu) nu .* b.cut_func(nu) .* ((1-temp(x))./(x-nu) +temp(x)./(x+nu));
+      b.s_func = @(x,nu) nu .* b.cut_func(nu) .* ((1-temp(nu))./(x-nu) +temp(nu)./(x+nu));
       b.g0 = 0;
       b.s0 = -quad(@(x) b.cut_func(x) .* tanh(x*b.scale/2), 0, b.int_end);
       
@@ -176,7 +180,8 @@ function build_LUT(b, omegas)
 
   if true
       plot(b.omega, b.gs_table, '-o');
-      xlabel('omega')
+      xlabel('omega [1/TU]')
+      ylabel('[1/TU]')
       legend('gamma', 'S')
       title(sprintf('Bath correlation tensor Gamma: %s, %s, cutoff: %s, %g, relative T: %g', b.type, b.stat, b.cut_type, b.cut_omega, 1/b.scale));
       grid on
@@ -204,10 +209,18 @@ function ret = compute_gs(b, omega)
       % Cauchy principal value. Integrand has simple poles at \nu = \pm omega,
       % only the positive one hits the integration region.
       fun = @(nu) b.s_func(omega, nu);
-      ret(2) = quad(fun, tol_omega0, abs(omega)-ep)...
-              +quad(fun, abs(omega)+ep, b.int_end);
-      % TODO justify tol_omega0 here
-  end
+      if b.int_pv
+          ret(2) = quad(fun, tol_omega0, abs(omega)-ep)...
+                   +quad(fun, abs(omega)+ep, b.int_end);
+          % TODO justify tol_omega0 here
+      else
+          % Complex path integration method
+          d = 5;
+          p1 = quad(fun, 0, 1i*d);
+          p2 = quad(fun, 1i*d, b.int_end+1i*d);
+          ret(2) = real(p1)+real(p2);
+      end
+    end
 end
 
 

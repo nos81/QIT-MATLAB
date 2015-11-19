@@ -46,7 +46,7 @@ for n=1:n_baths
     [g, s] = b.corr(dH(k));
     temp = A{k}' * A{k};
 
-    iH_LS = iH_LS +i * s * temp;
+    iH_LS = iH_LS +1i * s * temp;
     acomm = acomm -0.5 * g * temp;
     diss = diss +lrmul(g * A{k}, A{k}');
 
@@ -59,12 +59,12 @@ for n=1:n_baths
     [g, s] = b.corr(-dH(k));
     temp = A{k} * A{k}'; % note the difference here, A(-omega) = A'(omega)
 
-    iH_LS = iH_LS +i * s * temp;
+    iH_LS = iH_LS +1i * s * temp;
     acomm = acomm -0.5 * g * temp;
     diss = diss +lrmul(g * A{k}', A{k}); % here too
   end
 end
 
-iH_LS = iH_LS +i*H; % include the system Hamiltonian
+iH_LS = iH_LS +1i*H; % include the system Hamiltonian
 
 L = lmul(acomm -iH_LS) +rmul(acomm +iH_LS) +diss;
