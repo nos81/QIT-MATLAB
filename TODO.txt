@@ -2,23 +2,34 @@ General
 - user-defined local state labels "+0-" etc.
 - more comprehensive test scripts with asserts
 - use logical indexing instead of find()?
-
+- mtimes(a, b) FIX state cannot be multiplied by state...
+- lmaps vs plain arrays in the UI
 
 Noise
 - different bath models, as classes?
 - Markovian noise
 
 
+QM
+- quantum evolutions: kraus/choi/superop
+- combine all the *propagate* funcs: propagate: (\rho', |\psi'>)
+  U, Kraus K_i, (H, t), (L, t), Omega (channel)
+- measure: (rho', p_i, \rho'_i)
+  general measurement ops M_i  (\sum_i M_i \rho M_i^\dagger, trace(M_i \rho M_i^\dagger), M_i \rho M_i^\dagger / p_i)
+  projectors
+  POVM P_i (~, tr(P_i \rho), ~)
+
+
 Circuit model
+- dots etc.
 - output Qcircuit.tex diagrams?
 
 
 Examples
 - adiabatic simulation
-
+- ECCs
 
 Entanglement
 bipartite:
  e of formation: minimum of average E over pure decompositions
  distillable e, e cost, relative entropy of e.
-

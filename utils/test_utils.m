@@ -35,6 +35,20 @@ assert_o(norm(L*rho*R -inv_vec(lrmul(L, R)*vec(rho))), 0, tol)
 assert_o(norm(L*rho -inv_vec(lmul(L)*vec(rho))), 0, tol)
 assert_o(norm(rho*R -inv_vec(rmul(R)*vec(rho))), 0, tol)
 
+% vec-superops and Choi matrices should be equivalent
+% output and input vector space dims
+d_in = 3;
+d_out = 4;
+L = rand([d_out, d_in].^2);
+C = superop_to_choi(L);
+temp = gate.copydot(0, 2, d_in);
+temp = kron(temp.data, eye(d_out));
+
+rho = rand(d_in);
+r1 = inv_vec(L * vec(rho));
+r2 = temp' * kron(rho, C) * temp;
+assert_o(norm(r1-r2), 0, tol);
+
 
 % spectral decomposition
 [E, P] = spectral_decomposition(H);
