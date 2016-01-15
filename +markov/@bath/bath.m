@@ -18,7 +18,7 @@ classdef bath < handle
 
 % \gamma(omega) == 2*pi (J(omega)-J(-omega))(1+n(omega))
 
-% Ville Bergholm 2009-2015
+% Ville Bergholm 2009-2016
 
 
 properties (SetAccess = protected)
@@ -109,11 +109,15 @@ function set_cutoff(b, type, lim)
 
   b.cut_type = type;
   b.cut_omega = lim;  % == \omega_c * TU
-  
+
+  % TODO quad cannot handle improper integrals, switch to int() or quadgk()
+  b.int_end = b.cut_omega * 100;
+
   % update cutoff function (Matlab uses early binding, so when parameters change we need to redefine it)
   switch b.cut_type
     case 'sharp'
       b.cut_func = @(x) heaviside(b.cut_omega -x); % Heaviside theta cutoff
+      b.int_end = b.cut_omega; % no need to integrate further
     case 'smooth'
       b.cut_func = @(x) 1./(1 +(x/b.cut_omega).^2);  % rational cutoff
     case 'exp'
@@ -129,14 +133,12 @@ function setup(b)
 % Initialize the g and s functions, and the LUT.
 % Must be called after parameters change.
 
-  % TODO quad cannot handle improper integrals, switch to int() or quadgk()
-  b.int_end = b.cut_omega * 10;
-    
   % bath statistics
   switch b.stat
     case 'boson'
       b.g_func = @(x) 2*pi * x .* b.cut_func(abs(x)) .* (1 +1./(exp(b.scale * x)-1));
       % s_func has simple poles at \nu = \pm x.
+      %b.s_func = @(x,nu) nu .* b.cut_func(nu) .* ((1+temp(nu))./(x-nu) +temp(nu)./(x+nu));
       b.s_func = @(x,nu) nu .* b.cut_func(nu) .* (x * coth(b.scale * nu/2) +nu) ./ (x^2 -nu.^2);
       b.g0 = 2*pi / b.scale;
       b.s0 = -quad(b.cut_func, 0, b.int_end);
@@ -145,7 +147,8 @@ function setup(b)
       temp = @(x) 1./(exp(b.scale * x) + 1);
       b.g_func = @(x) 2*pi * abs(x) .* b.cut_func(abs(x)) .* (1 -temp(x));
       % s_func has simple poles at \nu = \pm x.
-      b.s_func = @(x,nu) nu .* b.cut_func(nu) .* ((1-temp(nu))./(x-nu) +temp(nu)./(x+nu));
+      %b.s_func = @(x,nu) nu .* b.cut_func(nu) .* ((1-temp(nu))./(x-nu) +temp(nu)./(x+nu));
+      b.s_func = @(x,nu) nu .* b.cut_func(nu) .* (x +nu .* tanh(b.scale * nu/2)) ./ (x^2 -nu.^2);
       b.g0 = 0;
       b.s0 = -quad(@(x) b.cut_func(x) .* tanh(x*b.scale/2), 0, b.int_end);
       
@@ -166,23 +169,40 @@ function build_LUT(b, omegas)
 
   % TODO justify limits for S lookup
   if nargin < 2
-    omegas = logspace(log10(10.2), log10(9 * b.cut_omega), 20);
-    omegas = [linspace(0.1, 10, 10), omegas]; % sampling is denser near zero, where S changes more rapidly
-    %omegas = linspace(0.1, 2*b.cut_omega, 30);
+    omegas = logspace(log10(1.01 * b.cut_omega), log10(6 * b.cut_omega), 20);
+    omegas = [linspace(0.1, 0.99 * b.cut_omega, 20), omegas]; % sampling is denser near zero, where S changes more rapidly
   end
   b.omega = [-fliplr(omegas), 0, omegas];
+  om = b.omega;  % shorthand
 
-  b.gs_table = zeros(2, length(b.omega));
-  for k=1:length(b.omega)
+  b.gs_table = zeros(2, length(om));
+  for k=1:length(om)
     k
-    b.gs_table(:,k) = b.compute_gs(b.omega(k));
+    b.gs_table(:,k) = b.compute_gs(om(k));
   end
 
   if true
-      plot(b.omega, b.gs_table, '-o');
+      plot(om, b.gs_table, '-o');
+      hold on
+      temp = b.gs_table(2,:);
+      delta_S = temp-fliplr(temp);
+      plot(om, delta_S, 'k-')
+      % analytical \Delta S
+      q = om / b.cut_omega;
+      switch b.cut_type
+        case 'sharp'
+          temp = log(abs(q.^2./(q.^2-1)));
+        case 'smooth'
+          temp = 2*log(abs(q))./(1+q.^2);
+        case 'exp'
+          temp = -real(expint(q).*exp(q) +expint(-q).*exp(-q));
+        otherwise
+          error('zzz')
+      end
+      plot(om, om .* temp, 'ko');
       xlabel('omega [1/TU]')
       ylabel('[1/TU]')
-      legend('gamma', 'S')
+      legend('gamma', 'S', 'S(\omega)-S(-\omega)')
       title(sprintf('Bath correlation tensor Gamma: %s, %s, cutoff: %s, %g, relative T: %g', b.type, b.stat, b.cut_type, b.cut_omega, 1/b.scale));
       grid on
   end
@@ -196,7 +216,7 @@ end
 function ret = compute_gs(b, omega)
 % Compute and return [\gamma(omega/TU) * TU, S(omega/TU) * TU]
 
-    ep = 1e-5; % epsilon for Cauchy principal value
+    ep = 1e-7; % epsilon for Cauchy principal value
     tol_omega0 = 1e-8;
 
     ret = [0; 0];

@@ -5,6 +5,8 @@ General
 - mtimes(a, b) FIX state cannot be multiplied by state...
 - lmaps vs plain arrays in the UI
 
+Perturbation theory
+
 Noise
 - different bath models, as classes?
 - Markovian noise

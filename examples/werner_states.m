@@ -29,6 +29,7 @@ plot(p, res);
 hold on
 % fully depolarized state
 plot((d+1)/(2*d), 0, 'ko')
+text((d+1)/(2*d)+0.02, 0.03, 'maximally mixed state')
 title(sprintf('Werner and isotropic states in d = %d', d))
 xlabel('Werner state p');
 legend('Werner purity', 'Werner lognegativity', 'Isotropic purity', 'Isotropic lognegativity');
