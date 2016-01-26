@@ -111,7 +111,7 @@ function set_cutoff(b, type, lim)
   b.cut_omega = lim;  % == \omega_c * TU
 
   % TODO quad cannot handle improper integrals, switch to int() or quadgk()
-  b.int_end = b.cut_omega * 100;
+  b.int_end = b.cut_omega * 500;
 
   % update cutoff function (Matlab uses early binding, so when parameters change we need to redefine it)
   switch b.cut_type
@@ -185,24 +185,30 @@ function build_LUT(b, omegas)
       plot(om, b.gs_table, '-o');
       hold on
       temp = b.gs_table(2,:);
-      delta_S = temp-fliplr(temp);
-      plot(om, delta_S, 'k-')
-      % analytical \Delta S
+      odd_S = temp-fliplr(temp);
+      plot(om, odd_S, 'k-')
+      even_S = temp+fliplr(temp);
+      plot(om, even_S, 'm-')
+      % analytical expressions for even and odd S funcs
       q = om / b.cut_omega;
       switch b.cut_type
         case 'sharp'
-          temp = log(abs(q.^2./(q.^2-1)));
+          odd_S = log(abs(q.^2./(q.^2-1)));
+          even_S = log(abs((1+q)./(1-q))) -2./q;
         case 'smooth'
-          temp = 2*log(abs(q))./(1+q.^2);
+          odd_S = 2*log(abs(q))./(1+q.^2);
+          even_S = -pi./q  ./(1+q.^2);
         case 'exp'
-          temp = -real(expint(q).*exp(q) +expint(-q).*exp(-q));
+          odd_S = -real(expint(q).*exp(q) +expint(-q).*exp(-q));
+          even_S = real(expint(q).*exp(q) -expint(-q).*exp(-q)) -2./q;
         otherwise
           error('zzz')
       end
-      plot(om, om .* temp, 'ko');
+      plot(om, om .* odd_S, 'ko', om, om .* even_S, 'mo');
       xlabel('omega [1/TU]')
       ylabel('[1/TU]')
-      legend('gamma', 'S', 'S(\omega)-S(-\omega)')
+      legend('gamma', 'S', 'S(\omega)-S(-\omega)', 'S(\omega)+S(-\omega)',...
+             'S(\omega)-S(-\omega) (fermion)', 'S(\omega)+S(-\omega) (boson)')
       title(sprintf('Bath correlation tensor Gamma: %s, %s, cutoff: %s, %g, relative T: %g', b.type, b.stat, b.cut_type, b.cut_omega, 1/b.scale));
       grid on
   end
