@@ -173,8 +173,10 @@ b bugfix
                  utils/liouvillian_fp   =>   utils/superop_fp
                  utils/plot_2q_corr     =>   utils/plot_correlation_simplex
 
-0.10.1  in progress
+0.11.0  in progress
               b markov/ops: warns of possible RWA violations
+              b utils/superop_fp: hermitian matrices are a real subspace, orthogonalization must respect this
+              - utils/nullspace_hermitian
               + lmap/tensorpow
               + gate/werner
               + gate/isotropic

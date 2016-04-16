@@ -9,6 +9,7 @@ function [A, spectrum] = superop_fp(L, rtol)
 %
 %   \dot{\rho} = inv_vec(L * vec(\rho)).
 %
+%  L maps the space of vectorized complex d \times d matrices to itself.
 %  Let size(L) == [D, D] (and d = sqrt(D) be the dimension of the Hilbert space).
 %
 %  Returns the D * n matrix A, which contains as its columns a set
@@ -25,7 +26,7 @@ function [A, spectrum] = superop_fp(L, rtol)
 %  A valid state operator also has to fulfill \rho \ge 0. These
 %  operators form a convex set in the Hermitian trace-1 hyperplane
 %  defined by A. Currently this function does nothing to enforce
-%  positivity, it is up to the user to choose the coefficients a_k
+%  positivity, it is up to the user to choose the coefficients c_k
 %  such that this condition is satisfied.
 %
 %  Singular values of L less than or equal to the tolerance tol are
@@ -37,44 +38,66 @@ function [A, spectrum] = superop_fp(L, rtol)
 %
 % Especially if rho \in Ker L, also rho' \in Ker L.
 
-% Ville Bergholm 2011-2014
+% Ville Bergholm 2011-2016
 
 
 if nargin < 2
     rtol = eps(class(L));
 end
 
+% Liouville space dimension
+D = size(L, 2);
 % Hilbert space dimension
-d = sqrt(size(L, 2));
+d = sqrt(D);
 
-% Get the kernel of L, restricted to vec-mapped Hermitian matrices.
-% columns of A: complex orthogonal vectors A_i spanning the kernel (with real coefficients)
-[A, spectrum] = nullspace_hermitian(L, rtol);
 
-% Extract the trace-1 core of A and orthonormalize the rest.
-% We want A_i to be orthonormal wrt. the H-S inner product
+%% Find the kernel of L, restricted to vec-mapped hermitian matrices.
+% Since the hermitian matrices do not form a complex subspace of
+% the complex liouville space but rather a real subspace, we must
+% first map all the objects to a corresponding real vector space.
+
+% columns of V: hermitian basis within the domain of L, vec-mapped, orthonormal
+V = reshape(H_basis(d), [D, D]);  % V is unitary
+
+% Find the restriction of L to the real hermitian subspace within its domain.
+LH = vec_to_real(L*V);  % == map_to_real(L) * vec_to_real(V);
+
+% solve the kernel of LH
+% columns of KH: real orthonormal vectors spanning the kernel (with real coefficients)
+[KH, spectrum] = nullspace(LH, rtol);
+
+%spectrum_delta = svd(KH) -svd(L) % TODO for valid Lindblad ops these are equal, why?
+
+% Map kernel back to a complex vector space. Columns of K are orthonormal.
+K = V * KH;
+
+
+%% Find the intersection of the kernel span_R(K) and the trace(X) == 1 hyperplane.
+% Extract the shortest trace-1 vector of span_R(K) and
+% orthonormalize the rest, using _real_ coefficients to preserve hermiticity!
+
 % <X, Y> := trace(X' * Y) = vec(X)' * vec(Y)
+% trace(X) = <I, X> = vec(I)' * vec(X) = 1. Normalizing, we obtain
+% u' * vec(x) = 1/sqrt(d), where the unit vector u = vec(I)/sqrt(d).
 
-% With this inner product, trace(A) = <eye(d), A>.
-temp = vec(speye(d));
-a = (temp' * A)';
+% Project u, the normal vector of the tr=1 plane onto span(K), never mind normalization.
+c = vec(speye(d));
+% Coordinate vector w = K' * c  is always real since the coords are traces of hermitian matrices.
+% cK = K * inv(K'*K) * K' * c
+% Columns of K are orthonormal, hence K'*K = I.
+cK = K * K' * c;
+% scale so that trace(cK) = 1
+cK = cK / (c' * cK);
 
-% Construct the shortest linear combination of A_i which has tr = 1.
-% This is simply (1/d) * eye(d) _iff_ it belongs to span(A_i).
-core = A * (a / norm(a)^2);  % trace-1
-
-% Remove the component parallel to core from all A_i.
-temp = core / norm(core); % normalized
-A = A -temp * (temp' * A);
+% Remove the component parallel to cK from the kernel.
+temp = cK / norm(cK); % unit vector
+K = K -temp * (temp' * K);
 
 % Re-orthonormalize the vectors, add the core
-A = [core, orthonormalize(A, 1e-6)]; % FIXME tolerance
+A = [cK, orthonormalize(K, 1e-6)]; % FIXME tolerance
 
-N = size(A, 2);
-for k = 1:N
-  temp = inv_vec(A(:, k));
-  A(:, k) = vec(0.5 * (temp + temp')); % re-Hermitize to fix numerical errors
-end
+test_H(A);
+return
 
 % TODO intersect with positive ops
 %probe(A);
@@ -87,6 +110,61 @@ end
 % TODO eigendecomposition, find orthogonal complement to span(v) = ker(v').
 % these are the states which do not belong to eigenspaces and
 % should show transient polynomial behavior
+end
+
+
+function test_H(A)
+% tests the hermitianness of each column of A
+N = size(A, 2);
+for k = 1:N
+  temp = inv_vec(A(:, k));
+  if norm(temp-temp') > 1e-6
+      disp(sprintf('col %d is non-hermitian', k))
+  end
+end
+end
+
+
+function R = vec_to_real(x)
+% Represents a complex vector in a real vector space.
+    R = [real(x); imag(x)];
+end
+
+function R = map_to_real(C)
+% Represents a complex linear map in a real vector space.
+    R = [real(C), -imag(C); imag(C), real(C)];
+end
+
+
+function U = H_basis(d)
+% Basis for the Hermitian subspace within the vector space of complex d*d matrices.
+% The antihermitian basis is obtained by multiplying the hermitian one with 1i.
+
+D = d^2;
+
+x = 1/sqrt(2);
+U = zeros(d, d, D);
+n = 1;
+
+% loop over the lower triangle (incl. diagonal)
+for b = 1:d
+  for a = b:d
+    if a == b
+      % diagonals: real => hermitian
+      U(a, b, n) = 1;
+      n = n+1;
+    else
+      % offdiagonals
+      % real, symmetric or imag, antisymmetric => hermitian
+      U(a, b, n) = x;
+      U(b, a, n) = x;
+      n = n+1;
+      U(a, b, n) = 1i*x;
+      U(b, a, n) = -1i*x;
+      n = n+1;
+    end
+  end
+end
 end
 
 

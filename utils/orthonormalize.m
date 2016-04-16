@@ -16,12 +16,10 @@ elseif m == 1
 else
     s = 0;
 end
-% use relative tolerance so scaling A doesn't change things
-%tol = max(s) * rtol; % max(m,n) * 
-% except it should, since almost-null vectors should be
-% discarded. if we have only those...
+%tol = max(m,n) * max(s) * eps(class(A));
+% We could use relative tolerance so scaling A doesn't change things,
+% except it should. Almost-null vectors should be
+% discarded, but if we have only those...
 
 r = sum(s > atol);
 ret = U(:, 1:r);
-
-end
