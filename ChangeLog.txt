@@ -174,19 +174,23 @@ b bugfix
                  utils/plot_2q_corr     =>   utils/plot_correlation_simplex
 
 0.11.0  in progress
-              b markov/ops: warns of possible RWA violations
-              b utils/superop_fp: hermitian matrices are a real subspace, orthogonalization must respect this
-              - utils/nullspace_hermitian
               + lmap/tensorpow
               + gate/werner
               + gate/isotropic
               + gate/copydot
               + examples/werner_states
               + examples/magic_state_distillation
+              + examples/dynamical_decoupling
+              * examples/nmr_sequences now also does pulse strength errors
               + utils/superop_to_choi
+              - utils/nullspace_hermitian
+              b utils/superop_fp: hermitian matrices are a real subspace, orthogonalization must respect this
               * utils/unravel_index works on vectors of indices
               * utils/tensorbasis returns the integer locality of each element
               * utils/tensorsum can now handle matrices and any number of inputs
-              * seq/*: sign convention changed
-              * examples/nmr_sequences updated
+              * seq: sign convention changed
+              - seq/cpmg
+              + seq/knill
+              + seq/dd
               * markov/bath class rewritten, now supports fermionic baths as well
+              b markov/ops: warns of possible RWA violations
