@@ -35,16 +35,16 @@ end
 
 H_LS = 0;
 
+ind = 1;
 for n=1:n_baths
   b = baths{n};
-  ind = 1;
   for k=1:length(dH)
     % first the positive energy shift
     [g, s] = b.corr(dH(k));
     % is the dissipation significant?
     if abs(g) >= qit.tol
-        A{n, ind} = sqrt(g) * V{n,k};
-        %NA(n, ind) = norm(A{n, ind}, 'fro'); % how significant is this op?
+        A{ind} = sqrt(g) * V{n,k};
+        %NA(ind) = norm(A{ind}, 'fro'); % how significant is this op?
         ind = ind+1;
     end
     % contribution to Lamb shift
@@ -58,8 +58,8 @@ for n=1:n_baths
     % now the corresponding negative energy shift
     [g, s] = b.corr(-dH(k));
     if abs(g) >= qit.tol
-        A{n, ind} = sqrt(g) * V{n,k}';   % note the difference here, V(-omega) = V'(omega)
-        %NA(n, ind) = norm(A{n, ind}, 'fro');
+        A{ind} = sqrt(g) * V{n,k}';   % note the difference here, V(-omega) = V'(omega)
+        %NA(ind) = norm(A{ind}, 'fro');
         ind = ind+1;
     end
     H_LS = H_LS +s * V{n,k} * V{n,k}'; % here too

@@ -194,3 +194,4 @@ b bugfix
               + seq/dd
               * markov/bath class rewritten, now supports fermionic baths as well
               b markov/ops: warns of possible RWA violations
+              + more test scripts

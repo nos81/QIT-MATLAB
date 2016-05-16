@@ -30,4 +30,4 @@ assert_o(norm(tensor(C, B, A) - T2), 0, tol);
 % Test script for gates.
 % Ville Bergholm 2010
 
-U = gate.two(B, t, dim);
+%U = gate.two(B, t, dim);

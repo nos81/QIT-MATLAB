@@ -164,53 +164,106 @@ function setup(b)
 end
 
 
-function build_LUT(b, omegas)
+
+function plot_cut(b, boltz)
+% Plots stuff as a function of cut limit
+% boltz is the Boltzmann factor exp(-\beta \hbar \omega).
+
+    om = -log(boltz) / b.scale  % \omega * TU
+
+    % try different cutoffs relative to om
+    N = 50;
+    cut = linspace(0.5, 20, N);
+    gs = zeros(2, N);
+    gsm = zeros(2, N);
+    for k=1:length(cut)
+        k
+        b.set_cutoff('smooth', cut(k) * abs(om));
+        gs(:,k) = b.compute_gs(om);
+        gsm(:,k) = b.compute_gs(-om);
+    end
+    odd_S = gs(2,:) -gsm(2,:);
+    even_S = gs(2,:) +gsm(2,:);
+    q = sign(om) ./ cut;
+    figure();
+    t = b.plot_stuff(cut, om, q, gs, odd_S, even_S);
+    xlabel('cutoff relative to omega')
+    title(sprintf('%s, boltzmann: %g, omega: %g', t, boltz, om));
+end
+
+
+function t = plot_stuff(b, x, om, q, gs, odd_S, even_S)
+
+    boltz = exp(-b.scale * om);
+    % ratio of Lamb shift to dephasing rate
+    ratio = odd_S ./ (gs(1,:) .* (boltz+1));
+
+    % gamma, S, ratio
+    [ax, h1, h2] = plotyy(x, gs, x, ratio);
+    hold(ax(1),'on');
+    hold(ax(2),'on');
+    set(h1,'Marker','s')
+    set(h2,'Marker','x')
+
+    % symmetrized and antisymmetrized S
+    plot(ax(1), x, odd_S, 'k-', x, even_S, 'm-')
+
+    % analytical expressions for even and odd S funcs
+    switch b.cut_type
+      case 'sharp'
+        odd_S = log(abs(q.^2./(q.^2-1)));
+        even_S = log(abs((1+q)./(1-q))) -2./q;
+      case 'smooth'
+        odd_S = 2*log(abs(q))./(1+q.^2);
+        even_S = -pi./q  ./(1+q.^2);
+      case 'exp'
+        odd_S = -real(expint(q).*exp(q) +expint(-q).*exp(-q));
+        even_S = real(expint(q).*exp(q) -expint(-q).*exp(-q)) -2./q;
+      otherwise
+        error('zzz')
+    end
+    plot(ax(1), x, om .* odd_S, 'ko', x, om .* even_S, 'mo');
+
+    axis(ax, 'tight')
+    set(get(ax(1),'Ylabel'),'String','[1/TU]')
+    set(get(ax(2),'Ylabel'),'String','Lamb shift ratio')
+    legend('gamma', 'S', 'S(\omega)-S(-\omega)', 'S(\omega)+S(-\omega)',...
+           'S(\omega)-S(-\omega) (fermion)', 'S(\omega)+S(-\omega) (boson)', 'Lamb shift ratio')
+    t = sprintf('Bath correlation tensor Gamma: %s, %s, relative T: %g', b.type, b.stat, 1/b.scale);
+    grid(ax(1), 'on')
+end
+
+
+function build_LUT(b, om)
   % Build gs_table.
 
   % TODO justify limits for S lookup
   if nargin < 2
-    omegas = logspace(log10(1.01 * b.cut_omega), log10(6 * b.cut_omega), 20);
-    omegas = [linspace(0.1, 0.99 * b.cut_omega, 20), omegas]; % sampling is denser near zero, where S changes more rapidly
+      % Default sampling for the lookup table.
+      %lim = b.cut_omega;
+      lim = log(10) / 5 / b.scale;  % up to boltzmann factor == 10
+      om = logspace(log10(1.1 * lim), log10(5 * lim), 20); % logarithmic sampling
+      om = [linspace(0.05 * lim, 1 * lim, 20), om]; % sampling is denser near zero, where S changes more rapidly
+      om = [-fliplr(om), 0, om];  % symmetric around zero
   end
-  b.omega = [-fliplr(omegas), 0, omegas];
-  om = b.omega;  % shorthand
 
+  b.omega = om;
   b.gs_table = zeros(2, length(om));
   for k=1:length(om)
     k
     b.gs_table(:,k) = b.compute_gs(om(k));
   end
 
-  if true
-      plot(om, b.gs_table, '-o');
-      hold on
-      temp = b.gs_table(2,:);
-      odd_S = temp-fliplr(temp);
-      plot(om, odd_S, 'k-')
-      even_S = temp+fliplr(temp);
-      plot(om, even_S, 'm-')
-      % analytical expressions for even and odd S funcs
+  if 1
+      % plot the LUT data
+      S = b.gs_table(2,:);
+      odd_S  = S -fliplr(S);
+      even_S = S +fliplr(S);
       q = om / b.cut_omega;
-      switch b.cut_type
-        case 'sharp'
-          odd_S = log(abs(q.^2./(q.^2-1)));
-          even_S = log(abs((1+q)./(1-q))) -2./q;
-        case 'smooth'
-          odd_S = 2*log(abs(q))./(1+q.^2);
-          even_S = -pi./q  ./(1+q.^2);
-        case 'exp'
-          odd_S = -real(expint(q).*exp(q) +expint(-q).*exp(-q));
-          even_S = real(expint(q).*exp(q) -expint(-q).*exp(-q)) -2./q;
-        otherwise
-          error('zzz')
-      end
-      plot(om, om .* odd_S, 'ko', om, om .* even_S, 'mo');
+      figure();
+      t = b.plot_stuff(om, om, q, b.gs_table, odd_S, even_S);
       xlabel('omega [1/TU]')
-      ylabel('[1/TU]')
-      legend('gamma', 'S', 'S(\omega)-S(-\omega)', 'S(\omega)+S(-\omega)',...
-             'S(\omega)-S(-\omega) (fermion)', 'S(\omega)+S(-\omega) (boson)')
-      title(sprintf('Bath correlation tensor Gamma: %s, %s, cutoff: %s, %g, relative T: %g', b.type, b.stat, b.cut_type, b.cut_omega, 1/b.scale));
-      grid on
+      title(sprintf('%s, cutoff: %s, %g', t, b.cut_type, b.cut_omega));
   end
 
   % add the limits at infinity

@@ -1,11 +1,12 @@
 % Test script for the Quantum Information Toolkit utilities
-% Ville Bergholm 2009-2011
+% Ville Bergholm 2009-2016
 
 tol = qit.tol;
 
 dim = 5;
 
-% random matrices
+%% random matrices
+
 H = rand_hermitian(dim);
 assert_o(norm(H - H'), 0, tol);
 
@@ -26,7 +27,8 @@ assert_o(norm(imag(temp)), 0, tol); % real eigenvalues
 assert_o(norm(temp-abs(temp)), 0, tol); % nonnegative eigenvalues
 
 
-% superoperators
+%% superoperators
+
 L = rand_U(dim);
 R = rand_U(dim);
 
@@ -50,7 +52,8 @@ r2 = temp' * kron(rho, C) * temp;
 assert_o(norm(r1-r2), 0, tol);
 
 
-% spectral decomposition
+%% spectral decomposition
+
 [E, P] = spectral_decomposition(H);
 m = length(E); % unique eigenvalues
 temp = 0;
@@ -60,15 +63,20 @@ end
 assert_o(norm(temp-H), 0, tol);
 
 
+%% tensorsum
 
-% Test script for gates. TODO
-% Ville Bergholm 2010
+A = randn(dim);
+B = randn(dim);
+C = randn(dim);
 
-%U = gate.two(B, t, dim);
+assert_o(norm(tensorsum(A, B)'-tensorsum(A', B')), 0, tol);
+
+temp = tensorsum(A, B, C);
+assert_o(norm(temp -tensorsum(A, tensorsum(B, C))), 0, tol);
+assert_o(norm(temp -tensorsum(tensorsum(A, B), C)), 0, tol);
 
 
-
-% Test script for invariant methods.
+%% Test script for invariant methods.
 % Ville Bergholm 2010
 
 U = rand_U(4); % random two-qubit gate
