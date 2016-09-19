@@ -195,3 +195,5 @@ b bugfix
               * markov/bath class rewritten, now supports fermionic baths as well
               b markov/ops: warns of possible RWA violations
               + more test scripts
+              + utils/ravel_index
+              + gate/epsilon
