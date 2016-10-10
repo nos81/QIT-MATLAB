@@ -178,10 +178,13 @@ b bugfix
               + gate/werner
               + gate/isotropic
               + gate/copydot
+              + gate/epsilon
               + examples/werner_states
               + examples/magic_state_distillation
               + examples/dynamical_decoupling
               * examples/nmr_sequences now also does pulse strength errors
+              + utils/rand_GL
+              + utils/ravel_index
               + utils/superop_to_choi
               - utils/nullspace_hermitian
               b utils/superop_fp: hermitian matrices are a real subspace, orthogonalization must respect this
@@ -195,5 +198,3 @@ b bugfix
               * markov/bath class rewritten, now supports fermionic baths as well
               b markov/ops: warns of possible RWA violations
               + more test scripts
-              + utils/ravel_index
-              + gate/epsilon
