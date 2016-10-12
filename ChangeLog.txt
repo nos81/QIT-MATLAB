@@ -183,6 +183,7 @@ b bugfix
               + examples/magic_state_distillation
               + examples/dynamical_decoupling
               * examples/nmr_sequences now also does pulse strength errors
+              + hamiltonian/jaynes_cummings
               + utils/rand_GL
               + utils/ravel_index
               + utils/superop_to_choi
