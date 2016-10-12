@@ -6,23 +6,24 @@ function y = asongoficeandfire(n)
 %  If n is not given, the colormap is the same length
 %  as the current figure's colormap. 
 
-% Ville Bergholm 2010
+% Ville Bergholm 2010-2016
 
 
 if (nargin < 1)
   n = size(get(gcf, 'colormap'), 1);
 end
 
-d = 3.1;
+d = 4;
 p = linspace(-1, 1, n);
 
+f_green = @(x) 0.5*(1-cos(pi*x));
+%f_green = @(x) 0.5*(tanh(4*(x-0.5))+1);
+
 x = p(find(p < 0));
-y = [1-(1+x).^d; 0.5*(tanh(4*(-x-0.5))+1); (-x).^d];
+y = [1-(1+x).^d; f_green(-x); (-x).^d];
 
 x = p(find(p >= 0));
-y = [y, [x.^d; 0.5*(tanh(4*(x-0.5))+1); 1-(1-x).^d]]';
-
-
+y = [y, [x.^d; f_green(x); 1-(1-x).^d]]';
 return
 
 figure
