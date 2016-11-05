@@ -185,6 +185,7 @@ b bugfix
               + examples/magic_state_distillation
               + examples/dynamical_decoupling
               * examples/nmr_sequences now also does pulse strength errors
+              * examples/bb84 gives more information
               + hamiltonian/jaynes_cummings
               + utils/rand_GL
               + utils/ravel_index
@@ -200,6 +201,6 @@ b bugfix
               + seq/dd
               * markov/bath class rewritten, now supports fermionic baths as well
               b markov/ops: warns of possible RWA violations
-              + more test scripts
               b seq/scrofulous now uses the phi parameter
               * invariant/LU uses lmap/tensorpow
+              + more test scripts
