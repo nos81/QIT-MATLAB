@@ -149,6 +149,24 @@ classdef lmap
         s.data = conj(s.data);
     end
 
+    function s = real(s)
+    % REAL  Real part of the lmap.
+    %  q = real(s)
+    %
+    %  Returns the real part of the lmap in the computational basis.
+
+        s.data = real(s.data);
+    end
+
+    function s = imag(s)
+    % IMAG  Imaginary part of the lmap.
+    %  q = imag(s)
+    %
+    %  Returns the imaginary part of the lmap in the computational basis.
+
+        s.data = imag(s.data);
+    end
+
 
     function x = trace(s)
     % TRACE  Trace of the lmap.

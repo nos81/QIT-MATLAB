@@ -42,7 +42,8 @@ s_inv(s) = 1:n*k;
 total = s_inv(p(s)); % total = s^{-1} * p * s
 
 % TODO this could be done much more efficiently
-I = trace(reorder(tensor_pow(rho, k), {total, []}));
+temp = lmap(tensorpow(rho.to_op(), k));
+I = trace(reorder(temp, {total, []}));
 end
 
 
@@ -73,16 +74,5 @@ switch length(p)
         error('Invalid permutation.');
     end
     ret = p;
-end
-end
-
-
-function ret = tensor_pow(rho, n)
-% Returns \rho^{\otimes n}.
-
-rho = to_op(rho);
-ret = lmap(rho);
-for k=2:n
-    ret = tensor(ret, rho);
 end
 end
