@@ -21,32 +21,33 @@ function [f] = fermion_ladder(grouping)
 %
 %  Now, the fermionic annihilation operators for the n-mode system are given by
 %   f_k := (-1)^{\phi_k} s_k.
+%   f_k := (-1)^{\phi_k} s_k = (\bigotimes_{j=1}^{k-1} sz_j) s_k.
 %
 %  These operators fulfill the required anticommutation relations:
 %   {f_k, f_j}  = 0,
 %   {f_k, f_j'} = I \delta_{kj},
 %   f_k' * f_k  = n_k.
 
-% Ville Bergholm 2009-2010
+% Ville Bergholm 2009-2016
 
 
-n = prod(grouping);
-d = 2^n;
-
-% number and phase operators (diagonal, so we store them as such)
-temp = zeros(d, 1);
-phi{1} = temp;
-for k=1:n-1
-  num = mkron(ones(2^(k-1), 1), [0; 1], ones(2^(n-k), 1)); % number operator n_k as a diagonal
-  temp = temp + num; % sum of number ops up to n_k, diagonal
-  phi{k+1} = temp;
+if isscalar(grouping)
+    grouping = [1, grouping];
 end
 
-s = sparse([0 1; 0 0]);
+n = prod(grouping);
 
-% fermionic annihilation operators
+s  = sparse([0, 1; 0, 0]);  % single annihilation op
+sz = sparse([1, 0; 0,-1]);
+
+% empty cell array for the annihilation operators
+f = cell(n,1);
+
+% Jordan-Wigner transform
+temp = 1;
 for k=1:n
-  f{k} = spdiags((-1).^phi{k}, 0, d, d) * mkron(speye(2^(k-1)), s, speye(2^(n-k)));
+    f{k} = mkron(temp, s, speye(2^(n-k)));
+    temp = kron(temp, sz);
 end
 
 f = reshape(f, grouping);

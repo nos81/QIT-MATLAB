@@ -8,7 +8,7 @@ function s = dd(name, t, n)
 
 %  The target operation for these sequences is identity.
 
-%! G.Uhrig, "Keeping a Quantum Bit Alive by Optimized \pi-Pulse Sequences", PRL 98, 100504 (2007).
+%! See the reference Uhrig2007.
 % Ville Bergholm 2007-2016
 
 % Multiplying the pi pulse strength by factor s is equivalent to A -> A/s, t -> t*s.
