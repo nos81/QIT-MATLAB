@@ -177,13 +177,12 @@ b bugfix
               + lmap/tensorpow
               + lmap/real
               + lmap/imag
+              b lmap/display can handle sparse scalar lmaps too
               + gate/werner
               + gate/isotropic
               + gate/copydot
               + gate/epsilon
               + examples/werner_states
-              + examples/magic_state_distillation
-              + examples/dynamical_decoupling
               * examples/nmr_sequences now also does pulse strength errors
               * examples/bb84 gives more information
               + hamiltonian/jaynes_cummings
@@ -205,3 +204,7 @@ b bugfix
               b markov/ops: warns of possible RWA violations
               * invariant/LU uses lmap/tensorpow
               + more test scripts
+
+0.12.0  in progress
+              + examples/magic_state_distillation
+              + examples/dynamical_decoupling

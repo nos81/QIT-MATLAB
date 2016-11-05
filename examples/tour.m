@@ -48,3 +48,7 @@ qubit_and_resonator();
 pause
 
 qft_circuit([2, 3, 2]);
+pause
+
+werner_states(2);
+werner_states(3);

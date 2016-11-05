@@ -1,7 +1,7 @@
 function display(s, no_dims, labels)
 % DISPLAY  Display the lmap in a neat format.
 
-% Ville Bergholm 2008-2013
+% Ville Bergholm 2008-2016
 
 
 global qit;
@@ -46,7 +46,7 @@ if n_ind == 1 || (n_ind == 2 && (isequal(s.dim{1}, 1) || isequal(s.dim{2}, 1)))
   
   elseif D == 1
     % scalar, just print the value
-    out = [out, sprintf(' %g', s.data)];
+    out = [out, sprintf(' %g', full(s.data))];
     no_dims = true;
     
   else
