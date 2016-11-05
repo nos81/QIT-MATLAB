@@ -5,7 +5,7 @@ function nmr_sequences(seqs, titles)
 %  Compares the performance of different single-qubit NMR control
 %  sequences in the presence of systematic errors.
 %  Plots the fidelity of each control sequence as a function
-%  of both off-resonance error f and fractional pulse length error g.
+%  of both off-resonance error f and fractional pulse strength error g.
 
 % Ville Bergholm 2006-2016
 
@@ -16,7 +16,7 @@ global qit;
 
 if nargin < 1
     th = pi;
-    seqs = {seq.nmr([th, 0]), seq.corpse(th), seq.scrofulous(th), seq.bb1(th), seq.knill(th)};
+    seqs = {seq.nmr([th, 0]), seq.corpse(th), seq.scrofulous(th), seq.bb1(th), seq.knill()};
     titles = {'Plain \pi pulse', 'CORPSE', 'SCROFULOUS', 'BB1', 'Knill'};
 else
     if nargin < 2
@@ -53,6 +53,7 @@ for q=1:ns
 
   s = seqs{q};
   U = seq.seq2prop(s); % target propagator
+  psi_target = {psi.u_propagate(U).bloch_vector()}; % target state
 
   %==================================================
   s_error = s;
@@ -63,6 +64,7 @@ for q=1:ns
 
   subplot(2,2,1);
   plot_state_trajectory(out);
+  plot_state_trajectory(psi_target, 'b.', false)
   title([titles{q} ' evolution, off-resonance error']);
 
   %==================================================
@@ -78,6 +80,7 @@ for q=1:ns
 
   subplot(2,2,3);
   plot_state_trajectory(out);
+  plot_state_trajectory(psi_target, 'b.', false)
   title([titles{q} ' evolution, ', error_type]);
 
   %==================================================
