@@ -1,12 +1,16 @@
 function [B, locality] = tensorbasis(n, d)
 % TENSORBASIS  Hermitian tensor-product basis for End(H).
-%  B = tensorbasis(n, d)  % H = C_d^{\otimes n}.
-%  B = tensorbasis(dim)   % H = C_{dim(1)} \otimes ... \otimes C_{dim(n)}
+%  [B, L] = tensorbasis(n, d)  % H = C_d^{\otimes n}.
+%  [B, L] = tensorbasis(dim)   % H = C_{dim(1)} \otimes ... \otimes C_{dim(n)}
 %
-%  Returns a Hermitian basis for linear operators on the Hilbert space H
+%  Returns a Hermitian basis B for linear operators on the Hilbert space H
 %  which shares H's tensor product structure. The basis elements are tensor products
 %  of Gell-Mann matrices (which in the case of qubits are equal to Pauli matrices).
 %  The basis elements are normalized such that \trace(b_i' * b_j) = \delta_{ij}.
+%
+%  The second output variable L is an array denoting the locality
+%  of each basis element, i.e. the number of non-identity matrices
+%  in the corresponding tensor product.
 %
 %  Input is either two scalars, n and d, in which case the system consists of n qu(d)its,
 %  or the vector dim, which contains the dimensions of the individual subsystems.
@@ -14,7 +18,7 @@ function [B, locality] = tensorbasis(n, d)
 %  In addition to expanding Hermitian operators on H, this basis can be multiplied by
 %  the imaginary unit i to obtain the antihermitian generators of U(prod(dim)).
 
-% Ville Bergholm 2005-2015
+% Ville Bergholm 2005-2016
 
 
 global qit;
