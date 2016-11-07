@@ -1,13 +1,13 @@
 README file for the Quantum Information Toolkit.
-Version 0.10.0 (beta)
-Released 2014-07-08
+Version 0.11.0 (beta)
+Released 2016-11-07
 
 
 Introduction
 ============
 
 Quantum Information Toolkit (QIT) is a free, open source
-MATLAB 7.6 toolkit for various quantum information and computing
+MATLAB toolkit for various quantum information and computing
 -related purposes, distributed under GPL.
 There is also a Python version available, with equivalent functionality.
 The latest version can be downloaded from the project website,
@@ -49,7 +49,7 @@ hypothesis testing, small simulations, and learning, not for
 computationally demanding simulations. Hence optimal efficiency of the
 algorithms used is not a number one priority.
 However, if you think an algorithm could be improved without
-compromising accuracy or maintainability, please let the authors know
+compromising its accuracy or maintainability, please let the authors know
 or become a contributor yourself!
 
 
@@ -75,7 +75,8 @@ coding guidelines:
    performing multiple related tasks, see e.g. @state/state.m
 * Fully document the functions and classes (purpose, calling syntax,
    output, approximations used, assumptions made...)
-* Add relevant literature references using the %! syntax
+* Add relevant literature references using the %! syntax in the m-files,
+   and in refs.bib using the full Bibtex syntax.
 * Use the error() function on invalid input
 * Use code indention to improve readability
 * Use variables sparingly, give them descriptive (but short) names
@@ -88,6 +89,6 @@ coding guidelines:
 Authors
 =======
 
-Ville Bergholm                2008-2014
+Ville Bergholm                2008-2016
 Jacob D. Biamonte             2008-2009
 James D. Whitfield            2009-2010
