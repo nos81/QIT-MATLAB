@@ -208,3 +208,6 @@ b bugfix
 0.12.0  in progress
               + examples/magic_state_distillation
               + examples/dynamical_decoupling
+              + markov/bath.plot_correlation
+              + markov/bath.plot_LUT
+              + markov/bath.plot_cutoff

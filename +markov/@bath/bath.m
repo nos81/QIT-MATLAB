@@ -3,25 +3,40 @@ classdef bath < handle
 %
 %  Currently supports bosonic and fermionic canonical ensembles at
 %  absolute temperature T, with an ohmic spectral density.
-%
 %  The system-bath coupling is assumed to be of the form
 %    H_int = A \otimes \sum_k \lambda_k (a_k +a_k')
 %
+%  Below, dimensional quantities are denoted using a backslash: \t = t * TU etc.
+%  TU denotes the time unit used.
+%
 %  The bath spectral density is ohmic with a cutoff:
-%    J(\omega) = \omega * cut_func(\omega) * heaviside(\omega)
+%    \J(\omega) = \omega * cut_func(\omega) * heaviside(\omega)
 %
 %  Three types of cutoffs are supported:
 %    cut_func(x * \omega_c) =
 %       exponential:  exp(-x)
 %       smooth:       (1+x^2)^{-1}
 %       sharp:        heaviside(1-x)
-
-% \gamma(omega) == 2*pi (J(omega)-J(-omega))(1+n(omega))
+%
+%  We represent the spectral correlation tensor \Gamma of the bath as follows.
+%  Since we only have one coupling term, \Gamma is a scalar. It depends on three parameters:
+%  the inverse temperature of the bath \s = \beta \hbar,
+%  the spectral cutoff frequency of the bath \omega_c,
+%  and the system frequency \omega. \Gamma has the following scaling property:
+%
+%    \Gamma_{\s,\omega_c}(\omega) = \Gamma_{\s/a,\omega_c*a}(\omega*a)/a.
+%
+%  Hence we may eliminate the dimensions by choosing a = TU:
+%
+%    \Gamma_{\s,\omega_c}(\omega) = 1/TU * Gamma_{s, omega_c}(omega).
+%
+%  Furthermore, we split Gamma to its hermitian and antihermitian parts (notice the prefactors):
+%    Gamma(omega) = 0.5*gamma(omega) +1i*S(omega)
 
 % Ville Bergholm 2009-2016
 
 
-properties (SetAccess = protected)
+properties %(SetAccess = protected)
   % basic parameters
   type   % Bath type. Currently only 'ohmic' is supported.
   stat   % Bath statistics ('boson' or 'fermion').
@@ -39,16 +54,17 @@ properties (SetAccess = protected)
   % J(omega/TU) * TU = omega * heaviside(omega) * cut_func(omega);
   cut_func % cutoff function
 
+  pf        % Planck or Fermi function n(omega) for the bath, depending on bath statistics
+  corr_int  % integral transform for the dimensionless bath correlation function
+
   % lookup tables / function handles for g and s
-  % \gamma(omega/TU) * TU = g_func(omega)
-  %      S(omega/TU) * TU = s_func(omega)
   % \gamma(omega(k)/TU) * TU = gs_table(1,k)
-  %      S(omega(k)/TU) * TU = gs_table(2,k)
+  %     \S(omega(k)/TU) * TU = gs_table(2,k)
+  omega
   g_func
   s_func
   g0      % limit of g at x == 0
   s0      % limit of S at x == 0
-  omega
   gs_table
   
   % HACKs
@@ -75,9 +91,6 @@ function b = bath(type, stat, TU, T)
   %
   %  Sets up a descriptor for a heat bath coupled to a quantum system.
     
-    
-  global qit;
-
   if nargin ~= 4
     error('Usage: bath(...)')
   end
@@ -89,6 +102,7 @@ function b = bath(type, stat, TU, T)
   b.T      = T;
 
   % dimensionless physical scale factor
+  global qit;
   b.scale = qit.hbar / (qit.kB * T * TU);
 
   % bath spectral density
@@ -99,19 +113,24 @@ function b = bath(type, stat, TU, T)
   end
 
   % defaults, can be changed later
-  b.set_cutoff('exp', 10);
+  b.set_cutoff('exp', 1);
 end
 
 
 function set_cutoff(b, type, lim)
-% Define the cutoff function for J
+% Define the cutoff function for J.
 % We assume that cut_func(0) == 1.
+% If type or lim is [], keep the old value.
 
-  b.cut_type = type;
-  b.cut_omega = lim;  % == \omega_c * TU
+  if ~isempty(type)
+    b.cut_type = type;
+  end
+  if ~isempty(lim)
+      b.cut_omega = lim;  % == \omega_c * TU
+  end
 
   % TODO quad cannot handle improper integrals, switch to int() or quadgk()
-  b.int_end = b.cut_omega * 500;
+  b.int_end = b.cut_omega * 100;
 
   % update cutoff function (Matlab uses early binding, so when parameters change we need to redefine it)
   switch b.cut_type
@@ -136,66 +155,220 @@ function setup(b)
   % bath statistics
   switch b.stat
     case 'boson'
-      b.g_func = @(x) 2*pi * x .* b.cut_func(abs(x)) .* (1 +1./(exp(b.scale * x)-1));
+      b.pf = @(x) 1./(exp(b.scale * x) - 1);
+      b.corr_int = @(s, nu) nu .* b.cut_func(nu) .* (exp(-1i*nu.*s) +2*cos(nu.*s).*b.pf(nu));
+      b.g_func = @(x) 2*pi * x .* b.cut_func(abs(x)) .* (1 +b.pf(x));
       % s_func has simple poles at \nu = \pm x.
-      %b.s_func = @(x,nu) nu .* b.cut_func(nu) .* ((1+temp(nu))./(x-nu) +temp(nu)./(x+nu));
+      %b.s_func = @(x,nu) nu .* b.cut_func(nu) .* ((1+b.pf(nu))./(x-nu) +b.pf(nu)./(x+nu));
       b.s_func = @(x,nu) nu .* b.cut_func(nu) .* (x * coth(b.scale * nu/2) +nu) ./ (x^2 -nu.^2);
       b.g0 = 2*pi / b.scale;
       b.s0 = -quad(b.cut_func, 0, b.int_end);
-      
+
     case 'fermion'
-      temp = @(x) 1./(exp(b.scale * x) + 1);
-      b.g_func = @(x) 2*pi * abs(x) .* b.cut_func(abs(x)) .* (1 -temp(x));
+      b.pf = @(x) 1./(exp(b.scale * x) + 1);
+      b.corr_int = @(s, nu) nu .* b.cut_func(nu) .* (exp(-1i*nu.*s) +2i*sin(nu.*s).*b.pf(nu));
+      b.g_func = @(x) 2*pi * abs(x) .* b.cut_func(abs(x)) .* (1 -b.pf(x));
       % s_func has simple poles at \nu = \pm x.
-      %b.s_func = @(x,nu) nu .* b.cut_func(nu) .* ((1-temp(nu))./(x-nu) +temp(nu)./(x+nu));
+      %b.s_func = @(x,nu) nu .* b.cut_func(nu) .* ((1-b.pf(nu))./(x-nu) +b.pf(nu)./(x+nu));
       b.s_func = @(x,nu) nu .* b.cut_func(nu) .* (x +nu .* tanh(b.scale * nu/2)) ./ (x^2 -nu.^2);
       b.g0 = 0;
       b.s0 = -quad(@(x) b.cut_func(x) .* tanh(x*b.scale/2), 0, b.int_end);
-      
+
     otherwise
       error('Unknown statistics.')
   end
   
   % clear lookup tables
-  % start with a single point precomputed
-  b.omega = [-Inf, 0, Inf];
-  b.gs_table = [0, b.g0, 0;
-		0, b.s0, 0];
+  b.omega = [];
+  b.gs_table = [];
 end
 
 
+function t = desc(b)
+% Bath description string.
+    t = sprintf(', %s, %s, inverse T: %g, cutoff: %s, %g',...
+                b.type, b.stat, b.scale, b.cut_type, b.cut_omega);
+end
 
-function plot_cut(b, boltz)
-% Plots stuff as a function of cut limit
-% boltz is the Boltzmann factor exp(-\beta \hbar \omega).
+
+function res = plot_correlation(b)
+% Plots the bath correlation function \C_{\s,\omega_c}(\t) = <B(\t) B(0)> / \hbar^2.
+% It scales as
+%   \C_{\s,\omega_c}(\t) = \C_{\s/a,\omega_c*a}(\t/a) / a^2.
+% Choosing a = TU, we obtain
+%   \C_{\s,\omega_c}(\t) = 1/TU^2 * C_{s, omega_c}(t).
+
+    tol_nu = 1e-7;  % approaching the singularity at nu=0 this closely
+    c = b.cut_omega;
+    figure();
+
+    % plot the functions to be transformed
+    subplot(1,3,1)
+    nu = linspace(tol_nu, 5*c, 500);
+    plot(nu, nu .* b.cut_func(nu) .* b.pf(nu), 'r')
+    hold on;
+    if strcmp(b.stat, 'boson')
+        plot(nu, nu .* b.cut_func(nu) .* (1+b.pf(nu)), 'b')
+    else
+        plot(nu, nu .* b.cut_func(nu) .* (1-b.pf(nu)), 'g')
+    end
+    grid on;
+    legend('n', '1 \pm n')
+    xlabel('$\nu$ [1/TU]')
+    title('Integrand without exponentials')
+
+    % plot the full integrand
+    subplot(1,3,2)
+    res = [];
+    t = linspace(0, 4/c, 5);
+    nu = linspace(tol_nu, 5*c, 100);
+    for k=1:length(t)
+        k
+        fun = @(x) b.corr_int(t(k), x);
+        res(:,k) = fun(nu);
+    end
+    plot(nu, real(res), '-', nu, imag(res), '--')
+    grid on;
+    xlabel('$\nu$ [1/TU]')
+    title('Integrand')
+
+    % plot the correlation function
+    subplot(1,3,3)
+    res = [];
+    t = linspace(0, 10/c, 100);  % real part of C(t) is even, imaginary part odd
+    for k=1:length(t)
+        k
+        %fun = @(nu) nu .* b.cut_func(nu) .* (exp(-1i*nu.*t(k)).*(1+b.pf(nu))+exp(1i*nu.*t(k)).*b.pf(nu));
+        fun = @(x) b.corr_int(t(k), x);
+        res(k,1) = quad(fun, tol_nu, b.int_end);
+        %res(k,1) = quad(fun, tol_nu, 100);
+    end
+    plot(t, real(res), 'k-', t, imag(res), 'k--') %, t, abs(res), '-.')
+    a = axis();
+    hold on;
+    grid on;
+    xlabel('t [TU]')
+    ylabel('[1/TU^2]')
+    title(['Bath correlation function C(t)', b.desc()])
+
+    % plot analytic high- and low-temp limits
+    x = c * t;
+    switch b.cut_type
+      case 'sharp'
+        temp = ((1 +1i*x).*exp(-1i*x) -1)./x.^2;
+        hb = 2/b.scale * sin(x)./x;
+      case 'smooth'
+        temp = -1i*sinh(x).*sinint(1i*x) +cosh(x).*(1i*pi/2+(expint(x)+expint(-x))/2)...
+               -1i * pi/2 * exp(-abs(x));  % imag part
+        hb = pi/b.scale * exp(-abs(x));
+      case 'exp'
+        temp = 1./(1+(1i*x)).^2;
+        hb = 2/b.scale ./ (1+x.^2);
+      otherwise
+        error('Unknown cutoff type "%s"', b.cut_type)
+    end
+    temp = temp * c^2;
+    hb   = hb * c;
+    switch b.stat
+      case 'boson'
+        plot(t, real(temp), 'b.')  % real part, cold
+        plot(t, hb, 'r.')  % real part, hot
+        plot(t, imag(temp), 'ko')  % imag part, every T
+        legend('re C', 'im C', 're C (cold, analytic)', 're C (hot, analytic)', 'im C (analytic)')
+      case 'fermion'
+        plot(t, real(temp), 'k.')  % real part, every T
+        plot(t, imag(temp), 'bo')  % imag part, cold
+        plot(t, 0, 'ro')  % imag part, hot
+        legend('re C', 'im C', 're C (analytic)', 'im C (cold, analytic)', 'im C (hot, analytic)')
+      otherwise
+        error('Unknown statistics.')
+    end
+    axis(a)
+    return
+
+    temp = t(t < 1/c);
+    plot(temp, res(1)*(1-(temp*c).^2), 'k-')
+    temp = t(t >= 1/c & t < b.scale);
+    plot(temp, res(1)*(temp*c).^(-1), 'k:')
+    temp = t(t > b.scale);
+    plot(temp, res(1)*exp(-temp./b.scale), 'k--')
+end
+
+
+function plot_LUT(b)
+% Plots the LUT contents plus something extra as a function of omega.
+
+    if length(b.omega) == 0
+        b.build_LUT();
+    end
+
+    om = b.omega;
+    % computed values
+    S = b.gs_table(2,:);
+    odd_S  = S -fliplr(S);
+    even_S = S +fliplr(S);
+
+    figure();
+    b.plot_stuff(om, om, b.gs_table, odd_S, even_S);
+    hold on;
+    % omega cutoff value as vertical lines
+    a = axis();
+    c = b.cut_omega;
+    plot([c,c], a(3:4), 'k-')
+    plot([-c,-c], a(3:4), 'k-')
+    xlabel('omega [1/TU]')
+    title(b.desc())
+end
+
+
+function plot_cutoff(b, boltz)
+% Plots stuff as a function of the cutoff frequency.
+% boltz is the Boltzmann factor exp(-\beta \hbar \omega) that fixes
+% omega when bath temperature is fixed.
+
+    orig_scale = b.scale;
+    orig_cut   = b.cut_omega;
 
     om = -log(boltz) / b.scale  % \omega * TU
+    % using the scaling property, scale with |om|
+    temp = abs(om);
+    om = om/temp;  % sign of om
+    b.scale = orig_scale * temp;
 
     % try different cutoffs relative to om
     N = 50;
-    cut = linspace(0.5, 20, N);
+    cut = linspace(0.5, 5, N);  % cut_omega/|omega|
     gs = zeros(2, N);
     gsm = zeros(2, N);
     for k=1:length(cut)
         k
-        b.set_cutoff('smooth', cut(k) * abs(om));
+        b.set_cutoff([], cut(k));
+
         gs(:,k) = b.compute_gs(om);
         gsm(:,k) = b.compute_gs(-om);
     end
+    gs  = gs  * temp;
+    gsm = gsm * temp;
     odd_S = gs(2,:) -gsm(2,:);
     even_S = gs(2,:) +gsm(2,:);
-    q = sign(om) ./ cut;
+
+    % restore original bath parameters
+    b.scale = orig_scale;
+    b.set_cutoff([], orig_cut);
+
     figure();
-    t = b.plot_stuff(cut, om, q, gs, odd_S, even_S);
-    xlabel('cutoff relative to omega')
-    title(sprintf('%s, boltzmann: %g, omega: %g', t, boltz, om));
+    b.plot_stuff(cut, om*ones(size(cut)), gs, odd_S, even_S);
+    xlabel('\omega_c/\omega')
+    t = b.desc();
+    title(sprintf('%s, boltzmann: %g, omega: %g', t, boltz, om*temp));
 end
 
 
-function t = plot_stuff(b, x, om, q, gs, odd_S, even_S)
+function plot_stuff(b, x, om, gs, odd_S, even_S)
+% Plot stuff as a function of the vector x. The other inputs are given as a function of x.
 
     boltz = exp(-b.scale * om);
-    % ratio of Lamb shift to dephasing rate
+    % ratio of Lamb shift to dephasing rate, Ising spin chain
     ratio = odd_S ./ (gs(1,:) .* (boltz+1));
 
     % gamma, S, ratio
@@ -209,6 +382,7 @@ function t = plot_stuff(b, x, om, q, gs, odd_S, even_S)
     plot(ax(1), x, odd_S, 'k-', x, even_S, 'm-')
 
     % analytical expressions for even and odd S funcs
+    q = om / b.cut_omega;
     switch b.cut_type
       case 'sharp'
         odd_S = log(abs(q.^2./(q.^2-1)));
@@ -229,7 +403,6 @@ function t = plot_stuff(b, x, om, q, gs, odd_S, even_S)
     set(get(ax(2),'Ylabel'),'String','Lamb shift ratio')
     legend('gamma', 'S', 'S(\omega)-S(-\omega)', 'S(\omega)+S(-\omega)',...
            'S(\omega)-S(-\omega) (fermion)', 'S(\omega)+S(-\omega) (boson)', 'Lamb shift ratio')
-    t = sprintf('Bath correlation tensor Gamma: %s, %s, relative T: %g', b.type, b.stat, 1/b.scale);
     grid(ax(1), 'on')
 end
 
@@ -239,9 +412,9 @@ function build_LUT(b, om)
 
   % TODO justify limits for S lookup
   if nargin < 2
-      % Default sampling for the lookup table.
-      %lim = b.cut_omega;
-      lim = log(10) / 5 / b.scale;  % up to boltzmann factor == 10
+      % Default sampling for the lookup table, up to 5*cut_omega
+      lim = b.cut_omega;
+      %lim = log(10) / 5 / b.scale;  % up to boltzmann factor == 10
       om = logspace(log10(1.1 * lim), log10(5 * lim), 20); % logarithmic sampling
       om = [linspace(0.05 * lim, 1 * lim, 20), om]; % sampling is denser near zero, where S changes more rapidly
       om = [-fliplr(om), 0, om];  % symmetric around zero
@@ -252,18 +425,6 @@ function build_LUT(b, om)
   for k=1:length(om)
     k
     b.gs_table(:,k) = b.compute_gs(om(k));
-  end
-
-  if 1
-      % plot the LUT data
-      S = b.gs_table(2,:);
-      odd_S  = S -fliplr(S);
-      even_S = S +fliplr(S);
-      q = om / b.cut_omega;
-      figure();
-      t = b.plot_stuff(om, om, q, b.gs_table, odd_S, even_S);
-      xlabel('omega [1/TU]')
-      title(sprintf('%s, cutoff: %s, %g', t, b.cut_type, b.cut_omega));
   end
 
   % add the limits at infinity
