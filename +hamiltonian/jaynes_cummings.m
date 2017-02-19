@@ -1,19 +1,18 @@
-function [H, dim, H_int] = jaynes_cummings(om_atom, Om, m, use_RWA)
-% JAYNES_CUMMINGS  Jaynes-Cummings model, one or more two-level atoms coupled to a single-mode cavity.
-%  [H, dim] = jaynes_cummings(om_atom, Om, m, use_RWA)
+function [H, dim, H_int] = jaynes_cummings(om_atom, om_cavity, J, m, use_RWA)
+% JAYNES_CUMMINGS  Jaynes-Cummings model, two-level atom coupled to a cavity.
+%  [H, dim] = jaynes_cummings(om_atom, om_cavity, J, m, use_RWA)
 %
 %  Returns the Hamiltonian H and the dimension vector dim for an
 %  implementation of the Jaynes-Cummings model, describing n two-level atoms coupled
-%  to a harmonic oscillator (e.g. a single EM field mode in an optical cavity),
-%  where n = length(om_atom) = length(Om).
+%  to c harmonic oscillators (e.g. individual EM field modes in an optical cavity),
+%  where n == length(om_atom), c == length(om_cavity), and size(J) == [c, n].
 %
-%  H/\hbar = -\sum_k \frac{\omega_a_k}{2} \sigma_z_k +\omega_c a^\dagger a +\sum_k \frac{\Omega_k}{2} \sigma_x_k (a+a^\dagger)
+%  H/\hbar = -\sum_k \frac{\omega_a_k}{2} \sigma_z_k +\sum_j \omega_c_j a_j^\dagger a_j +\sum_{jk} \frac{J_{jk}}{2} \sigma_x_k (a_j+a_j^\dagger)
 %
-%  The returned Hamiltonian H has been additionally normalized with \omega_c,
-%  and is thus dimensionless. om_atom(k) = \omega_a_k / \omega_c,  Om(k) = \Omega_k / \omega_c.
+%  The Hamiltonian H can also be normalized with e.g. \omega_c_1, and thus be made dimensionless.
 %
-%  The order of the subsystems is [cavity, atom_1, ..., atom_n].
-%  The dimension of the Hilbert space of the bosonic cavity mode (infinite in principle) is truncated to m.
+%  The order of the subsystems is [cavity_1, ..., cavity_c, atom_1, ..., atom_n].
+%  The dimension of the Hilbert space of each bosonic cavity mode (infinite in principle) is truncated to m.
 %  If use_RWA is true, the Rotating Wave Approximation is applied to the Hamiltonian,
 %  and the counter-rotating interaction terms are discarded.
 
@@ -31,36 +30,46 @@ global qit
 
 % number of atoms
 n = length(om_atom);
-if length(Om) ~= n
-    error('The coupling vector Om must be of the same length as the atom splitting vector om_atom.');
+% number of cavity modes
+c = length(om_cavity);
+
+if size(J) ~= [c, n]
+    error('The coupling matrix J must be of size [length(om_cavity), length(om_atom)].');
 end
 
 % dimension vector
-dim = [m, 2*ones(1,n)];
+dim = [m*ones(1,c), 2*ones(1,n)];
 
 % operators
 a = boson_ladder(m);
 x = a+a';
 sp = 0.5*(qit.sx -1i*qit.sy); % qubit raising operator
 
-% cavity
-Hc = op_list({{a' * a, 1}}, dim);
-
 atom = cell(1, n);
-coupling = cell(1, n);
+cavity = cell(1, c)
+coupling = cell(c, n);
+% loop over cavity modes
+for j=1:c
+    cavity{j} = {om_cavity(j) * a' * a, j}
+end
 % loop over atoms
 for k=1:n
-    atom{k} = {-0.5*om_atom(k) * qit.sz, k+1}; % atomic Hamiltonian
-    % atom-cavity coupling
-    if use_RWA
-        % rotating wave approximation, discard counter-rotating terms
-        coupling{k}   = {a,  1; 0.5*Om(k) * sp,  k+1};
-        coupling{n+k} = {a', 1; 0.5*Om(k) * sp', k+1};
-    else
-        coupling{k} = {x, 1; 0.5*Om(k) * qit.sx, k+1};
+    atom{k} = {-0.5*om_atom(k) * qit.sz, k+c}; % atomic Hamiltonian
+
+    % loop over cavity modes
+    for j=1:c
+        % atom-cavity coupling
+        if use_RWA
+            % rotating wave approximation, discard counter-rotating terms
+            coupling{j,k}   = {a,  j; 0.5*J(j,k) * sp,  k+c};
+            coupling{j,n+k} = {a', j; 0.5*J(j,k) * sp', k+c};
+        else
+            coupling{j,k} = {x, j; 0.5*J(j,k) * qit.sx, k+c};
+        end
     end
 end
 Ha = op_list(atom, dim);
+Hc = op_list(cavity, dim);
 H_int = op_list(coupling, dim);
 
 if nargout == 3

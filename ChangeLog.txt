@@ -211,3 +211,4 @@ b bugfix
               + markov/bath.plot_correlation
               + markov/bath.plot_LUT
               + markov/bath.plot_cutoff
+              * hamiltonian/jaynes_cummings:  allow multiple modes as well as multiple atoms.
