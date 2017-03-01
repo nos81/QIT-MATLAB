@@ -46,11 +46,11 @@ x = a+a';
 sp = 0.5*(qit.sx -1i*qit.sy); % qubit raising operator
 
 atom = cell(1, n);
-cavity = cell(1, c)
+cavity = cell(1, c);
 coupling = cell(c, n);
 % loop over cavity modes
 for j=1:c
-    cavity{j} = {om_cavity(j) * a' * a, j}
+    cavity{j} = {om_cavity(j) * a' * a, j};
 end
 % loop over atoms
 for k=1:n
