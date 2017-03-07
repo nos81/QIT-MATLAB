@@ -3,8 +3,8 @@ function [A, H_LS] = lindblad_ops(H, D, baths)
 %  [A, H_LS] = lindblad_ops(H, D, B)
 %
 %  Builds the Lindblad operators corresponding to a
-%  base Hamiltonian H and a (Hermitian) interaction operator D
-%  coupling the system to bath B.
+%  system Hamiltonian H and a (Hermitian) interaction operator D
+%  coupling the system to bath B in the weak coupling limit.
 %
 %  Returns A == {A_i * sqrt(TU)}_i and H_LS * TU / \hbar,
 %  where A_i are the Lindblad operators and H_LS is the Lamb shift.
@@ -12,7 +12,7 @@ function [A, H_LS] = lindblad_ops(H, D, baths)
 %  B can also be a cell vector of baths, in which case D has to be
 %  a cell vector of the corresponding interaction operators.
 
-% Ville Bergholm 2009-2015
+% Ville Bergholm 2009-2017
 
 
 global qit

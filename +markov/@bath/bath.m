@@ -33,7 +33,7 @@ classdef bath < handle
 %  Furthermore, we split Gamma to its hermitian and antihermitian parts (notice the prefactors):
 %    Gamma(omega) = 0.5*gamma(omega) +1i*S(omega)
 
-% Ville Bergholm 2009-2016
+% Ville Bergholm 2009-2017
 
 
 properties %(SetAccess = protected)
@@ -178,16 +178,16 @@ function setup(b)
       error('Unknown statistics.')
   end
   
-  % clear lookup tables
-  b.omega = [];
-  b.gs_table = [];
+  % clear lookup tables, initialize with the (known) limits at infinity and zero
+  b.omega   = [-Inf, 0, Inf];
+  b.gs_table = [[0; 0], [b.g0; b.s0], [0; 0]];
 end
 
 
 function t = desc(b)
 % Bath description string.
-    t = sprintf(', %s, %s, inverse T: %g, cutoff: %s, %g',...
-                b.type, b.stat, b.scale, b.cut_type, b.cut_omega);
+    t = sprintf('%s, %s, beta hbar omega_c: %g, cutoff: %s, %g',...
+                b.type, b.stat, b.scale * b.cut_omega, b.cut_type, b.cut_omega);
 end
 
 
@@ -249,7 +249,7 @@ function res = plot_correlation(b)
     grid on;
     xlabel('t [TU]')
     ylabel('[1/TU^2]')
-    title(['Bath correlation function C(t)', b.desc()])
+    title(['Bath correlation function C(t), ', b.desc()])
 
     % plot analytic high- and low-temp limits
     x = c * t;
@@ -298,7 +298,7 @@ end
 function plot_LUT(b)
 % Plots the LUT contents plus something extra as a function of omega.
 
-    if length(b.omega) == 0
+    if length(b.omega) <= 3
         b.build_LUT();
     end
 
