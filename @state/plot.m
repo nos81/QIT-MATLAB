@@ -8,7 +8,7 @@ function h = plot(s)
 %
 %  If s is a nonpure state, also plots the coherences.
 
-% Ville Bergholm 2009-2010
+% Ville Bergholm 2009-2017
 
 
 % prepare labels
@@ -39,8 +39,9 @@ end
 
 
 N = size(s.data, 1);
-Ncol = 127; % color resolution (odd to fix zero phase at the center of a color index)
-colormap(circshift(hsv(Ncol), floor(Ncol/6))); % the hsv map wraps (like phase)
+
+N_colors = 127; % color resolution (odd to fix zero phase at the center of a color index)
+colormap(cm_phase(N_colors));
 
 if is_ket(s)
   % state vector
