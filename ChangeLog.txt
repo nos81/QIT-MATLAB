@@ -215,3 +215,4 @@ b bugfix
               + utils/cm_phase
               + utils/R_SO3
               + utils/wigner3j
+              + utils/clebsch_gordan
