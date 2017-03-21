@@ -1,17 +1,17 @@
 classdef state < lmap
 % STATE  Class for quantum states.
 %
-%  Describes a discrete composite quantum system consisting of subsystems
-%  whose dimensions are given in the vector dim (big-endian ordering).
+%  Describes a discrete (or discretized), possibly composite quantum system,
+%  consisting of subsystems whose dimensions are given in the dim vector (big-endian ordering).
 %  Can handle both pure and mixed states.
-
+%
 %  State class instances are special cases of lmaps. They have exactly two indices.
 %  TODO If the dimension of the first  index is 1, it is a bra.
 %  If the dimension of the second index is 1, it is a ket.
 %  If neither of the above is true, both indices must have equal dimensions and the
 %  object represents a state operator.
 
-% Ville Bergholm 2008-2012
+% Ville Bergholm 2008-2017
 
   methods
     function out = state(s, dim)
@@ -26,69 +26,34 @@ classdef state < lmap
     %  x = state(rand(4,1), [2 2]); % ket, two qubits
     %  x = state(rand(4));          % state operator, dim = 4
     %  x = state(rand_positive(6), [3 2]); % state operator, qutrit+qubit
-    %  x = state('GHZ', [2 2 2]);   % named states (in this case the three-qubit GHZ state)
-    %
-    %  The currently supported named states are
-    %   GHZ (Greenberger-Horne-Zeilinger),
-    %   W,
-    %   Bell1, Bell2, Bell3, Bell4 
 
-    if (nargin == 0)
+    if nargin == 0
       error('No arguments given.');
-
-    elseif (nargin > 2)
+    elseif nargin > 2
       error('Too many arguments.');
 
-    elseif (isa(s, 'state'))
+    elseif isa(s, 'state')
       % copy constructor
-      if (nargin == 1)
+      if nargin == 1
         dim = s.dim;  % copy also dimensions
       end
       s = s.data;
 
-    elseif (isa(s, 'lmap'))
+    elseif isa(s, 'lmap')
       % state from lmap (TODO kind of a hack really, we should not need this)
-      if (nargin == 1)
+      if nargin == 1
         dim = s.dim;  % copy also dimensions
         dim = dim{1}; % dim{2} should be the same for this operation to make sense
       end
       s = s.data;
 
-    elseif (ischar(s))
+    elseif ischar(s)
       % string
-      if (isletter(s(1)))
-        % named state
-        if (nargin == 1)
-          dim = [2 2 2];
-        end
-
-        name = lower(s);
-        n = length(dim);
-        s = zeros(prod(dim), 1);
-        switch name
-          case {'bell1', 'bell2', 'bell3', 'bell4'}
-            Q_Bell = [0 0 1 1i; 1 1i 0 0; -1 1i 0 0; 0 0 1 -1i] / sqrt(2);
-            dim = [2 2];
-            s = Q_Bell(:, name(5)-'0');
-            
-          case 'ghz'
-            s(1) = 1; s(end) = 1;
-
-          case 'w'
-            ind = 1;
-            for k=n:-1:1
-              s(ind*(dim(k) - 1) + 1) = 1; % MATLAB indexing starts at 1
-              ind = ind*dim(k);
-            end
-
-          otherwise
-            error('Unknown named state ''%s''.', name)
-        end
-        s = s/norm(s); % normalize
-      
+      if isletter(s(1))
+          error('Use named_state instead.')
       else
         % number string defining a standard basis ket
-        if (nargin == 1)
+        if nargin == 1
           n = length(s); % number of units
           dim = 2*ones(1, n); % assume units are qubits
         end
@@ -96,7 +61,7 @@ classdef state < lmap
         % calculate the linear index
         n = length(dim);
         s = s - '0';
-        if (any(s >= dim))
+        if any(s >= dim)
           error('Invalid basis ket.')
         end
         muls = fliplr(circshift(cumprod(fliplr(dim)), [0 1]));
@@ -106,16 +71,16 @@ classdef state < lmap
         s(ind+1) = 1; % MATLAB indexing starts at 1
       end
 
-    elseif (isnumeric(s))
-      if (isscalar(s))
+    elseif isnumeric(s)
+      if isscalar(s)
         % integer represented using the computational standard basis
-        if (nargin == 1)
+        if nargin == 1
           error('Need system dimension.')
         end
 
         ind = s;
         temp = prod(dim); % total number of states
-        if (ind >= temp)
+        if ind >= temp
           error('Invalid basis ket.')
         end
         s = zeros(temp, 1);
@@ -124,23 +89,23 @@ classdef state < lmap
       else
         % state vector or matrix
         sss = size(s);
-        if (length(sss) > 2)
+        if length(sss) > 2
           error('State must be given as a state vector or a state operator.')
         end
-        if (sss(1) == 1)
+        if sss(1) == 1
           s = s.'; % row vector into column vector
-        elseif (sss(2) > 1 && sss(1) ~= sss(2))
+        elseif sss(2) > 1 && sss(1) ~= sss(2)
           error('State operator matrix must be square.')
         end
       end
 
-      if (nargin == 1)
+      if nargin == 1
         dim = size(s, 1); % no dim given, infer from s
       end
     end
 
     % state vector or operator?
-    if (size(s, 2) ~= 1)
+    if size(s, 2) ~= 1
       dim = {dim, dim};
     else
       dim = {dim, 1};
@@ -148,7 +113,7 @@ classdef state < lmap
 
     % call the lmap constructor
     out = out@lmap(s, dim);
-    end
+  end
 
     function x = subsref(s, index)
     % SUBSREF  Direct access to the data members.

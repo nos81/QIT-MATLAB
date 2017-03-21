@@ -216,3 +216,4 @@ b bugfix
               + utils/R_SO3
               + utils/wigner3j
               + utils/clebsch_gordan
+              + utils/named_state, state constructor simplified.
