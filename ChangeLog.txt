@@ -217,3 +217,5 @@ b bugfix
               + utils/wigner3j
               + utils/clebsch_gordan
               + utils/named_state, state constructor simplified.
+              * rename: markov/ops => utils/rotating_frame
+              * utils/spectral decomposition now returns a column vector.

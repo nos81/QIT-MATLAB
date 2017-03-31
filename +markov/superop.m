@@ -30,14 +30,22 @@ for k=2:n_baths
 end
 
 % jump ops
-[dH, X] = markov.ops(H, D);
+[dH, X] = rotating_frame(H, D);
+
+% tolerance for final transition frequency differences
+tol_dH_warn = 1e-3;
+for k=2:length(dH)
+    if abs(dH(k)-dH(k-1)) < tol_dH_warn
+        fprintf('Warning: The small difference between dH(%d) and dH(%d) may break the RWA.\n', k-1, k);
+    end
+end
 
 iH_LS = 0;
 acomm = 0;
 diss = 0;
 
 for n=1:n_baths
-  A = X(n,:); % ops for the n'th bath
+  A = X(:,n); % ops for the n'th bath
   b = baths{n};
 
   % we build the Liouvillian in a funny order to be a bit more efficient

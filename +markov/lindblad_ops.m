@@ -31,7 +31,22 @@ for k=2:n_baths
 end
 
 % jump ops
-[dH, V] = markov.ops(H, D);
+[dH, V] = rotating_frame(H, D);
+
+% The dH differences must not be too low for RWA to hold.
+% The smallest dH difference determines \tau_S, the intrinsic time scale of
+% the system, as defined in Breuer&Petruccione, chapter 3.3.1.
+% For the RWA to work, \tau_S must be much shorter than \tau_R, the
+% relaxation time of the system.
+
+% tolerance for final transition frequency differences
+tol_dH_warn = 1e-3;
+for k=2:length(dH)
+    if abs(dH(k)-dH(k-1)) < tol_dH_warn
+        fprintf('Warning: The small difference between dH(%d) and dH(%d) may break the RWA.\n', k-1, k);
+    end
+end
+
 
 H_LS = 0;
 
@@ -43,12 +58,12 @@ for n=1:n_baths
     [g, s] = b.corr(dH(k));
     % is the dissipation significant?
     if abs(g) >= qit.tol
-        A{ind} = sqrt(g) * V{n,k};
+        A{ind} = sqrt(g) * V{k,n};
         %NA(ind) = norm(A{ind}, 'fro'); % how significant is this op?
         ind = ind+1;
     end
     % contribution to Lamb shift
-    H_LS = H_LS +s * V{n,k}' * V{n,k};
+    H_LS = H_LS +s * V{k,n}' * V{k,n};
 
     if dH(k) == 0
         % no negative shift
@@ -58,11 +73,11 @@ for n=1:n_baths
     % now the corresponding negative energy shift
     [g, s] = b.corr(-dH(k));
     if abs(g) >= qit.tol
-        A{ind} = sqrt(g) * V{n,k}';   % note the difference here, V(-omega) = V'(omega)
+        A{ind} = sqrt(g) * V{k,n}';   % note the difference here, V(-omega) = V'(omega)
         %NA(ind) = norm(A{ind}, 'fro');
         ind = ind+1;
     end
-    H_LS = H_LS +s * V{n,k} * V{n,k}'; % here too
+    H_LS = H_LS +s * V{k,n} * V{k,n}'; % here too
   end
 end
 %NA
