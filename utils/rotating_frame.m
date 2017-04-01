@@ -1,4 +1,4 @@
-function [dH, A, label] = rotating_frame(H, D)
+function [dH, A, label] = rotating_frame(H, D, varargin)
 % ROTATING_FRAME  Hermitian operator in a rotating frame.
 %  [dH, A, label] = rotating_frame(H, D)
 %
@@ -26,21 +26,26 @@ function [dH, A, label] = rotating_frame(H, D)
 %  Returns dH, a vector of the sorted unique nonnegative differences between
 %  eigenvalues of H, and A, a cell array of the corresponding summed projections of D.
 %  size(A) == [length(dH), length(D)]
-%  label is a cell vector
+%  label is a cell vector containing text labels that describe the content of the summed projectors.
 
 % Ville Bergholm 2009-2017
 
 
 global qit;
 
-% TODO justify the numerical tolerances used
-% tolerance for grouping transition frequencies
-tol_dH = 1e6 * qit.tol;
-% tolerance for rotating term norms
-tol_normA = qit.tol;
+opt = struct(varargin{:});
+% TODO justify the default numerical tolerances
+if ~isfield(opt, 'tol_dH')
+    % tolerance for grouping transition frequencies
+    opt.tol_dH = 1e6 * qit.tol;
+end
+if ~isfield(opt, 'tol_norm')
+    % tolerance for rotating term norms
+    opt.tol_norm = qit.tol;
+end
 
 
-[E, P] = spectral_decomposition(full(H), true);
+[E, P] = spectral_decomposition(full(H), true, opt.tol_dH);
 m = length(E); % unique eigenvalues
 
 % compute all the eigenvalue differences
@@ -73,7 +78,7 @@ current_dH = Inf;
 % Combine degenerate deltaE values, build the D(v) slices.
 for k = 1:length(deltaE)
   diff = abs(deltaE(k) -current_dH);
-  if diff > tol_dH
+  if diff > opt.tol_dH
     % new omega value, new jump op
     % otherwise just extend current op
     s = s+1;
@@ -93,9 +98,9 @@ end
 
 % eliminate zero As and corresponding dHs
 temp = zeros(size(A));
-for k=1:length(dH)
-    for op=1:n_D
-        temp(k, op) = norm(A{k, op}) < tol_normA;
+for op=1:n_D
+    for k=1:length(dH)
+        temp(k, op) = norm(A{k, op}) <= opt.tol_norm;
     end
 end
 % rows in which every A vanishes
