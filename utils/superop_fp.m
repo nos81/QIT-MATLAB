@@ -32,13 +32,16 @@ function [A, spectrum] = superop_fp(L, rtol)
 %  Singular values of L less than or equal to the tolerance tol are
 %  treated as zero.
 
-% If L has Lindblad form, if L(rho) = \lambda * rho,
-% we also have L(rho') = conj(\lambda) * rho'
-% Hence the non-real eigenvalues of L come in conjugate pairs.
+% Assume L has Lindblad form. Now (L(rho))' = L(rho'), and consequently L is hermitianness preserving.
+% Also,  if L(rho) = \lambda * rho, taking the h.c. yields
+% L(rho') = conj(\lambda) * rho'.
 %
-% Especially if rho \in Ker L, also rho' \in Ker L.
+% This means that
+% (1) the non-real eigenvalues of L come in conjugate pairs.
+% (2) a hermitian rho can only correspond to a real eigenvalue
+% (3) if rho \in Ker L, also rho' \in Ker L.
 
-% Ville Bergholm 2011-2016
+% Ville Bergholm 2011-2017
 
 
 if nargin < 2
@@ -66,7 +69,7 @@ LH = vec_to_real(L*V);  % == map_to_real(L) * vec_to_real(V);
 % columns of KH: real orthonormal vectors spanning the kernel (with real coefficients)
 [KH, spectrum] = nullspace(LH, rtol);
 
-%spectrum_delta = svd(KH) -svd(L) % TODO for valid Lindblad ops these are equal, why?
+%spectrum_delta = svd(LH) -svd(L) % TODO for valid Lindblad ops these are equal, why?
 
 % Map kernel back to a complex vector space. Columns of K are orthonormal.
 K = V * KH;
@@ -94,7 +97,7 @@ temp = cK / norm(cK); % unit vector
 K = K -temp * (temp' * K);
 
 % Re-orthonormalize the vectors, add the core
-A = [cK, orthonormalize(K, 1e-6)]; % FIXME tolerance
+A = [cK, ortho(K, 1e-6)]; % FIXME tolerance
 
 test_H(A);
 return
@@ -110,6 +113,29 @@ return
 % TODO eigendecomposition, find orthogonal complement to span(v) = ker(v').
 % these are the states which do not belong to eigenspaces and
 % should show transient polynomial behavior
+end
+
+
+function ret = proj(u,v)
+% Project vector v orthogonally onto vector u.
+    ret = ((u'*v)/(u'*u))*u;
+end
+
+function ret = ortho(A, atol)
+% Orthonormalization using modified Gram-Schmidt, making sure that
+% only real coefficients are used to preserve hermiticity.
+    B = zeros(size(A));
+    for k=1:size(A, 2)
+        v = A(:,k);
+        for j=1:k-1
+            % remove projections onto previously orthogonalized vectors
+            v = v -proj(B(:,j), v);
+        end
+        len(k) = norm(v);
+        B(:,k) = v/len(k); % normalize
+    end
+    pick = (len >= atol);  % discard zero vectors
+    ret = B(:, pick);
 end
 
 
@@ -141,6 +167,17 @@ function U = H_basis(d)
 % The antihermitian basis is obtained by multiplying the hermitian one with 1i.
 
 D = d^2;
+
+if 0
+% TEST using the Gell-Mann matrices
+G = gellmann(d);
+U = zeros(D,D);
+U(:,1) = vec(eye(d))/sqrt(d);
+for k=2:D
+    U(:,k) = vec(G{k-1});
+end
+return
+end
 
 x = 1/sqrt(2);
 U = zeros(d, d, D);
@@ -185,13 +222,13 @@ neg = [];
 for j=1:length(b)
     for k=1:length(a)
         r = C +a(k)*A(:, 2) +b(j)*A(:, 3);
-        neg(j, k) = min(eig(inv_vec(r)));
+        neg(j, k) = min(real(eig(inv_vec(r))));
     end
 end
 figure();
-mesh(a, b, neg);
-xlabel('A_1')
-ylabel('A_2')
+surf(a, b, neg, double(neg>=0));
+xlabel('c_2')
+ylabel('c_3')
 zlabel('min eigenvalue')
 end
 
