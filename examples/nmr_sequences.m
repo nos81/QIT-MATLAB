@@ -53,7 +53,7 @@ for q=1:ns
 
   s = seqs{q};
   U = seq.seq2prop(s); % target propagator
-  psi_target = {psi.u_propagate(U).bloch_vector()}; % target state
+  psi_target = {psi.prop(U).bloch_vector()}; % target state
 
   %==================================================
   s_error = s;

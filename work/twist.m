@@ -41,7 +41,7 @@ for k = 1:m
   temp = ptrace(s, ignore);
   % always make sure system b (the one the local op acts on) is on the right
   if (b < a)
-    temp = u_propagate(temp, swap);
+    temp = temp.prop(swap);
   end
   [V, Sigma, W, S, errflag] = lorentz_svd(temp);
   err = err || errflag;

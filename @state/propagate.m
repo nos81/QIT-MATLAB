@@ -196,8 +196,8 @@ else
         d = diag(d);
         for k=1:n
           U = v * diag(exp(-1i * t(k) * d)) * v';
-          out{k} = out_func(u_propagate(s, U), H);
-          %out{k} = out_func(u_propagate(s, expm(-i*H*t(k))), H);
+          out{k} = out_func(s.prop(U), H);
+          %out{k} = out_func(s.prop(expm(-i*H*t(k))), H);
         end
       else
         % Krylov subspace method

@@ -57,7 +57,7 @@ res = [];
 for a=1:s(2)
   for b=1:s(3)
     temp = bloch_state([1; S(:,a,b)]);
-    res(:,a,b) = bloch_vector(kraus_propagate(temp, E));
+    res(:,a,b) = bloch_vector(temp.prop(E));
   end
 end
 

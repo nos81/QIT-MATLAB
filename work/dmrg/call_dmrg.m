@@ -72,7 +72,7 @@ if (n <= 10)
   % exact t propagation
   if (do_tdmrg)
     [K, dim] = H2func([1 n]);
-    s = u_propagate(s, expm(-i*t*K));
+    s = s.prop(expm(-i*t*K));
   end
 
   % and measurement

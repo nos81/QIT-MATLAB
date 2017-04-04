@@ -16,7 +16,7 @@ function [W, a, b] = wigner(s, res, limits)
 % Ville Bergholm 2010
 
 
-if (nargin == 2 && isscalar(res))
+if nargin == 2 && isscalar(res)
   % return W(alpha)
   a = real(res);
   b = imag(res);
@@ -24,7 +24,7 @@ else
   % return a grid of W values
   if (nargin < 3)
     limits = [-2, 2, -2, 2];
-    if (nargin < 2)
+    if nargin < 2
       res = [40, 40];
     end
   end
@@ -44,9 +44,9 @@ W = zeros(length(b), length(a));
 for k=1:length(a)
   for j=1:length(b)
     alpha = a(k)+i*b(j);
-    r = u_propagate(s, ho.displace(-alpha, n));
+    r = s.prop(ho.displace(-alpha, n));
     %temp = r.data;
     %W(j,k) = real(temp'*(P.*temp));
-    W(j,k) = real(ev(r, P));
+    W(j,k) = real(r.ev(P));
   end
 end

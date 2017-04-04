@@ -49,11 +49,11 @@ flip = mkron(qit.sx, qit.sx, qit.sx);
 for j = 1:nq
   for k = 1:np
     w = normalize(a(1)*x +a(2)*y +a(3)*z +q(j)*s0);
-    wbar = u_propagate(w, flip);
+    wbar = w.prop(flip);
     s = p(k)*to_op(w) +(1-p(k))*to_op(wbar);
 
     %SLOCC = mkron(rand_SU(2), rand_SU(2), rand_SU(2));
-    %s = u_propagate(s, SLOCC);
+    %s = s.prop(SLOCC);
     
     %s = p(k)*to_op(ghz) +(1-p(k))*to_op(w);
 

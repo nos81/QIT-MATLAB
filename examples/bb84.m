@@ -42,10 +42,10 @@ for k=1:n
   q = temp;
 
   % Should Alice flip the qubit?
-  if bits_A(k), q = u_propagate(q, sx); end
+  if bits_A(k), q = q.prop(sx); end
 
   % Should Alice apply a Hadamard?
-  if basis_A(k), q = u_propagate(q, H); end
+  if basis_A(k), q = q.prop(H); end
 
   % Alice now sends the qubit to Bob...
   % ===============================================
@@ -56,20 +56,20 @@ for k=1:n
   basis_E(k) = rand(1) > 0.5;
   
   % Eve's choice of basis: Hadamard?
-  if basis_E(k), q = u_propagate(q, H); end
+  if basis_E(k), q = q.prop(H); end
 
   % Eve measures in the basis she has chosen
   [p, res, q] = measure(q);
   bits_E(1, k) = res-1;
 
   % Eve tries to reverse the changes she made...
-  if basis_E(k), q = u_propagate(q, H); end
+  if basis_E(k), q = q.prop(H); end
 
   % ...and sends the result to Bob.
   % ===============================================
 
   % Bob's choice of basis
-  if basis_B(k), q = u_propagate(q, H); end
+  if basis_B(k), q = q.prop(H); end
 
   % Bob measures in the basis he has chosen, and discards the qubit.
   [p, res] = measure(q);

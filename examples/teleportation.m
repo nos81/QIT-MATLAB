@@ -20,12 +20,12 @@ I   = gate.id(d);
 U = add * tensor(H, I);
 
 disp('Alice and Bob start with a shared EPR pair.')
-epr = u_propagate(state('00', [d d]), U)
+epr = state('00', [d d]).prop(U)
 
 
 disp('Alice wants to transmit this payload to Bob:')
 payload = state('0', d);
-payload = u_propagate(payload, rand_SU(d));
+payload = payload.prop(rand_SU(d));
 % choose a nice global phase
 payload = fix_phase(payload)
 
@@ -35,7 +35,7 @@ reg = tensor(payload, epr)
 
 
 disp('Now Alice entangles the payload with her half of the EPR pair')
-reg = u_propagate(reg, tensor(U', I))
+reg = reg.prop(tensor(U', I))
 
 [p, b(1), reg] = measure(reg, 1);
 [p, b(2), reg] = measure(reg, 2);
@@ -53,7 +53,7 @@ disp('Using the two classical d-its of data Alice sent him,')
 disp('Bob performs a local transformation on his half of the EPR pair.')
 Z = H * gate.mod_inc(b(1), d) * H';
 X = gate.mod_inc(-b(2), d);
-reg_B = fix_phase(u_propagate(reg_B, Z*X))
+reg_B = fix_phase(reg_B.prop(Z*X))
 
 
 ov = fidelity(payload, reg_B);

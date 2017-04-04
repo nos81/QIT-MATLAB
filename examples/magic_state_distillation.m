@@ -56,7 +56,7 @@ switch type
     T = exp(1i*pi/4) * K * H;
     
     % dephase rho (does not affect the T0 fidelity)
-    temp = (rho +rho.u_propagate(T) +rho.u_propagate(T')) / 3;
+    temp = (rho +rho.prop(T) +rho.prop(T')) / 3;
     
     % use five copies
     rho_in = temp.tensorpow(5);
@@ -79,12 +79,12 @@ switch type
     end
 
     % trivial syndrome state
-    rho_s = rho_in.u_propagate(PP);
+    rho_s = rho_in.prop(PP);
     % and the probability of obtaining it
     p_s = real(rho_s.trace())
     
     % decoding
-    rho_out = rho_s.u_propagate(U_dec);
+    rho_out = rho_s.prop(U_dec);
     
   case 'H'
     target = bloch_state([1, 0, 1] / sqrt(2), 2)  %.to_ket()
@@ -94,3 +94,4 @@ switch type
 end
 
 
+% FIXME finish!

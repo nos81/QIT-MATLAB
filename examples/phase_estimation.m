@@ -25,7 +25,7 @@ T = 2^t;
 S = size(U, 1);
 
 % index register in uniform superposition
-%reg_t = u_propagate(state(0, qubits(t)), gate.walsh(t)); % use Hadamards
+%reg_t = state(0, qubits(t)).prop(gate.walsh(t)); % use Hadamards
 reg_t = state(ones(T, 1)/sqrt(T), qubits(t)); % skip the Hadamards
 
 % state register (ignore the dimensions)
@@ -39,7 +39,7 @@ for k = 1:t
     ctrl = -ones(1, t);
     ctrl(k) = 1;
     temp = gate.controlled(U^(2^(t-k)), ctrl);
-    reg = u_propagate(reg, temp);
+    reg = reg.prop(temp);
 end
 
 % from this point forward the state register is not used anymore
@@ -55,4 +55,4 @@ end
 
 % do an inverse quantum Fourier transform on the index reg
 QFT = gate.qft(qubits(t));
-reg = u_propagate(reg, QFT');
+reg = reg.prop(QFT');

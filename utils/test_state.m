@@ -14,19 +14,28 @@ sigma1 = state(rand_positive(prod(dim)), dim);
 U_s = rand_U(prod(dim));
 
 % pure states
-dim = [2 2];
+dim = [2, 2];
 p = state(0, dim);
 
-p1 = u_propagate(p, rand_SU(prod(dim)));
-p2 = u_propagate(p, rand_SU(prod(dim)));
+p1 = prop(p, rand_SU(prod(dim)));
+p2 = prop(p, rand_SU(prod(dim)));
 U_p = rand_U(prod(dim));
 
-
-% TODO concurrence, fix_phase, kraus_propagate, locc_convertible, lognegativity, measure,
+% TODO concurrence, fix_phase, locc_convertible, lognegativity, measure,
 % negativity,
 
-% Test script for generalized Bloch vectors.
-% Ville Bergholm 2011
+
+%% propagation
+
+dim = [2, 3];
+s = state('02', dim);
+
+% with lmaps
+q = s.prop(gate.swap(2,3));
+assert_o(norm(q-state('20', fliplr(dim))), 0, tol);
+
+
+%% generalized Bloch vectors
 
 temp = bloch_vector(sigma1, true);
 assert_o(norm(bloch_state(temp) -sigma1), 0, tol); % consistency
@@ -35,8 +44,7 @@ assert_o(norm(imag(temp)), 0, tol); % correlation tensor is real
 assert(sqrt(prod(sigma1.dim)) -norm(temp, 'fro') >= -tol); % purity limit
 
 
-% Test scripts for fidelity.m, trace_dist.m
-% Ville Bergholm 2009
+%% fidelity, trace_dist
 
 % symmetric
 assert_o(fidelity(rho1, rho2), fidelity(rho2, rho1), tol);
@@ -46,8 +54,8 @@ assert_o(fidelity(sigma1, sigma1), 1, tol); % normalized to unity
 assert_o(trace_dist(sigma1, sigma1), 0, tol); % distance measure
 
 % unaffected by unitary transformations
-assert_o(fidelity(rho1, rho2), fidelity(u_propagate(rho1, U_r), u_propagate(rho2, U_r)), tol);
-assert_o(trace_dist(rho1, rho2), trace_dist(u_propagate(rho1, U_r), u_propagate(rho2, U_r)), tol);
+assert_o(fidelity(rho1, rho2), fidelity(prop(rho1, U_r), prop(rho2, U_r)), tol);
+assert_o(trace_dist(rho1, rho2), trace_dist(prop(rho1, U_r), prop(rho2, U_r)), tol);
 
 % for pure states they're equivalent
 assert_o(trace_dist(p1, p2)^2 +fidelity(p1, p2)^2, 1, tol);
@@ -58,18 +66,16 @@ assert(1-fidelity(rho1, rho2) -trace_dist(rho1, rho2) <= tol);
 assert(1-fidelity(rho1, p1)^2 -trace_dist(rho1, p1) <= tol);
 
 
-% Test script for entropy.m
-% Ville Bergholm 2009
+%% entropy
 
 assert_o(entropy(p1), 0, tol); % zero for pure states
 assert(entropy(sigma1) >= -tol); % nonnegative
 
 % unaffected by unitary transformations
-assert_o(entropy(u_propagate(sigma1, U_s)), entropy(sigma1), tol);
+assert_o(entropy(prop(sigma1, U_s)), entropy(sigma1), tol);
 
 
-% Test script for ptrace.m
-% Ville Bergholm 2008
+%% partial trace
 
 rho_A = ptrace(rho1, [2]);
 % trace of partial trace equals total trace
@@ -82,16 +88,14 @@ assert_o(trace(sigma1), trace(rho_X), tol)
 assert_o(trace(sigma1), trace(ptrace(sigma1, 1:5)), tol)
 
 
-% Test script for ptranspose.m
-% Ville Bergholm 2008
+%% partial transpose
 
 rho_pt_B = ptranspose(rho1, [2]);
 assert_o(trace_dist(rho1, ptranspose(rho_pt_B, [2])), 0, tol)
 assert_o(trace(rho1), trace(rho_pt_B), tol)
 
 
-% Test script for schmidt.m
-% Ville Bergholm 2009-2010
+%% schmidt
 
 [lambda1, u, v] = schmidt(p1, 1);
 lambda2 = schmidt(p1, 2);
@@ -113,8 +117,7 @@ for k=1:20
 end
 
 
-% Test script for reorder.m
-% Ville Bergholm 2010-2011
+%% reorder
 
 dim = [2 5 1];
 A = rand(dim(1));

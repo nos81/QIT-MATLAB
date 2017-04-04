@@ -50,13 +50,13 @@ end
 
 n = prod(s.dim);
 % normalization included here for convenience
-ref = u_propagate(state(0, n)/sqrt(pi), ho.squeeze(z, n));
+ref = prop(state(0, n)/sqrt(pi), ho.squeeze(z, n));
 
 H = zeros(length(b), length(a));
 for k=1:length(a)
   for j=1:length(b)
     alpha = a(k)+i*b(j);
-    temp = u_propagate(ref, ho.displace(alpha, n));
+    temp = ref.prop(ho.displace(alpha, n));
     H(j,k) = fidelity(s, temp)^2;
   end
 end

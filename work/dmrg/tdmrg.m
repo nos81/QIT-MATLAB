@@ -64,7 +64,7 @@ for k=1:steps
 
     % propagate state
     dim = block{q}.state.dim;
-    block{q}.state = u_propagate(block{q}.state, mkron(speye(dim(1)), expm(full((-1i*ddt)*H)), speye(dim(4))));
+    block{q}.state = block{q}.state.prop(mkron(speye(dim(1)), expm(full((-1i*ddt)*H)), speye(dim(4))));
 
     % truncate
     block{q} = truncate(block{q}, m);

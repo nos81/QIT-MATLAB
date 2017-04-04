@@ -22,7 +22,7 @@ I   = gate.id(d);
 U = add * tensor(H, I);
 
 disp('Alice and Bob start with a shared EPR pair.')
-reg = u_propagate(state('00', [d d]), U)
+reg = state('00', [d d]).prop(U);
 
 
 % two random d-its
@@ -34,10 +34,10 @@ Z = H * gate.mod_inc(a(1), d) * H';
 X = gate.mod_inc(-a(2), d);
 
 disp('Alice encodes the d-its to her half of the EPR pair using local transformations,')
-reg = u_propagate(reg, tensor(Z*X, I))
+reg = reg.prop(tensor(Z*X, I))
 
 disp('and sends it to Bob. He then disentangles the pair,')
-reg = u_propagate(reg, U')
+reg = reg.prop(U')
 
 [p, b(1), reg] = measure(reg, 1);
 [p, b(2), reg] = measure(reg, 2);

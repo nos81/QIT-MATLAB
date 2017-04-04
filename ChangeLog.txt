@@ -206,6 +206,9 @@ b bugfix
               + more test scripts
 
 0.12.0  in progress
+              - state/u_propagate
+              - state/kraus_propagate
+              + state/prop
               + examples/magic_state_distillation
               + examples/dynamical_decoupling
               + markov/bath.plot_correlation

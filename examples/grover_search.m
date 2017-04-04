@@ -36,7 +36,7 @@ U_zeroflip(1) = -1;
 s = state(0, qubits(n));
 
 % initial superposition
-s = u_propagate(s, A);
+s = s.prop(A);
 
 % Grover iteration
 for k=1:reps
@@ -44,9 +44,9 @@ for k=1:reps
   s.data = -U_oracle .* s.data;
 
   % inversion about the mean
-  s = u_propagate(s, A');
+  s = s.prop(A');
   s.data = U_zeroflip .* s.data;
-  s = u_propagate(s, A);
+  s = s.prop(A);
 end
 
 [dummy, res] = measure(s);

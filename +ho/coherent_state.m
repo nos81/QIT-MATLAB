@@ -13,5 +13,5 @@ ket = (alpha.^k)./sqrt(factorial(k));
 %ket = ket*exp(-abs(alpha)^2/2);
 s = normalize(state(ket, n));
 
-%s = exp(-abs(alpha)^2/2) * u_propagate(state(0, n), expm(alpha*boson_ladder(n)'));
-%s = u_propagate(state(0, n), ho.displace(alpha, n));
+%s = exp(-abs(alpha)^2/2) * state(0, n).prop(expm(alpha*boson_ladder(n)'));
+%s = state(0, n).prop(ho.displace(alpha, n));

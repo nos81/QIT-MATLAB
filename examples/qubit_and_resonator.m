@@ -86,7 +86,7 @@ ddd = linspace(0, 2*pi* 40e-3, 100); % MHz
 L = H(0, 1, 0);
 for k=1:length(ddd)
   s = propagate(s0, L, (2/Omega_q)*pi/2); % Q
-  %s = u_propagate(s0, kron(I_r, sx));
+  %s = s0.prop(kron(I_r, sx));
 
   %LL = markov.superop(H(ddd(k), 0, 0), D, bq);
   LL = H(ddd(k), 0, 0);

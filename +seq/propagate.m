@@ -35,7 +35,7 @@ for j=1:n
 
     P = expm(dt * G);
     for q=1:n_steps
-        s = s.u_propagate(P);
+        s = s.prop(P);
         out{end+1} = out_func(s);
     end
 

@@ -59,8 +59,8 @@ legend('P_1', 'P_{1}^{eq} + (P_{1}(0)-P_{1}^{eq}) exp(-t/T_1)')
 
 % T2 demo
 s = state('0', [2]);
-s = u_propagate(s, R_y(pi/2)); % rotate to (|0>+|1>)/sqrt(2)
-out = propagate(s, L, t, @(x,h) ev(u_propagate(x, R_y(-pi/2)), qit.p0));
+s = s.prop(R_y(pi/2)); % rotate to (|0>+|1>)/sqrt(2)
+out = propagate(s, L, t, @(x,h) x.prop(R_y(-pi/2)).ev(qit.p0));
 subplot(2, 1, 2);
 plot(t, cell2mat(out), 'r-', t, 0.5*(1+exp(-t/T2)), 'b-.', 'LineWidth', 2);
 xlabel('t / TU');

@@ -9,12 +9,10 @@ function s = mtimes(a, b)
 
 
 % a must be a state, otherwise we wouldn't be in this function
-if (isa(b, 'lmap'))
-  s = mtimes@lmap(a, b); % HACK for u_propagate, returns an lmap
-elseif (isscalar(a) && isnumeric(a))
+if isscalar(a) && isnumeric(a)
   s = b;
   s.data = a * s.data;
-elseif (isscalar(b) && isnumeric(b))
+elseif isscalar(b) && isnumeric(b)
   s = a;
   s.data = b * s.data;
 else

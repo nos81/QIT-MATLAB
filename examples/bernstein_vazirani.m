@@ -43,11 +43,11 @@ U_oracle = oracle(f);
 % start with all-zero state
 s = state(0, dim);
 % initial superposition
-s = s.u_propagate(H);
+s = s.prop(H);
 % oracle phase flip
 s.data = U_oracle .* s.data;
 % final Hadamards
-s = s.u_propagate(H);
+s = s.prop(H);
 
 figure();
 s.plot();
