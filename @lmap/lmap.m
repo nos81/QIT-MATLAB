@@ -32,13 +32,6 @@ classdef lmap
       error('Too many arguments.');
     end
 
-    if nargin == 2
-      % cover for lazy users, convert a dim vector into a cell vector with one entry
-      if isnumeric(dim)
-        dim = {dim};
-      end
-    end
-
     if isa(s, 'lmap')
       % copy constructor
       if nargin == 1
@@ -56,6 +49,10 @@ classdef lmap
     % error checking
     n = length(dim);
     for k=1:n
+      % empty vector is interpreted as singleton dim
+      if isempty(dim{k})
+          dim{k} = 1;
+      end
       if size(s, k) ~= prod(dim{k})
         error('Dimensions of index %d do not match the combined dimensions of the subsystems.', k)
       end

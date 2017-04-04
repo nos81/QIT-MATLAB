@@ -19,4 +19,6 @@ p = p / sum(p);  % Dir(1, 1, ..., 1) -distributed
 % TODO this would be a simpler choice, but what's the exact distribution?
 %x = sort(rand(n-1, 1));  % n-1 points in (0,1), sorted
 %p = [x;1] -[0;x];        % n deltas between points = partition of unity
+
+% TODO or, we could use p = rand(1,n);  p = p / sum(p);
 end
