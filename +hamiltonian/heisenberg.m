@@ -96,20 +96,20 @@ H = op_list(temp, dim);
 % spin-spin couplings: loop over nonzero entries of C
 % only use the upper triangle
 [a, b] = find(triu(C));
+temp = {};
 for m = 1:length(a)
     i = a(m);
     j = b(m);
     % spin ops for sites i and j
     Si = angular_momentum(dim(i));
     Sj = angular_momentum(dim(j));
-    temp = {};
     % coupling between sites a and b
     c = Jfunc(i, j);
     for k = 1:3
         temp = cat(2, temp, {{c(k) * Si{k}, i; Sj{k}, j}});
-        H = H +op_list(temp, dim);
     end
 end
+H = H +op_list(temp, dim);
 end
 
 function res = cdot(v, A)

@@ -225,3 +225,4 @@ b bugfix
               * rename: markov/ops => utils/rotating_frame
               * utils/spectral decomposition now returns a column vector.
               b utils/superop_fp: preserve hermiticity by doing orthogonalization using Gram-Schmidt
+              b hamiltonian/heisenberg: now uses the correct spin-spin coupling
