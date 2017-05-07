@@ -1,4 +1,4 @@
-% Initialization script for the quantum information toolkit.
+% Initialization script for the Quantum Information Toolkit.
 
 addpath(pwd);
 addpath([pwd '/utils']);
@@ -8,7 +8,7 @@ addpath([pwd '/examples']);
 global qit;
 
 % toolkit version number
-qit.version = '0.11.0';
+qit.version = '0.12.0a';
 fprintf('MATLAB Quantum Information Toolkit, version %s\n', qit.version)
 
 % Pauli matrices

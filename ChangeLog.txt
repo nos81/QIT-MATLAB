@@ -209,6 +209,7 @@ b bugfix
               - state/u_propagate
               - state/kraus_propagate
               + state/prop
+              * state/to_ket: added optional purity tolerance parameter
               + examples/magic_state_distillation
               + examples/dynamical_decoupling
               + markov/bath.plot_correlation
