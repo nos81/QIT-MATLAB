@@ -8,7 +8,7 @@ function [S] = squeeze(z, n)
 % Ville Bergholm 2010
 
 
-if (~isscalar(z))
+if ~isscalar(z)
   error('z must be a scalar.')
 end
 

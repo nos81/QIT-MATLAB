@@ -12,7 +12,7 @@ function s = momentum_state(p, n)
 
 ket = zeros(n, 1);
 
-temp = i*sqrt(2)*p;
+temp = 1i*p;
 
 ket(1) = 1; % arbitrary
 ket(2) = temp * ket(1);

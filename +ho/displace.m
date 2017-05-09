@@ -8,7 +8,7 @@ function [D] = displace(alpha, n)
 % Ville Bergholm 2010
 
 
-if (~isscalar(alpha))
+if ~isscalar(alpha)
   error('Alpha must be a scalar.')
 end
 
