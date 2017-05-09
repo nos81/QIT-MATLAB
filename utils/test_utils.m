@@ -1,6 +1,8 @@
 % Test script for the Quantum Information Toolkit utilities
 % Ville Bergholm 2009-2017
 
+disp('Testing utilities.')
+
 tol = qit.tol;
 
 dim = 5;

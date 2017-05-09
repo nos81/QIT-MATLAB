@@ -5,5 +5,6 @@
 test_utils
 test_lmap
 test_state
+ho.test_ho
 markov.test_markov
 disp('All tests passed.')

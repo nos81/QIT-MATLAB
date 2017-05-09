@@ -2,6 +2,8 @@
 
 % Ville Bergholm 2009-2017
 
+disp('Testing the Born-Markov module.')
+
 tol = qit.tol;
 
 dim = 6;

@@ -1,6 +1,8 @@
 % Test script for the harmonic oscillator module.
 % Ville Bergholm 2017
 
+disp('Testing the harmonic oscillator module.')
+
 tol = qit.tol;
 
 % truncation dimension

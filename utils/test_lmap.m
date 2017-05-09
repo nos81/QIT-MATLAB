@@ -1,8 +1,9 @@
 % Test script for the lmap class.
 % Ville Bergholm 2009-2010
 
-tol = qit.tol;
+disp('Testing the lmap class.')
 
+tol = qit.tol;
 
 % reordering subsystems
 dim = [2 5 3];

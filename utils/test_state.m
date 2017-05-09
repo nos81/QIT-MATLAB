@@ -1,6 +1,8 @@
 % Test script for the state class.
 % Ville Bergholm 2008-2011
 
+disp('Testing the state class.')
+
 tol = qit.tol;
 
 % mixed states
