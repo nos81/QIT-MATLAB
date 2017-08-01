@@ -76,6 +76,18 @@ assert(entropy(sigma1) >= -tol); % nonnegative
 % unaffected by unitary transformations
 assert_o(entropy(prop(sigma1, U_s)), entropy(sigma1), tol);
 
+% tensor network ket state with bond dimension chi
+rand_c = @(a,b) randn(a,b)+1i*randn(a,b);
+dim = [4, 5];
+chi = 2;
+temp = rand_c(dim(2), chi) * rand_c(chi, dim(1));
+s = state(vec(temp), dim);
+s = s.normalize();
+
+% Renyi entanglement entropy of order 0 is just the log of the
+% Schmidt rank which for a random state is almost always the bond dimension.
+assert_o(s.entropy([1], 0), log2(chi), tol);
+
 
 %% partial trace
 

@@ -210,6 +210,7 @@ b bugfix
               - state/kraus_propagate
               + state/prop
               * state/to_ket: added optional purity tolerance parameter
+              b state/entropy gives correct order 0 Rényi entropies.
               + examples/magic_state_distillation
               + examples/dynamical_decoupling
               + markov/bath.plot_correlation
